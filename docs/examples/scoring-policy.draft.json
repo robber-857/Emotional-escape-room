@@ -1,0 +1,132 @@
+{
+  "schema_version": 1,
+  "version": "v6.1-weighted-draft.1",
+  "status": "draft",
+  "publishable": false,
+  "source": {
+    "document": "情感密室_V6.1_客户签字确认最终版",
+    "level4_page": 5
+  },
+  "dimensions": [
+    "A",
+    "V",
+    "T",
+    "F"
+  ],
+  "level_weights": {
+    "L1": 0.2,
+    "L2": 0.3,
+    "L3": 0.3,
+    "L4": 0.2
+  },
+  "level_groups": {
+    "L1": [
+      "L1-01",
+      "L1-02"
+    ],
+    "L2": [
+      "L2-01",
+      "L2-02",
+      "L2-03",
+      "L2-04"
+    ],
+    "L3": [
+      "L3-01",
+      "L3-02"
+    ],
+    "L4": [
+      "L4-01"
+    ]
+  },
+  "l2_policy": {
+    "mode": "all_four",
+    "random_selection": false,
+    "required_terminal_outcomes": [
+      "completed",
+      "explicitly_allowed_decline_or_skip"
+    ]
+  },
+  "normalization": {
+    "method": "fixed_slot_max_abs_then_weighted_mean",
+    "range": [
+      -1,
+      1
+    ],
+    "slot_weights": null,
+    "slot_bounds": null,
+    "missing_evidence": "retain_denominator_zero_contribution_lower_coverage",
+    "unfinished_level": "no_final_result"
+  },
+  "classification": {
+    "thresholds": {
+      "A": 0,
+      "V": 0,
+      "T": 0,
+      "F": 0
+    },
+    "tie_policy": "positive",
+    "confirmed": false,
+    "minimum_coverage": null,
+    "borderline_band": null
+  },
+  "example_only_rules": [
+    {
+      "rule_id": "l4.exit.glimmer",
+      "group_id": "L4-01",
+      "decision_slot": "exit_choice",
+      "outcome": "glimmer",
+      "delta": {
+        "A": -2,
+        "V": -2,
+        "T": -2,
+        "F": -1
+      }
+    },
+    {
+      "rule_id": "l4.exit.tower",
+      "group_id": "L4-01",
+      "decision_slot": "exit_choice",
+      "outcome": "tower",
+      "delta": {
+        "A": 1,
+        "V": 3,
+        "T": 1,
+        "F": 2
+      }
+    },
+    {
+      "rule_id": "l4.exit.forest",
+      "group_id": "L4-01",
+      "decision_slot": "exit_choice",
+      "outcome": "forest",
+      "delta": {
+        "A": -1,
+        "V": 1,
+        "T": -2,
+        "F": -3
+      }
+    },
+    {
+      "rule_id": "l4.exit.palace",
+      "group_id": "L4-01",
+      "decision_slot": "exit_choice",
+      "outcome": "palace",
+      "delta": {
+        "A": 1,
+        "V": -1,
+        "T": 1,
+        "F": 1
+      }
+    }
+  ],
+  "unresolved": [
+    "All L1-L3 scoring rules and dependencies",
+    "Sequence and overlap semantics",
+    "Slot normalization bounds and weights",
+    "Classification threshold ties and minimum evidence",
+    "L2 explicit skip transitions and scoring",
+    "Furniture spatial classification",
+    "Active timing and 15000ms boundary",
+    "L3 carry decision plus chosen item aggregation"
+  ]
+}
