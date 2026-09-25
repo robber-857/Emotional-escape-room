@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "version": "v6.1-weighted-draft.1",
+  "version": "v6.1-weighted-draft.2",
   "status": "draft",
   "publishable": false,
   "source": {
@@ -41,10 +41,8 @@
   "l2_policy": {
     "mode": "all_four",
     "random_selection": false,
-    "required_terminal_outcomes": [
-      "completed",
-      "explicitly_allowed_decline_or_skip"
-    ]
+    "required_terminal_outcomes": null,
+    "decline_progression": "pending_designer_decision"
   },
   "normalization": {
     "method": "fixed_slot_max_abs_then_weighted_mean",
@@ -120,13 +118,61 @@
     }
   ],
   "unresolved": [
-    "All L1-L3 scoring rules and dependencies",
-    "Sequence and overlap semantics",
-    "Slot normalization bounds and weights",
+    "Complete L1-L3 action predicates and score catalog",
+    "L2 rejection progression and half-door sequence handling: pending designer decision",
+    "L3 storm trigger and ending after not opening or not closing door: pending designer decision",
+    "Slot normalization bounds including cumulative matches, and weights",
     "Classification threshold ties and minimum evidence",
-    "L2 explicit skip transitions and scoring",
-    "Furniture spatial classification",
-    "Active timing and 15000ms boundary",
-    "L3 carry decision plus chosen item aggregation"
-  ]
+    "Final Figma UI to furniture action mapping",
+    "Active timing lease and heartbeat implementation",
+    "Persona explanation and illustration Figma link from user"
+  ],
+  "confirmed_behavior_policies": {
+    "l1_overlap": {
+      "match_policy": "accumulate_all_matching_rules",
+      "deduplicate": "per_rule_per_scoring_scope",
+      "stop_after_first_match": false
+    },
+    "l1_paddle": {
+      "required_valid_actions": 5,
+      "score_on_transition": [
+        4,
+        5
+      ],
+      "max_score_occurrences": 1,
+      "persist_progress": true,
+      "duplicate_request_increments_count": false
+    },
+    "l2_earring": {
+      "long_search": {
+        "operator": ">",
+        "active_ms": 15000,
+        "requires": "still_searching"
+      },
+      "short_search": {
+        "operator": "<=",
+        "active_ms": 15000,
+        "requires": "return_to_hall"
+      },
+      "equal_while_searching": "no_long_score_yet"
+    },
+    "l3_carry": {
+      "aggregation": "carry_yes_plus_confirmed_item",
+      "max_items": 1,
+      "max_occurrences_per_stage": 1,
+      "preview_scores": false
+    },
+    "furniture": {
+      "ui_source": "final_figma",
+      "scoring": "validated_action_rule_lookup",
+      "infer_new_spatial_scoring": false
+    },
+    "l4_visual": {
+      "source": "final_ui"
+    },
+    "persona_content": {
+      "source": "user_future_figma",
+      "status": "awaiting_link"
+    }
+  }
 }
