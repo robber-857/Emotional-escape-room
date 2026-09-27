@@ -1,0 +1,17 @@
+{
+  "name": "emotional-escape-room",
+  "private": true,
+  "workspaces": [
+    "apps/web"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace @emotional/web",
+    "build": "npm run build --workspace @emotional/web",
+    "start": "npm run start --workspace @emotional/web",
+    "typecheck": "npm run typecheck --workspace @emotional/web",
+    "test": "npm run test --workspace @emotional/web"
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  }
+}

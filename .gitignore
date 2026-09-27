@@ -1,0 +1,12 @@
+node_modules/
+.next/
+out/
+.venv/
+__pycache__/
+.pytest_cache/
+.env
+.env.local
+!.env.example
+output/
+.playwright-cli/
+*.tsbuildinfo
