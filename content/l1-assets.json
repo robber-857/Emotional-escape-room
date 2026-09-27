@@ -1,0 +1,255 @@
+{
+  "fileKey": "Pu12R5Mu0kgIlQbU3nIIbn",
+  "exportedAt": "2026-09-26",
+  "assets": [
+    {
+      "name": "river-broken",
+      "nodeId": "1:28",
+      "path": "/game/l1/river-broken.png",
+      "bytes": 6543800,
+      "pixelWidth": 2944,
+      "pixelHeight": 1568,
+      "sha256": "a4a6ecb689bddca1301b7e38cb735433f861b0d9b16a5b7f4671bd1fa9d6a494",
+      "sourceKind": "figma-background-layer-export"
+    },
+    {
+      "name": "river-repaired",
+      "nodeId": "1:196",
+      "path": "/game/l1/river-repaired.png",
+      "bytes": 6818164,
+      "pixelWidth": 2944,
+      "pixelHeight": 1568,
+      "sha256": "69388f12344c01b378c062ea2132eadab68df09ee053780d42915aa26a3e7687",
+      "sourceKind": "figma-background-layer-export"
+    },
+    {
+      "name": "plant-back",
+      "nodeId": "1:197",
+      "path": "/game/l1/plant-back.png",
+      "bytes": 434602,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "350fb2809812a5b6015e78040ff992af9650bd604900445265eeb6b78b796480",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "plant-right",
+      "nodeId": "1:198",
+      "path": "/game/l1/plant-right.png",
+      "bytes": 468810,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "0e4596496e621da90fcf7beec980bca52e53f75df175d1cafc79522128f4dcd9",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "plant-mid",
+      "nodeId": "1:199",
+      "path": "/game/l1/plant-mid.png",
+      "bytes": 434602,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "350fb2809812a5b6015e78040ff992af9650bd604900445265eeb6b78b796480",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "plant-left",
+      "nodeId": "1:200",
+      "path": "/game/l1/plant-left.png",
+      "bytes": 397911,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "909f08e481b5e8a19a9a0b47b003b41444442dd288c75fd47c03aa13d590ea07",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "plant-low",
+      "nodeId": "1:201",
+      "path": "/game/l1/plant-low.png",
+      "bytes": 537945,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "77a0040bd26446ae040fbcf8c45c82e17c974af748f7d093b90de2d8ffbc7a67",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "boat",
+      "nodeId": "1:202",
+      "path": "/game/l1/boat.png",
+      "bytes": 705580,
+      "pixelWidth": 1037,
+      "pixelHeight": 811,
+      "sha256": "84474832a757a14a1fb13137b4823588d1ea8486e5f4458587561f9d6ef18920",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "post",
+      "nodeId": "1:203",
+      "path": "/game/l1/post.png",
+      "bytes": 892357,
+      "pixelWidth": 601,
+      "pixelHeight": 1024,
+      "sha256": "c3ea1fd6e7bc1822982db575a141ce0ed97532145123567daeae15f749a12c9e",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "ring",
+      "nodeId": "1:204",
+      "path": "/game/l1/ring.png",
+      "bytes": 152886,
+      "pixelWidth": 447,
+      "pixelHeight": 447,
+      "sha256": "135c4875d6211132a89744de7e91bb85dd6a791f125a3385f23cc25e19ef9900",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "lilies",
+      "nodeId": "1:205",
+      "path": "/game/l1/lilies.png",
+      "bytes": 40187,
+      "pixelWidth": 240,
+      "pixelHeight": 240,
+      "sha256": "8285974135889c391765bacdce0ac8276420887cd23d42d8f72e54b05cc7bd87",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "oar",
+      "nodeId": "1:209",
+      "path": "/game/l1/oar.png",
+      "bytes": 2663928,
+      "pixelWidth": 1726,
+      "pixelHeight": 1651,
+      "sha256": "be8fec4f22c00cb62444abecb69f36ca0bb14cce152046dad5f6721cff52666d",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "bush",
+      "nodeId": "1:210",
+      "path": "/game/l1/bush.png",
+      "bytes": 670588,
+      "pixelWidth": 772,
+      "pixelHeight": 1024,
+      "sha256": "ed51cdefa9539737bed11d56526fed09d2bec8e2ef7f1d4a3834c4405c966046",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "sparkles",
+      "nodeId": "1:215",
+      "path": "/game/l1/sparkles.png",
+      "bytes": 52042,
+      "pixelWidth": 429,
+      "pixelHeight": 752,
+      "sha256": "af57eea844c55bb2495e491b14556081cbb13c7d3136e6622db4ef5ec5d4cfd1",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "planks",
+      "nodeId": "1:245",
+      "path": "/game/l1/planks.png",
+      "bytes": 153050,
+      "pixelWidth": 384,
+      "pixelHeight": 384,
+      "sha256": "fc90e0ee41e41e823ea7899561367b3d21e5fbf4d29e799f37dce70d503f27eb",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "sparkles-small",
+      "nodeId": "1:134",
+      "path": "/game/l1/sparkles-small.png",
+      "bytes": 48666,
+      "pixelWidth": 480,
+      "pixelHeight": 480,
+      "sha256": "61af7f17747c4afe4cc46a805160dbe554d29a3cdb723e0e506b4fc555dd17d8",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "lilies-shadow",
+      "nodeId": "1:206",
+      "path": "/game/l1/lilies-shadow.svg",
+      "bytes": 1254,
+      "sha256": "10d46fc52639bb45c54a3a0e7098fd1cf98ddd41d2683e6726d5671b83be0c59",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "rope",
+      "nodeId": "120:70",
+      "path": "/game/l1/rope.png",
+      "bytes": 398384,
+      "pixelWidth": 635,
+      "pixelHeight": 800,
+      "sha256": "07a720e6070ed9d9f04e237f9503a5c4165e5959e30ad871219d65fafae97dd3",
+      "sourceKind": "figma-design-context-transparent-asset"
+    },
+    {
+      "name": "shore-base",
+      "nodeId": "1:109",
+      "path": "/game/l1/shore-base.png",
+      "bytes": 1105189,
+      "pixelWidth": 1024,
+      "pixelHeight": 578,
+      "sha256": "24cba445c570b59704c18d86af2ebe7b369441d3daa34e8de9c5a37d9ec545b1",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "shore-middle",
+      "nodeId": "1:109",
+      "path": "/game/l1/shore-middle.png",
+      "bytes": 1224544,
+      "pixelWidth": 1024,
+      "pixelHeight": 576,
+      "sha256": "9a9b15e5d51efbe8f2a7442513daa8f26fc046b1432b1f500dfef8cff24cfbd7",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "shore",
+      "nodeId": "1:109",
+      "path": "/game/l1/shore.png",
+      "bytes": 1233805,
+      "pixelWidth": 1024,
+      "pixelHeight": 576,
+      "sha256": "b6b8f5d08d1d6395d8e966e752175081affc251906ae45bc8c9b25b0eab0a595",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "person",
+      "nodeId": "120:79",
+      "path": "/game/l1/person.png",
+      "bytes": 219541,
+      "pixelWidth": 480,
+      "pixelHeight": 853,
+      "sha256": "53789249d10edc35e21d2c751e48d6501db725cf640a6beb9d3f04390b0fc6a5",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "woman",
+      "nodeId": "120:80",
+      "path": "/game/l1/woman.png",
+      "bytes": 145981,
+      "pixelWidth": 434,
+      "pixelHeight": 575,
+      "sha256": "df93b3f4f0315115d5e18fb1826e0eaf25cfd08be509051f43af5b81e0072632",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "lamp-off",
+      "nodeId": "120:102",
+      "path": "/game/l1/lamp-off.png",
+      "bytes": 84969,
+      "pixelWidth": 315,
+      "pixelHeight": 384,
+      "sha256": "f79615a39cf21aa89f80368f80d7bd84f1d51853bb2c4555788e51e39943add7",
+      "sourceKind": "figma-design-context-original-fill"
+    },
+    {
+      "name": "lamp-on",
+      "nodeId": "1:120",
+      "path": "/game/l1/lamp-on.png",
+      "bytes": 121089,
+      "pixelWidth": 480,
+      "pixelHeight": 480,
+      "sha256": "cd22d532408d1f44bfc6fbb38265c09637030c5c911d5c7aafef8084e7342a00",
+      "sourceKind": "figma-design-context-original-fill"
+    }
+  ],
+  "updatedAt": "2026-09-27"
+}
