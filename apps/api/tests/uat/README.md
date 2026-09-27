@@ -43,4 +43,4 @@ Remove-Item Env:TEST_DATABASE_URL
 
 ## 人工验收边界
 
-自动化实际执行结果记录在 docs/uat。George 的审查、项目负责人对剧情/交互的签认、真实手机 Safari/Chrome 测试需另行记录，不代签。正式评分尚未实现，其 UAT 标为 Blocked，不把当前状态版本当分数。
+自动化实际执行结果见 [2026-09-28 执行记录](RESULTS-2026-09-28.md)。George 的审查、项目负责人对剧情/交互的签认、真实手机 Safari/Chrome 测试需另行记录，不代签。正式评分尚未实现，其 UAT 标为 Blocked，不把当前状态版本当分数。
