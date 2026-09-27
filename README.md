@@ -1,83 +1,83 @@
 # Emotional Escape Room · 情感密室
 
-当前交付：**L1「分离之河」前端交互预览 + FastAPI 启动骨架**。
-前端可独立运行；本机交互状态不是正式后端状态。尚未实现正式评分、数据库会话、L2–L4、16 型结果、服务端存档或部署。
+当前交付：L1 前端 + FastAPI 权威事件校验 + PostgreSQL 持久化 + Docker Compose。
+正式人格评分、L2–L4、账号同步及线上部署仍未完成。第一次运行请从这里开始。
 
-## 环境与安装
+## George：Docker 启动（推荐）
 
-已在 Windows / PowerShell、Node.js 24.14.0、npm 11.9.0、Python 3.12.10 验证。
-要求 Node.js 22+、Python 3.12+。安装时需要网络；不需要数据库、Figma token 或其他密钥。
+安装 Git 和 Docker Desktop（Windows 使用 Linux containers / WSL2）。克隆项目并切换到包含本次改动的分支后，在仓库根目录运行：
 
-前端在仓库根目录安装，使用仓库中的 package-lock.json：
+```powershell
+Copy-Item .env.example .env  # 仅首次；已有 .env 不覆盖
+# macOS / Linux: cp .env.example .env
+docker compose up -d --build
+docker compose ps
+```
 
-~~~powershell
-cd D:\Emotional
+打开 http://localhost:3000 。默认端口：网页 3000、API 8000、数据库 54329；全部只绑定本机。
+首次拉取镜像和安装依赖需要网络。Docker 模式无需安装本机 Node/Python，也不需要 Figma token。
+Compose 顺序：数据库健康 → Alembic 建表/升级 → API 就绪 → 网页。
+端口被占用时在根 .env 改 WEB_PORT / API_PORT / DB_PORT，再运行启动命令，不要结束无关服务。
+
+- API 文档：http://localhost:8000/docs
+- 数据库与迁移就绪：http://localhost:3000/api/v1/ready
+- 进程健康：http://localhost:3000/api/v1/health（不代表数据库/UAT通过）
+- 事件日志：`docker compose logs -f api`
+- 停止并保留存档：`docker compose down`（不要加 `-v`，它会删除数据库卷）
+- 更新代码后：`docker compose up -d --build`
+
+完整步骤、数据库查看/备份、配置说明、验收步骤：[George 本地开发交接](docs/george-local-setup.md)。
+后端接口、校验规则、事务和设计边界：[L1 后端设计](docs/l1-backend.md)。
+
+## 本机开发（热更新）
+
+Node.js 22+、Python 3.12+、Docker Desktop。先只启动数据库，避免与容器前端/API争用端口：
+
+```powershell
+docker compose up -d db
 npm.cmd ci
-Copy-Item apps\web\.env.example apps\web\.env.local
+Copy-Item apps/web/.env.example apps/web/.env.local # 仅首次
 npm.cmd run dev
-~~~
+```
 
-访问 http://127.0.0.1:3000 。已有 .env.local 时保留本机配置，不重复覆盖。
-macOS / Linux 使用 npm，目录替换为自己的 checkout 路径。
+另开终端，从仓库根目录：
 
-## 后端启动（另一个终端）
-
-~~~powershell
-cd D:\Emotional\apps\api
+```powershell
+cd apps/api
 python -m venv .venv
-.venv\Scripts\python.exe -m pip install -r requirements.txt
-Copy-Item .env.example .env
-.venv\Scripts\python.exe -m uvicorn app.main:app --env-file .env --reload --host 127.0.0.1 --port 8000
-~~~
+.venv/Scripts/python.exe -m pip install -r requirements.txt
+Copy-Item .env.example .env # 仅首次；数据库凭据与根 .env 对应
+.venv/Scripts/python.exe -m alembic upgrade head
+.venv/Scripts/python.exe -m uvicorn app.main:app --env-file .env --reload --host 127.0.0.1 --port 8000
+```
 
-无需激活虚拟环境，避免 PowerShell 执行策略差异。
-macOS / Linux 把 .venv\Scripts\python.exe 换为 .venv/bin/python。
+macOS/Linux 使用 npm、python3 和 .venv/bin/python；cp 代替 Copy-Item。
+浏览器经 Next.js 同源 /api 代理访问，API_BASE_URL 是服务端变量，不带 NEXT_PUBLIC_ 前缀。
 
-- API 健康检查：http://127.0.0.1:8000/api/v1/health
-- OpenAPI / Swagger：http://127.0.0.1:8000/docs
-- 通过前端代理：http://127.0.0.1:3000/api/v1/health
-- 游戏预览不依赖 API 在线。后端目前只有健康检查，能力标志明确返回 false；不能据此认为会话、计分或数据库已经就绪。
-- 本轮不配置 CORS：浏览器经 Next.js 同源 /api 代理访问。未来跨域方案另行确认。
-- 两个终端分别 Ctrl+C 停止。端口被占用时先确认占用进程，不结束无关服务。
-
-## 配置文件
+## 配置与检查
 
 | 文件 | 用途 |
 | --- | --- |
-| package.json / package-lock.json | npm workspace、根命令与精确依赖锁 |
-| apps/web/package.json | Next.js / React、TypeScript 和测试命令 |
-| apps/web/next.config.ts | /api 代理；默认目标 127.0.0.1:8000 |
-| apps/web/.env.example → .env.local | API_BASE_URL，服务端变量；修改后重启 Next.js |
-| apps/web/tsconfig.json | TypeScript 严格模式 |
-| apps/web/src/app/tokens.css | 色彩变量 |
-| apps/web/src/features/l1/fills.json | 原始素材裁切、翻转、旋转与透明度 |
-| content/l1-assets.json | Figma node ID、本地素材、尺寸、SHA-256 |
-| apps/api/.env.example → .env | APP_ENV，默认 development |
-| apps/api/requirements.in / requirements.txt | 后端直接依赖范围 / 精确依赖锁 |
-| apps/api/pytest.ini | 后端测试目录与导入路径 |
+| .env.example → .env | Docker 数据库凭据和本机端口 |
+| compose.yaml | web / api / migrate / db，健康检查、持久化卷 |
+| apps/web/Dockerfile / apps/api/Dockerfile | Linux 镜像构建 |
+| .dockerignore / .gitignore | 排除本机依赖、存档配置和密钥 |
+| apps/web/.env.example → .env.local | 本机 Next.js 的 API_BASE_URL |
+| apps/api/.env.example → .env | 本机 API 的 APP_ENV / DATABASE_URL |
+| apps/api/alembic.ini / migrations | 数据库版本与升级 |
+| package-lock.json / apps/api/requirements.txt | 锁定前后端依赖 |
+| apps/web/next.config.ts / tsconfig.json | API 代理 / TypeScript |
+| content/l1-assets.json / apps/web/src/features/l1/fills.json | 本地素材来源与图层 |
 
-.env、.env.local、node_modules、.next、.venv、output 均不入 Git。
-当前不需要 DATABASE_URL；不要为了启动骨架添加真实生产数据库。
-
-## Review 与验证
-
-~~~powershell
-cd D:\Emotional
+```powershell
 npm.cmd run typecheck
 npm.cmd test
 npm.cmd run build
-npm.cmd run start
-~~~
+cd apps/api
+.venv/Scripts/python.exe -m pytest -q
+```
 
-生产预览同样默认 3000；先停掉开发服务再执行 start。
-
-~~~powershell
-cd D:\Emotional\apps\api
-.venv\Scripts\python.exe -m pytest tests -q
-~~~
-
-建议阅读顺序：model.ts（前置条件/状态）→ Scene.tsx + Sprite.tsx + fills.json（图层与拖动）→ L1Game.tsx（提示、保存与 UI）→ save.ts（恢复校验）→ model.test.ts → apps/api/app/main.py。
-本地素材已随项目保存，运行时不使用 Figma 临时链接。
+默认测试使用临时 SQLite；PostgreSQL 并发测试见交接文档。通过测试不等于 George 的另一台电脑或真实设备 UAT 已通过。
 
 ## L1 操作与验收入口
 
@@ -89,12 +89,12 @@ cd D:\Emotional\apps\api
 6. 分别验证河面直接游泳、救生圈过河；“否”记录拒绝但仍可重选，关闭提示不算拒绝。
 7. L1-02 对岸有男子与女子，可分别决定是否打招呼。灯位于左下角，拿起与点亮分别选择；拿起后进入右下角物品栏，可继续点亮，也可带未亮灯进门。
 8. 菜单内提供减少动效、恢复道具位置、保存返回、开发记录和确认后重新开始。
-9. 新版保存 key 为 emotional:l1:preview:v2，旧 v1 数据保留但不自动迁移，避免旧版一次搜草的记录被误解释。
+9. 新旅程创建服务器会话；旧 preview:v1/v2 存档保留，但不会导入为服务器已校验状态。
 
-“开发预览记录”仅展示本机动作序列，不显示伪造的正式分数。
-localStorage 保存同浏览器进度；可恢复已加载页面中的离线操作，不保证断网后首次加载/刷新页面。
-尚无 Service Worker、IndexedDB outbox、服务器同步或多设备恢复。
-多标签页写入会提示重新载入，非分布式锁或正式并发存档方案。
+“开发预览记录”显示当前会话的服务器接受/拒绝回执、事件 ID、规则版本和状态版本。
+关卡进度写入 PostgreSQL；浏览器只持有匿名会话凭据、道具摆放草稿和一个待确认请求。
+请求前先保存待确认动作，收到响应后清除；断线时停止推进，点击“重试同步”重发同一个事件 ID。
+未实现 Service Worker / IndexedDB 多事件离线队列；断网不能继续闯关。另一标签页修改存储会要求重新载入，服务端版本锁负责最终并发校验。
 
 ## 正式开发文档
 
@@ -110,4 +110,4 @@ localStorage 保存同浏览器进度；可恢复已加载页面中的离线操�
 
 从任一过河方式到达对岸；快速检查可选择河面 → 是。分别点击门边男子和女子，确认一个人的选择不影响另一人；灯的“拿起”和“点亮”各有独立是/否。拿起后地面灯消失、右下角物品栏出现灯，点击物品栏继续操作。刷新后恢复人物和灯状态。点击房门 → 否继续探索，→ 是结束 L1 预览；尚不进入 L2。
 
-旧 v2 存档仍可恢复，历史 greet 对应男子；新增 greet-woman 单独记录，不把旧事件自动算成和两人都打过招呼。
+服务器分别记录 greet（男子）与 greet-woman（女子）。旧 v2 本地预览存档保留，但不导入为服务器已校验进度。

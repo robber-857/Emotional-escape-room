@@ -1,5 +1,7 @@
 # L1 正式开发文档
 
+> 2026-09-27：前后端已接入，当前服务器校验、数据库和启动方式见 [L1 后端设计](l1-backend.md) / [George 交接](george-local-setup.md)。本文早期本地预览与骨架描述保留作历史。
+
 日期：2026-09-27。版本：L1 frontend preview v2。状态：可 review 的前端实现，非正式上线版本。
 本文件记录实际实现，原 architecture.md / development-plan.md 继续表达完整 MVP 目标。
 完整实现状态与验证结果见 [progress.md](progress.md)，启动与配置见根 README。

@@ -6,16 +6,22 @@ import { Sprite } from "./Sprite";
 import { Scene, asset, assetNames } from "./Scene";
 import {
   initialState,
-  transition,
   promptFor,
   choiceLabels,
   type Action,
   type L1State,
   type Subject,
 } from "./model";
-import { SAVE_KEY, restore, type Positions, type SavedGame } from "./save";
+import { type Positions } from "./save";
+import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, createSession, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
 
 export function L1Game() {
+  const sessionRef = useRef<Session | null>(null);
+  const requestLock = useRef(false);
+  const [syncing, setSyncing] = useState(false);
+  const [pendingSync, setPendingSync] = useState(false);
+  const [receipts, setReceipts] = useState<Receipt[]>([]);
+  const [syncError, setSyncError] = useState("");
   const [effect, setEffect] = useState<"oar" | "repair" | null>(null);
   useEffect(() => {
     if (!effect) return;
@@ -32,7 +38,7 @@ export function L1Game() {
   const [loaded, setLoaded] = useState(false);
   const [assetError, setAssetError] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
-  const [saveStatus, setSaveStatus] = useState("进度仅保存在此浏览器");
+  const [saveStatus, setSaveStatus] = useState("连接服务器后开始保存进度");
   const [message, setMessage] = useState(
     "河水静静流淌。先看看岸边，寻找过河的方式。",
   );
@@ -49,20 +55,12 @@ export function L1Game() {
 
   useEffect(() => {
     try {
-      const raw = localStorage.getItem(SAVE_KEY);
-      if (raw) {
-        const saved = restore(raw);
-        stateRef.current = saved.state;
-        positionsRef.current = saved.positions;
-        setState(saved.state);
-        setPositions(saved.positions);
-        setHasSave(true);
-      }
-    } catch {
-      setSaveStatus("本机存档无法读取。开始新旅程会重新建立存档。");
-    }
+      const saved = readSession();
+      if (saved) { sessionRef.current = saved; setHasSave(true); }
+      setPendingSync(!!readPending());
+    } catch { setSyncError("浏览器存储无法读取，请检查站点存储权限。"); }
     const changed = (e: StorageEvent) => {
-      if (e.key === SAVE_KEY) setExternalChange(true);
+      if (e.key === SESSION_KEY || e.key === PENDING_KEY) setExternalChange(true);
     };
     window.addEventListener("storage", changed);
     return () => {
@@ -111,6 +109,13 @@ export function L1Game() {
     else rotationDialog.current?.close();
   }, [portrait]);
   useEffect(() => {
+    if (modal === "trace" && sessionRef.current) {
+      let active = true;
+      getReceipts(sessionRef.current).then((rows) => { if (active) setReceipts(rows); }).catch(() => { if (active) setSyncError("无法刷新服务器记录，请重试同步"); });
+      return () => { active = false; };
+    }
+  }, [modal]);
+  useEffect(() => {
     if (modal) dialog.current?.showModal();
     else dialog.current?.close();
   }, [modal]);
@@ -118,23 +123,50 @@ export function L1Game() {
     if (selected) promptHeading.current?.focus({ preventScroll: true });
   }, [selected, state.scene]);
 
-  function save(next: L1State, nextPositions: Positions) {
+  function save(_next: L1State, nextPositions: Positions) {
+    // Cosmetic draft only: server state is never restored from this storage.
     try {
-      const data: SavedGame = {
-        version: 2,
-        events: next.events,
-        positions: nextPositions,
-        savedAt: new Date().toISOString(),
-      };
-      localStorage.setItem(SAVE_KEY, JSON.stringify(data));
-      setSaveStatus("已保存到此浏览器");
-      setHasSave(true);
-    } catch {
-      setSaveStatus("保存失败：请允许浏览器存储。关闭页面可能丢失本次进度。");
-    }
+      if (sessionRef.current) localStorage.setItem(`emotional:l1:draft:${sessionRef.current.id}`, JSON.stringify(nextPositions));
+      setSaveStatus("关卡进度已由服务器保存；道具摆放保存在本机");
+    } catch { setSaveStatus("道具摆放未能保存，关卡进度仍在服务器"); }
   }
-  function act(action: Action) {
+  function applySession(session: Session) {
+    sessionRef.current = session;
+    stateRef.current = session.state;
+    setState(session.state);
+    setHasSave(true);
+    setSaveStatus(`服务器已保存 · 版本 ${session.version}`);
+  }
+  async function continueGame() {
+    if (requestLock.current || externalChange) return;
+    requestLock.current = true; setSyncing(true); setSyncError("");
+    try {
+      let session = sessionRef.current;
+      if (!session) throw new Error("当前浏览器没有服务器会话");
+      session = await resumeSession(session);
+      applySession(session);
+      const draft = readDraft(session);
+      positionsRef.current = draft; setPositions(draft);
+      const pending = readPending();
+      if (pending) {
+        const result = await submit(session, pending);
+        session = result.session; applySession(session);
+        positionsRef.current = session.positions; setPositions(session.positions);
+      }
+      setPendingSync(false);
+      setReceipts(await getReceipts(session));
+      setSelected(null); setStarted(true); setMessage("已从服务器恢复进度，可以继续探索。");
+    } catch (error) {
+      if (error instanceof RejectedAction) {
+        applySession(error.session); setSelected(null); setReceipts((r) => [...r, error.receipt]);
+        setPendingSync(false); setStarted(true);
+      }
+      setSyncError(error instanceof Error ? error.message : "连接失败，请重试");
+    } finally { requestLock.current = false; setSyncing(false); }
+  }
+  async function act(action: Action) {
     if (
+      requestLock.current || pendingSync ||
       !started ||
       !loaded ||
       portrait ||
@@ -148,16 +180,27 @@ export function L1Game() {
       setMessage("本次探索记录已满，请从菜单重新开始。");
       return;
     }
-    const next = transition(stateRef.current, {
-      id: crypto.randomUUID(),
-      at: new Date().toISOString(),
-      action,
-    });
-    if (next === stateRef.current) return;
+    const session = sessionRef.current;
+    if (!session) return;
+    requestLock.current = true; setSyncing(true); setSyncError("");
     const before = stateRef.current;
-    stateRef.current = next;
-    setState(next);
-    save(next, positionsRef.current);
+    let next: L1State;
+    try {
+      const pending = prepare(session, action, positionsRef.current);
+      setPendingSync(true);
+      const result = await submit(session, pending);
+      setReceipts((r) => [...r, result.receipt]);
+      applySession(result.session); next = result.session.state;
+      setPendingSync(false);
+    } catch (error) {
+      if (error instanceof RejectedAction) {
+        applySession(error.session);
+        positionsRef.current = error.session.positions; setPositions(error.session.positions);
+        setReceipts((r) => [...r, error.receipt]); setPendingSync(false);
+      }
+      setSyncError(error instanceof Error ? error.message : "连接失败，请重试同步");
+      return;
+    } finally { requestLock.current = false; setSyncing(false); }
     if (!before.oar && next.oar) setEffect("oar");
     if (!before.repaired && next.repaired) setEffect("repair");
     if (action.type === "paddle") {
@@ -193,8 +236,9 @@ export function L1Game() {
     }
     if (before.scene !== next.scene) setSelected(null);
   }
-  function move(next: Positions) {
+  async function move(next: Positions) {
     if (
+      requestLock.current || pendingSync || effect ||
       !started ||
       !loaded ||
       portrait ||
@@ -213,8 +257,8 @@ export function L1Game() {
       !stateRef.current.rowing
     ) {
       if (!stateRef.current.wood)
-        act({ type: "choose", choice: "collect-wood", yes: true });
-      act({ type: "choose", choice: "repair", yes: true });
+        await act({ type: "choose", choice: "collect-wood", yes: true });
+      if (stateRef.current.wood) await act({ type: "choose", choice: "repair", yes: true });
     }
   }
   function resetPositions() {
@@ -224,8 +268,14 @@ export function L1Game() {
     save(stateRef.current, {});
     setModal(null);
   }
-  function fresh() {
-    if (externalChange) return;
+  async function fresh() {
+    if (externalChange || requestLock.current || pendingSync) return;
+    requestLock.current = true; setSyncing(true); setSyncError("");
+    let session: Session;
+    try { session = await createSession(); }
+    catch (error) { setSyncError(error instanceof Error ? error.message : "无法创建服务器会话"); return; }
+    finally { requestLock.current = false; setSyncing(false); }
+    applySession(session); setReceipts([]);
     if (strokeTimer.current) clearTimeout(strokeTimer.current);
     strokeLock.current = false;
     setStrokeBusy(false);
@@ -242,6 +292,7 @@ export function L1Game() {
     save(next, {});
   }
   const blocked =
+    syncing || pendingSync || strokeBusy ||
     !started ||
     !loaded ||
     portrait ||
@@ -328,12 +379,8 @@ export function L1Game() {
                 <div className="welcomeActions">
                   <button
                     className="primary"
-                    onClick={() =>
-                      hasSave
-                        ? (setStarted(true),
-                          setMessage("已恢复本机进度，可以继续探索。"))
-                        : fresh()
-                    }
+                    disabled={syncing || externalChange}
+                    onClick={() => hasSave ? continueGame() : fresh()}
                   >
                     {hasSave ? "继续上次旅程" : "开始探索"}{" "}
                     <span aria-hidden="true">→</span>
@@ -357,7 +404,7 @@ export function L1Game() {
               ) : (
                 <p role="status">正在准备河岸与道具…</p>
               )}
-              <small>第一幕交互预览 · 进度保存在此浏览器</small>
+              <small>第一幕 · 服务器校验与保存</small>
             </div>
           </div>
         )}
@@ -583,6 +630,12 @@ export function L1Game() {
       >
         ☰
       </button>
+      {(syncing || syncError || pendingSync) && (
+        <section className="syncStatus" role="status">
+          <p>{syncing ? "正在等待服务器校验…" : syncError || "有尚未确认的事件"}</p>
+          {!syncing && <button onClick={continueGame} disabled={externalChange || syncing}>重试同步 / 载入服务器进度</button>}
+        </section>
+      )}
       {externalChange && (
         <section className="conflict" role="alert">
           <p>另一标签页更新了这段旅程。为避免覆盖进度，请重新载入。</p>
@@ -621,13 +674,13 @@ export function L1Game() {
                 {motion ? "减少场景动效" : "开启场景动效"}
               </button>
               <button
-                disabled={!started || externalChange}
+                disabled={!started || externalChange || syncing || pendingSync}
                 onClick={resetPositions}
               >
                 恢复道具位置
               </button>
               <button
-                disabled={externalChange}
+                disabled={externalChange || syncing || pendingSync}
                 onClick={() => setModal("restart")}
               >
                 重新开始旅程
@@ -636,7 +689,7 @@ export function L1Game() {
             <p role="status">{saveStatus}</p>
             <div className="decisions">
               <button
-                disabled={!started || externalChange}
+                disabled={!started || externalChange || syncing || pendingSync}
                 onClick={() => {
                   save(stateRef.current, positionsRef.current);
                   setStarted(false);
@@ -648,17 +701,17 @@ export function L1Game() {
               <button onClick={() => setModal("trace")}>开发预览记录</button>
             </div>
             <small>
-              本次为前端预览：本机存档不代表服务端保存，尚不计算人格分数。
+              关卡进度以服务器回执为准；尚不计算正式人格分数。
             </small>
           </>
         )}
         {modal === "restart" && (
           <>
             <h2>重新开始第一幕？</h2>
-            <p>将替换此浏览器中的当前预览进度。</p>
+            <p>将创建新的服务器会话，旧会话记录保留。</p>
             <div className="decisions">
               <button onClick={() => setModal(null)}>保留当前旅程</button>
-              <button className="primary" onClick={fresh}>
+              <button className="primary" disabled={syncing || pendingSync} onClick={fresh}>
                 确认重新开始
               </button>
             </div>
@@ -666,31 +719,21 @@ export function L1Game() {
         )}
         {modal === "trace" && (
           <>
-            <span className="eyebrow">REVIEW · 本机交互记录</span>
+            <span className="eyebrow">REVIEW · 服务器校验记录</span>
             <h2>这次旅程的选择</h2>
             <p>
-              这里只记录前端动作顺序。无服务端入账、无正式分数，也不代表 UAT
-              已通过。
+              每条记录包含服务器校验结果；只有接受的动作才推进关卡。尚不计算正式分数。
+              会话：{sessionRef.current?.id} · 规则：{sessionRef.current?.rules_version}
             </p>
             <ol className="trace">
-              {state.events.map((e) => (
-                <li key={e.id}>
-                  <span>
-                    {e.action.type === "paddle"
-                      ? "划桨一次"
-                      : choiceLabels[e.action.choice]}
-                  </span>
-                  <b>
-                    {e.action.type === "paddle"
-                      ? "完成"
-                      : e.action.yes
-                        ? "是"
-                        : "否"}
-                  </b>
+              {receipts.map((e, i) => (
+                <li key={`${e.action_id}-${i}`}>
+                  <span>{e.action.type === "paddle" ? "划桨一次" : choiceLabels[e.action.choice]}{e.action.type === "choose" ? (e.action.yes ? " · 是" : " · 否") : ""}<br /><small>{e.action_id}</small></span>
+                  <b>{e.accepted ? "服务器已接受" : "服务器已拒绝"} · v{e.version}<br />{e.code}{e.duplicate ? " · 重试去重" : ""}</b>
                 </li>
               ))}
             </ol>
-            {!state.events.length && <p>还没有执行任何选择。</p>}
+            {!receipts.length && <p>还没有执行任何选择。</p>}
           </>
         )}
       </dialog>

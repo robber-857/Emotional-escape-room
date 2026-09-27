@@ -875,3 +875,7 @@ body {
     font-size: 12px;
   }
 }
+
+.syncStatus { position: fixed; bottom: 1rem; left: 50%; transform: translateX(-50%); z-index: 100; max-width: 90vw; padding: .6rem 1rem; border-radius: .7rem; background: #172e2b; color: #fff; text-align: center; }
+.syncStatus p { margin: .3rem 0; }
+.trace small { overflow-wrap: anywhere; font-size: .7rem; }

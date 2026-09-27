@@ -10,3 +10,6 @@ __pycache__/
 output/
 .playwright-cli/
 *.tsbuildinfo
+
+*.backup
+*.db

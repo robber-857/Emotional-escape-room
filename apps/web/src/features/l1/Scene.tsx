@@ -161,6 +161,7 @@ export function Scene({
         data-layer={id}
         transform={`translate(${dx} ${dy})`}
         role={subject ? "button" : undefined}
+        aria-disabled={subject ? disabled : undefined}
         tabIndex={subject && !disabled ? 0 : undefined}
         aria-label={
           subject
@@ -264,6 +265,7 @@ export function Scene({
       <g
         className="sceneObject hotspot"
         role="button"
+        aria-disabled={disabled}
         aria-label={labels[subject]}
         tabIndex={disabled ? -1 : 0}
         onClick={() => select(subject)}
