@@ -44,3 +44,35 @@ Remove-Item Env:TEST_DATABASE_URL
 ## 人工验收边界
 
 自动化实际执行结果见 [2026-09-28 执行记录](RESULTS-2026-09-28.md)。George 的审查、项目负责人对剧情/交互的签认、真实手机 Safari/Chrome 测试需另行记录，不代签。正式评分尚未实现，其 UAT 标为 Blocked，不把当前状态版本当分数。
+
+## L2-01 前端预览验证
+
+2026-09-28：桌面及触屏模拟两组通过，具体范围见 docs/progress.md 的 L2-01 记录。这不代表 L2 服务器校验或真机 UAT。
+
+在仓库根目录运行（Web 默认 3000，本机当前覆盖为 3100）：
+
+```powershell
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview open http://127.0.0.1:3100/l2
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-01.js
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-01-mobile.js
+```
+
+脚本在独立浏览器上下文中验证，不修改现有玩家存档。截图保存到 output/playwright，运行前可用 `New-Item -ItemType Directory -Force output/playwright` 创建目录。
+
+L2 最新坐下视角与门锁规则验证：`npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-door.js`。2026-09-28 桌面和触屏模拟各覆盖先拿一把/先拿两把，共四组通过；同一把不能二试，另一把二试成功。
+
+L2-02 半开门、拒绝后再进入、卧室刷新恢复与返回大厅：
+```powershell
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-02.js
+```
+
+L2-03 耳环寻找与计时暂停：
+```powershell
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-03.js
+```
+桌面用真实等待验证 >15 秒；覆盖拒绝后重选、返回后新段、菜单/离线暂停、手机旋屏暂停、刷新与只拾取一次。精确14999/15000/15001边界见前端 search.test.ts。浏览器模拟不等于真机或后端计时验收。
+
+L2-04 家具鼠标/原生触摸模拟拖动、重叠/墙面拒绝、桌椅组合、撤销/恢复/刷新、键盘、确认与移动后坐下入口：
+```powershell
+npx --yes --package @playwright/cli playwright-cli -s=l2-preview run-code --filename apps/api/tests/uat/l2-04.js
+```
