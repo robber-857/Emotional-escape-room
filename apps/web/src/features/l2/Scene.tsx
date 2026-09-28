@@ -40,7 +40,6 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onKey,onSearch,onFin
    <rect x="917" y="269" width="17" height="507" fill="#050505" style={{filter:"blur(3.6px)"}}/>
   </g>}
   <image data-layer="detail" href="/game/l2/detail.svg" x="633" y="321.49" width="10" height="10"/>
-  {!state.furniture.editing&&<g mask="url(#l2-cabinet-mask)"><ImageLayer id="cabinet" x={-46} y={166.77} w={302.458} h={1076.751}/></g>}
   {[...furnitureIds].sort((a,b)=>state.furniture.layout[a].v-state.furniture.layout[b].v).map(id=><FurniturePiece key={id} id={id} point={state.furniture.layout[id]} editing={state.furniture.editing} disabled={disabled} onMove={onMove}>
    {id==="chair"&&<><g style={{filter:"blur(.65px) drop-shadow(-2px 4px 7.6px #0005)"}}><ImageLayer id="chair" x={1059} y={574} w={173} h={247} opacity={.84} crop={[-.3095,-.1535,1.571,1.2876]}/></g>{!state.furniture.editing&&hit(`坐在${seatNames.chair}`,1060,577,170,240,()=>onSeat("chair"))}</>}
    {id==="sofa"&&<ImageLayer id="sofa" x={1176} y={581} w={768} h={370} crop={[-.0548,-.2011,1.099,1.3554]}/>}
@@ -51,6 +50,8 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onKey,onSearch,onFin
     {!state.furniture.editing&&<>{hit(`坐在${seatNames["table-seat"]}`,1145,741,350,166,()=>onSeat("table-seat"))}{hit("走到桌边",1040,920,510,129,onTable)}</>}
    </>}
   </FurniturePiece>)}
+  {/* The foreground cabinet occludes the armchair in exploration mode. */}
+  {!state.furniture.editing&&<g mask="url(#l2-cabinet-mask)"><ImageLayer id="cabinet" x={-46} y={166.77} w={302.458} h={1076.751}/></g>}
   {!state.furniture.editing&&hit(state.doorOpen?"查看半开的门":"查看门锁",745,285,180,480,onDoor)}
 
   {state.keys.length<2&&<title>{`桌上有${2-state.keys.length}把尚未拿起的钥匙`}</title>}
