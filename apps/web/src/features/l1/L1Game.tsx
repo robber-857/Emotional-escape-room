@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { woodAtGap, ropeAtGap, repairMaterialsReady } from "./geometry";
 import { Sprite } from "./Sprite";
 import { Scene, asset, assetNames } from "./Scene";
@@ -452,7 +453,8 @@ export function L1Game() {
                   </dd>
                 </div>
               </dl>
-              <p className="nextNotice">本次预览到此结束，第二幕尚未开放。</p>
+              <p className="nextNotice">第二幕可继续探索桌边、座位和钥匙。</p>
+              <Link className="primary l2Entry" href="/l2">进入第二幕</Link>
               <button className="primary" onClick={() => setModal("restart")}>
                 再探索一次
               </button>
