@@ -1,0 +1,147 @@
+{
+  "fileKey": "Pu12R5Mu0kgIlQbU3nIIbn",
+  "frame": "119:29",
+  "assets": [
+    {
+      "name": "room",
+      "nodeId": "119:30",
+      "path": "apps/web/public/game/l2/room.png",
+      "bytes": 871071,
+      "sha256": "42a65cd5e34809c2c050f94d19dd4f3e4d5be4bd11afff458e280594bd16c007",
+      "dimensions": [
+        1024,
+        560
+      ]
+    },
+    {
+      "name": "chair",
+      "nodeId": "119:31",
+      "path": "apps/web/public/game/l2/chair.png",
+      "bytes": 1261256,
+      "sha256": "7603268702bf2c6f3f128a6831111dea63645b5a18cea449842d3b567ac54843",
+      "dimensions": [
+        1472,
+        1728
+      ]
+    },
+    {
+      "name": "sofa",
+      "nodeId": "119:32",
+      "path": "apps/web/public/game/l2/sofa.png",
+      "bytes": 2017372,
+      "sha256": "683d89fdbad649412f55df1d16c95cabc872f6be9cf4e8a711770d3d91338276",
+      "dimensions": [
+        2048,
+        1216
+      ]
+    },
+    {
+      "name": "armchair",
+      "nodeId": "119:35",
+      "path": "apps/web/public/game/l2/armchair.png",
+      "bytes": 1896051,
+      "sha256": "dc6db865f8cc1bec1b64153b522c625333f4206f981a0f1ceb4dfea0879d9c0c",
+      "dimensions": [
+        1568,
+        1408
+      ]
+    },
+    {
+      "name": "cabinet",
+      "nodeId": "119:38",
+      "path": "apps/web/public/game/l2/cabinet.png",
+      "bytes": 2732370,
+      "sha256": "594a54c721adef67925baa722b967ceaa1b6ddd7d4113c05f1fb9b7c6e61f575",
+      "dimensions": [
+        800,
+        2848
+      ]
+    },
+    {
+      "name": "table-chair",
+      "nodeId": "119:39",
+      "path": "apps/web/public/game/l2/table-chair.png",
+      "bytes": 1874184,
+      "sha256": "1ff56d926efe4f5c0224ea991ac351dba271a92fdff850413803bb81d953ace0",
+      "dimensions": [
+        3104,
+        800
+      ]
+    },
+    {
+      "name": "keys",
+      "nodeId": "119:40,119:41",
+      "path": "apps/web/public/game/l2/keys.png",
+      "bytes": 51894,
+      "sha256": "2f6c9ca34089c6776af36e3461926a57ca64ab6bb47297857897405aee677a68",
+      "dimensions": [
+        326,
+        130
+      ]
+    },
+    {
+      "name": "detail",
+      "nodeId": "119:33",
+      "path": "apps/web/public/game/l2/detail.svg",
+      "bytes": 3230,
+      "sha256": "925b1d34b163d71658c0163ba6024f91847168e5c0879cb023be03c042f0c1bc",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"10\" height=\"10\" viewBox=\"0 0 10 10\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">"
+    },
+    {
+      "name": "cabinet-mask",
+      "nodeId": "119:36",
+      "path": "apps/web/public/game/l2/cabinet-mask.svg",
+      "bytes": 595,
+      "sha256": "92fe2fa32d8b665546880ee8694995303e7dd254d26d781bf3f3a3ef2838df90",
+      "root": "<svg preserveAspectRatio=\"none\" overflow=\"visible\" style=\"display: block;\" width=\"288.908\" height=\"870.419\" viewBox=\"0 0 288.908 870.419\" fill=\"none\" xmlns=\"http://www.w3.org/2000/svg\">"
+    },
+    {
+      "name": "table-view",
+      "nodeId": "134:37",
+      "frame": "134:14",
+      "path": "apps/web/public/game/l2/table-view.png",
+      "bytes": 2452235,
+      "sha256": "23f0e8df1b7b43367b36e59809cc02d2410c76c65b410a986cc576ad161843e2",
+      "dimensions": [
+        2048,
+        1088
+      ]
+    },
+    {
+      "name": "door-panel",
+      "nodeId": "119:47",
+      "frame": "119:42",
+      "path": "apps/web/public/game/l2/door-panel.png",
+      "bytes": 3266986,
+      "sha256": "d1522cd75a8b209b92a1bc0b997ee4a18bb40511693ae7688c91dc80160c11e8",
+      "dimensions": [
+        2048,
+        1120
+      ]
+    },
+    {
+      "name": "bedroom",
+      "nodeId": "119:53",
+      "frame": "119:51",
+      "path": "apps/web/public/game/l2/bedroom.png",
+      "bytes": 4694433,
+      "sha256": "5a2b5d913465514597d0eafef20a39bd56f36c2f473965dfa9edce1d7abd54f8",
+      "dimensions": [
+        2720,
+        1520
+      ]
+    },
+    {
+      "name": "earring",
+      "nodeId": "119:67",
+      "frame": "119:51",
+      "path": "apps/web/public/game/l2/earring.png",
+      "bytes": 45888,
+      "sha256": "ec418d12848b6528b66dffbe89a77bd76274d0991ab4f42b33094f66b55c8441",
+      "dimensions": [
+        480,
+        480
+      ]
+    }
+  ]
+}
