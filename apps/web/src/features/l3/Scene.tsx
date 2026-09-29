@@ -35,7 +35,7 @@ export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart,televi
       </>}
       {actionsReady&&<>
       {hit("window",690,140,580,500,"查看左窗","查看左窗")}{hit("curtain",1480,140,430,540,"查看右窗窗帘","拉开窗帘？")}
-      {hit("fan",1248,464,188,132,"查看电视机电源开关","电视电源？")}
+      {hit("television",1248,464,188,132,"查看电视机电源开关","电视电源？")}
       {hit("wait",710,795,300,130,"坐稳等待","坐稳等待？")}
 </>}
     </>}

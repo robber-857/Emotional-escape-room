@@ -104,8 +104,8 @@ export function L2Game({preview=false}:{preview?:boolean}){
    {(!ready||(!storageReady&&!syncError))&&<div className={styles.loading} role="status"><p>{loadError?"房间素材加载失败，请重试。":"正在准备房间…"}</p>{loadError&&<button onClick={()=>setAttempt(v=>v+1)}>重新加载</button>}</div>}
    {prompt?.type==="exit"&&<section className={`${styles.bubble} ${styles.keys}`} aria-label="场景提示" inert={blocked}>
     <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>另一扇门打开了，要进去吗？</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-    <p>{preview?"第二幕保存在本机。":"第二幕已通关，进度已保存到服务器。"}第三幕目前为本地预览，进度仅保存在此浏览器。</p>
-    <div className={styles.actions}><button onClick={()=>setPrompt(null)}>先留在这里</button><Link className={styles.primary} href="/l3?preview=1&from=l2">是，进入第三幕</Link></div>
+    <p>{preview?"第二、三幕为本地预览，进度仅保存在此浏览器。":"第二幕已通关，第三幕将沿用原旅程，由服务器保存进度。"}</p>
+    <div className={styles.actions}><button onClick={()=>setPrompt(null)}>先留在这里</button><Link className={styles.primary} href={preview?"/l3?preview=1&from=l2":"/l3?from=l2"}>是，进入第三幕</Link></div>
    </section>}
    {prompt&&prompt.type!=="exit"&&<section className={`${styles.bubble} ${styles[anchor]}`} aria-label="场景提示" inert={blocked}>
     <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>{prompt.type==="layout-confirm"?"就这样摆放吗？":prompt.type==="layout-reset"?"恢复家具的初始位置吗？":prompt.type==="search"?"桌上有一只耳环，要找找另一只吗？":prompt.type==="return"?"先回大厅吗？":prompt.type==="found"?"在窗帘附近找到另一只耳环了。":prompt.type==="seat"?"要在这里坐一会儿吗？":prompt.type==="door"?"用哪把钥匙试着开门？":prompt.type==="result"?(state.doorOpen?"里面很黑，要进去探索吗？":"这把钥匙没有打开门。" ):"桌上有两把钥匙，你想先选哪一把？"}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>

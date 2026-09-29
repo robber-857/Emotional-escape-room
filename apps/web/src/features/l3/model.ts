@@ -5,10 +5,10 @@ export const items = {
   doll: "小玩偶", key: "钥匙", journal: "日记本", rope: "登山绳", backpack: "背包",
 } as const;
 export type Item = keyof typeof items;
-// The legacy "fan" slot now controls the television; preserve existing preview saves.
+// Television is the canonical power action in both preview and server modes.
 export const decisions = {
   open: "打开半开的门", close: "关上门", wait: "坐稳等待",
-  curtain: "拉开右窗窗帘", window: "关闭左窗", fan: "关掉电视机电源",
+  curtain: "拉开右窗窗帘", window: "关闭左窗", television: "关掉电视机电源",
 } as const;
 export type Decision = keyof typeof decisions;
 export type Segment = "storm" | "carry";
@@ -21,7 +21,7 @@ export type State = {
   events: Event[]; scoring: {status: "pending_configuration"; contributions: null};
 };
 export function initialState(segment: Segment = "storm"): State {
-  return {segment, choices: {open:null,close:null,wait:null,curtain:null,window:null,fan:null},
+  return {segment, choices: {open:null,close:null,wait:null,curtain:null,window:null,television:null},
     carry:null,draft:null,item:null,events:[],scoring:{status:"pending_configuration",contributions:null}};
 }
 export function stormComplete(state: State): boolean {
@@ -54,7 +54,7 @@ export function transition(state: State, event: Event): State {
   return next === state ? state : {...next,events:[...state.events,event]};
 }
 export function serialize(state: State): string {
-  return JSON.stringify({version:1,source:"local_preview",segment:state.segment,events:state.events});
+  return JSON.stringify({version:2,source:"local_preview",segment:state.segment,events:state.events});
 }
 function validAction(a: unknown): a is Action {
   if (!a || typeof a !== "object") return false;
@@ -69,9 +69,12 @@ function validAction(a: unknown): a is Action {
 }
 export function restore(raw: string, segment: Segment): State {
   const saved = JSON.parse(raw);
-  if (saved?.version !== 1 || saved.source !== "local_preview" || saved.segment !== segment || !Array.isArray(saved.events) || saved.events.length > MAX_EVENTS) throw Error("Invalid preview save");
+  if (![1,2].includes(saved?.version) || saved.source !== "local_preview" || saved.segment !== segment || !Array.isArray(saved.events) || saved.events.length > MAX_EVENTS) throw Error("Invalid preview save");
   let state = initialState(segment);
-  for (const e of saved.events) {
+  for (const original of saved.events) {
+    // Read-only compatibility for old local previews; every restored/new event is canonical.
+    const e = saved.version === 1 && original?.action?.type === "decision" && original.action.slot === "fan"
+      ? {...original,action:{...original.action,slot:"television"}} : original;
     if (!e || typeof e.id !== "string" || !e.id || e.id.length > 100 || typeof e.at !== "string" || !Number.isFinite(Date.parse(e.at)) || !validAction(e.action)) throw Error("Invalid preview event");
     const next = transition(state,e);
     if (next === state) throw Error("Invalid preview sequence");

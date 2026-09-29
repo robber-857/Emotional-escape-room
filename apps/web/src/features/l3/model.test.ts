@@ -2,11 +2,22 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {initialState,stormComplete,transition,isRepeatedDecision,restore,serialize,items,MAX_EVENTS,type Action,type State,type Item} from "./model";
 let seq=0;
+
+test("old local power events restore as television and only version 2 is written",()=>{
+ const events=["open","close","fan"].map((slot,i)=>({id:`legacy-${i}`,at:"2026-09-29T00:00:00Z",action:{type:"decision",slot,yes:true}}));
+ const raw=JSON.stringify({version:1,source:"local_preview",segment:"storm",events});
+ const restored=restore(raw,"storm");assert.equal(restored.choices.television,true);
+ assert.equal(Object.hasOwn(restored.choices,"fan"),false);
+ const saved=JSON.parse(serialize(restored));assert.equal(saved.version,2);
+ assert.equal(saved.events[2].action.slot,"television");assert.equal(saved.events[2].id,"legacy-2");
+ assert.throws(()=>restore(JSON.stringify({version:2,source:"local_preview",segment:"storm",events}),"storm"));
+ assert.deepEqual(restore(serialize(restored),"storm"),restored);
+});
 const act=(s:State,action:Action)=>transition(s,{id:`event-${++seq}`,at:"2026-09-29T00:00:00Z",action});
 test("door refusal never triggers storm or carry, closing requires an open door",()=>{
  let s=initialState();assert.equal(act(s,{type:"decision",slot:"close",yes:true}),s);
  s=act(s,{type:"decision",slot:"open",yes:false});assert.equal(s.choices.close,null);
- assert.equal(act(s,{type:"decision",slot:"fan",yes:true}),s);
+ assert.equal(act(s,{type:"decision",slot:"television",yes:true}),s);
  s=act(s,{type:"decision",slot:"open",yes:true});s=act(s,{type:"decision",slot:"close",yes:false});
  assert.equal(s.choices.close,false);assert.equal(s.segment,"storm");
  s=act(s,{type:"decision",slot:"close",yes:true});assert.equal(s.choices.close,true);
@@ -14,7 +25,7 @@ test("door refusal never triggers storm or carry, closing requires an open door"
 });
 test("storm controls preserve independent refusals, retry and no implicit ending",()=>{
  let s=act(act(initialState(),{type:"decision",slot:"open",yes:true}),{type:"decision",slot:"close",yes:true});
- for(const slot of ["wait","curtain","window","fan"] as const){
+ for(const slot of ["wait","curtain","window","television"] as const){
   s=act(s,{type:"decision",slot,yes:false});assert.equal(s.choices[slot],false);
   assert.equal(act(s,{type:"decision",slot,yes:false}),s);
   s=act(s,{type:"decision",slot,yes:true});assert.equal(s.choices[slot],true);
@@ -52,7 +63,7 @@ test("full event log blocks mutation explicitly",()=>{
 
 test("repeated refusals remain acknowledgeable without exhausting the log or duplicating score events",()=>{
  let s=initialState();
- for(const slot of ["open","close","wait","curtain","window","fan"] as const){
+ for(const slot of ["open","close","wait","curtain","window","television"] as const){
   const no={type:"decision",slot,yes:false} as const;
   assert.equal(isRepeatedDecision(s,no),false);
   s=act(s,no);const raw=serialize(s);
@@ -62,11 +73,11 @@ test("repeated refusals remain acknowledgeable without exhausting the log or dup
   assert.equal(isRepeatedDecision(s,no),false);
  }
  assert.equal(s.events.length,12);assert.equal(s.scoring.contributions,null);
- assert.equal(isRepeatedDecision(initialState(),{type:"decision",slot:"fan",yes:false}),false);
+ assert.equal(isRepeatedDecision(initialState(),{type:"decision",slot:"television",yes:false}),false);
 });
 
 test("all 64 yes/no combinations complete only after six explicit answers",()=>{
- const slots=["open","close","wait","curtain","window","fan"] as const;
+ const slots=["open","close","wait","curtain","window","television"] as const;
  for(let mask=0;mask<64;mask++){
   let s=initialState();
   for(let i=0;i<slots.length;i++){assert.equal(stormComplete(s),false);s=act(s,{type:"decision",slot:slots[i],yes:!!(mask&(1<<i))});}
