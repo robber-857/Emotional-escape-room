@@ -11,7 +11,7 @@ async original => {
   const read=async k=>page.evaluate(k=>JSON.parse(localStorage.getItem(k)),k);
   const check=async()=>{const size=page.viewportSize();if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('horizontal overflow');for(const label of ['场景提示','物品近景选择']){const region=page.getByRole('region',{name:label,exact:true});const box=await region.count()?await region.boundingBox():null;if(box&&(box.x<0||box.y<0||box.x+box.width>size.width+1||box.y+box.height>size.height+1))throw Error('clipped '+label);}};
   try {
-   await page.goto(base+'/l3');await page.getByRole('heading',{name:'L3 尚未接入正式旅程'}).waitFor();
+   await page.goto(base+'/l3');await page.getByRole('alert').filter({hasText:'原旅程凭据未找到'}).waitFor();
    await page.goto(base+'/l3?preview=1');await ready();
    if(await page.getByRole('navigation',{name:'风暴互动'}).count()||await page.getByRole('button',{name:'查看左窗',exact:true}).count()||await page.getByRole('button',{name:'坐稳等待',exact:true}).count())throw Error('future actions exposed before storm');
    await page.evaluate(()=>{localStorage.setItem('emotional:l1:untouched','sentinel-l1');localStorage.setItem('emotional:l2:preview:v2','sentinel-l2');});

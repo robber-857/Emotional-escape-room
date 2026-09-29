@@ -33,9 +33,9 @@ async original=>{
    await page.reload();await idle();await page.locator('[data-layer="l2-exit-door"]').waitFor();
    if(!preview){const s=await snapshot();check(s.l2.completion==='complete'&&s.l2.state.exitDoorOpen,'server completion missing');check(Math.abs(s.l2.state.furniture.layout.sofa.u-.1)<.001,'server left position wrong');check(s.l2.scoring.totals===null,'invented score');check(JSON.stringify(s.l1)===JSON.stringify(initial.l1),'L1 modified');}
    await page.screenshot({path:`output/playwright/l2-exit-${preview?'preview':'server'}-${mobile?'mobile':'desktop'}.png`});
-   await click('查看通往第三幕的门');await page.getByText(/第三幕目前为本地预览/).waitFor();await page.getByRole('link',{name:'是，进入第三幕',exact:true}).click();await page.waitForURL('**/l3?preview=1&from=l2');await page.getByRole('button',{name:'查看半开的门',exact:true}).waitFor();
+   await click('查看通往第三幕的门');await page.getByText(preview?/第二、三幕为本地预览/:/第三幕将沿用原旅程/).waitFor();await page.getByRole('link',{name:'是，进入第三幕',exact:true}).click();await page.waitForURL(preview?'**/l3?preview=1&from=l2':'**/l3?from=l2');await page.getByRole('button',{name:'查看半开的门',exact:true}).waitFor();
    if(!preview){const s=await snapshot();check(s.l2.completion==='complete'&&JSON.stringify(s.l1)===JSON.stringify(initial.l1),'L3 modified server run');}
-   check(!errors.length,errors.join(';'));results.push({mobile,preview,status:'PASS',cases:['decline stays L2','unchanged confirm locked','floating drop saved without unlocking','large sofa left floor','confirm opens other door','refresh persists','L3 local preview','L1 retained']});
+   check(!errors.length,errors.join(';'));results.push({mobile,preview,status:'PASS',cases:['decline stays L2','unchanged confirm locked','floating drop saved without unlocking','large sofa left floor','confirm opens other door','refresh persists','L3 follows entry mode','L1 retained']});
   }catch(e){throw Error(e.message+'\n'+await page.locator('body').ariaSnapshot());}finally{await context.close();}
  }
  return results;
