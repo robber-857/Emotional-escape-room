@@ -28,6 +28,8 @@ export function L4Game({preview}:{preview:boolean}) {
   const confirmed=preview?localConfirmed:doors.find(d=>d.id===server.session?.state.door)??null;
   const busy=!preview&&server.busy;
   const dialog=useRef<HTMLDialogElement>(null),key=useRef(""),lastRaw=useRef<string|null>(null);
+  const resultDialog=useRef<HTMLDialogElement>(null);
+  useEffect(()=>{if(confirmed&&!selected)resultDialog.current?.showModal();},[confirmed,selected]);
   const back=preview?"/l3?preview=1&segment=carry":"/l3";
   useEffect(()=>{
     let live=true;
@@ -89,6 +91,8 @@ export function L4Game({preview}:{preview:boolean}) {
     <dialog ref={dialog} className={styles.dialog} onCancel={()=>setSelected(null)} aria-labelledby="door-title">
       {selected&&<><p className={styles.eyebrow}>出口 · {selected.view}</p><h2 id="door-title">要走进{selected.name}吗？</h2><p>{selected.description}</p><div className={styles.actions}><button autoFocus disabled={busy} onClick={()=>setSelected(null)}>再看看</button><button className={styles.primary} disabled={busy||!!error} onClick={confirm}>{busy?"正在确认…":"走进这扇门"}</button></div></>}
     </dialog>
+    {confirmed&&<button className={styles.resultEntry} onClick={()=>resultDialog.current?.showModal()}>查看恋爱性格</button>}
+    <dialog ref={resultDialog} className={styles.dialog} aria-labelledby="result-title"><p className={styles.eyebrow}>旅程的终点</p><h2 id="result-title">来看看你的恋爱性格吧</h2><p>每一次选择，都留下了属于你的印记。</p><div className={styles.actions}><button onClick={()=>resultDialog.current?.close()}>稍后再看</button><Link className={styles.primary} href={preview?"/results?preview=1":"/results"}>查看我的恋爱性格 →</Link></div></dialog>
     <dialog ref={trace} className={styles.dialog} onCancel={()=>setTraceOpen(false)} aria-label="第四幕服务器记录"><button onClick={()=>setTraceOpen(false)}>关闭记录</button>{traceOpen&&<ServerTrace sessionId={server.session?.id}/>}</dialog>
   </main>;
 }

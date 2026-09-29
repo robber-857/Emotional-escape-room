@@ -18,3 +18,4 @@
 .rotation{display:none}@media(orientation:portrait) and (max-width:700px){.rotation{position:fixed;inset:0;z-index:10;background:#191d17;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}.stage{visibility:hidden}}
 @media(max-height:500px) and (orientation:landscape){.heading h1{font-size:23px}.heading p{display:none}.footer{bottom:2%;gap:3px}.footer>span{font-size:10px}.back{padding:8px 12px}.dialog{padding:18px}.dialog h2{font-size:22px;margin:8px 0}.actions{margin-top:15px}}
 @media(prefers-reduced-motion:reduce){.stage,.door{animation:none}.door{transition:none}}
+.resultEntry{position:fixed;bottom:10%;left:50%;transform:translateX(-50%);background:#242c22;color:#f9f1e0;z-index:2}.actions a{display:flex;align-items:center;padding:10px 16px;border-radius:7px}

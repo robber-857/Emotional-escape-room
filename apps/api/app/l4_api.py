@@ -7,7 +7,8 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import insert, select, update
 
-from .db import l2_runs, l3_runs, l4_runs, l4_events
+from .db import sessions, l2_runs, l3_runs, l4_runs, l4_events
+from .results import build_result
 from .l2_domain import with_completion
 from .l4_domain import initial_state, apply_action, RULES_VERSION, COMPLETION_POLICY_VERSION
 from .l4_receipts import AUTHORITY, VALIDATION_VERSION, pending_scoring, outcome
@@ -48,6 +49,19 @@ def register_l4(app, authorize):
             raise HTTPException(409, "L3_NOT_COMPLETE")
         row = conn.execute(select(l4_runs).where(l4_runs.c.session_id == str(sid))).mappings().first()
         return row, l3["state"]["item"]
+
+    @app.get("/api/v1/sessions/{sid}/result", tags=["Results"])
+    def final_result(sid: UUID, authorization: str = Header(default="")):
+        with app.state.engine.begin() as conn:
+            row, _ = run(conn, sid, authorization, lock=True)
+            if row is None or row["state"]["completion"] != "complete":
+                raise HTTPException(409, "L4_NOT_COMPLETE")
+            snapshots = {"l4": dict(row)}
+            for level, table, column in (("l1", sessions, sessions.c.id),
+                                         ("l2", l2_runs, l2_runs.c.session_id),
+                                         ("l3", l3_runs, l3_runs.c.session_id)):
+                snapshots[level] = dict(conn.execute(select(table).where(column == str(sid))).mappings().one())
+            return build_result(sid, snapshots)
 
     @app.post("/api/v1/sessions/{sid}/levels/l4", tags=["L4"])
     def start(sid: UUID, body: StrictModel, authorization: str = Header(default="")):
