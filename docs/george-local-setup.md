@@ -81,4 +81,6 @@ docker compose cp db:/tmp/emotional.backup ./emotional.backup
 - 页面仍是旧前端：重新 build，刷新页面；保留当前浏览器会话存储以继续同一旅程。
 - 丢失会话凭据：本阶段没有登录/找回；新建旅程，旧库记录保留。
 
-正式评分、L2–L4、跨设备账号、公网部署不在本次已交付范围。
+2026-09-28：L2 已接入原 L1 会话，升级需执行最新 `docker compose up -d --build`，ready 的 schema_version 应为 `0002_l2`。完成 L1 后点击“进入第二幕”；不要删除浏览器凭据或数据库卷。真实衔接验收及评分留口见 [L2 后端](l2-backend.md)。
+
+正式评分、L2 最终通关规则、L3–L4、跨设备账号、公网部署尚未完成。
