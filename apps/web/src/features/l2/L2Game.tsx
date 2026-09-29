@@ -4,6 +4,7 @@ import {useEffect,useRef,useState} from "react";
 import {LayoutButton} from "./LayoutButton";
 import {SearchClock} from "./searchClock";
 import Link from "next/link";
+import {LevelHeading} from "../shared/LevelHeading";
 import {Scene,KeySprite,assets} from "./Scene";
 import {initialState,transition,restore,keysAvailable,seatNames,keyNames,SAVE_KEY,MAX_EVENTS,type Seat,type State,type Action,type KeyId} from "./model";
 import styles from "./l2.module.css";
@@ -99,7 +100,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>setPrompt({type:"layout-reset"})}>恢复初始摆放</LayoutButton>
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>layoutAction("layout-exit")}>返回探索</LayoutButton>
    </nav>}
-   <header className={styles.heading}><h1>失联房间{preview?" · 本机预览":""}</h1></header>
+   <LevelHeading className={styles.heading} ready={ready&&storageReady&&!portrait}><h1>失联房间</h1></LevelHeading>
    <button className={styles.menu} aria-label="打开第二幕菜单" onClick={()=>setModal("menu")}>☰</button>
    {(!ready||(!storageReady&&!syncError))&&<div className={styles.loading} role="status"><p>{loadError?"房间素材加载失败，请重试。":"正在准备房间…"}</p>{loadError&&<button onClick={()=>setAttempt(v=>v+1)}>重新加载</button>}</div>}
    {prompt?.type==="exit"&&<section className={`${styles.bubble} ${styles.keys}`} aria-label="场景提示" inert={blocked}>

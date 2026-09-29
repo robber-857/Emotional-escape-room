@@ -1,0 +1,19 @@
+.game{min-height:100dvh;display:grid;place-items:center;background:#191d17;color:#fff9ec}
+.stage{position:relative;width:min(100vw,181.61dvh);aspect-ratio:1284/707;isolation:isolate;overflow:hidden;animation:arrive .7s ease-out}
+.art{position:absolute;inset:0;overflow:hidden;z-index:-2;background:#403d26}
+/* Display only the scene region of the supplied Figma screenshot, preserving its original pixels. */
+.scene{position:absolute;width:112.92835%;max-width:none;height:auto;left:-3.97196%;top:-39.32107%;pointer-events:none}
+.stage::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:linear-gradient(180deg,#191a126b,transparent 25%,transparent 74%,#111d15e8)}
+.heading{position:absolute;left:4%;top:4%;text-shadow:0 2px 10px #171809}
+.heading p,.eyebrow{font-size:11px;letter-spacing:.2em}.heading h1{font:500 clamp(23px,3.1vw,44px)/1.3 'Songti SC','SimSun',serif;letter-spacing:.15em;margin:5px 0}.heading span{font-size:clamp(11px,1.1vw,15px)}
+.back{position:absolute;right:3%;top:5%;padding:10px 15px;min-height:44px;background:#202519c9;border:1px solid #e7d4ab66;border-radius:6px;font-size:12px}
+.door{position:absolute;left:var(--left);width:var(--width);top:25%;height:54%;border-radius:48% 48% 4px 4px;border:2px solid transparent;padding:0;background:transparent!important;transition:box-shadow .25s,border-color .25s,background .25s;animation:reveal .65s var(--delay) both}
+.door:hover:not(:disabled),.door:focus-visible,.door.chosen{border-color:#fff2bf;box-shadow:inset 0 0 30px #fff3a942,0 0 22px #ffe5aa70;outline:none}
+.door:disabled{opacity:1}
+.footer{position:absolute;bottom:3%;left:4%;right:4%;display:grid;grid-template-columns:1fr auto;gap:7px;font-size:clamp(11px,1.2vw,16px);text-shadow:0 2px 8px #000}.footer>span{font-size:12px;align-self:center}.footer small{grid-column:1/-1;color:#ddd9c9;font-size:10px}
+.loading{position:absolute;inset:0;background:#20251bf2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:25px;text-align:center;z-index:4}
+.dialog{color:#f9f1e0;background:#242c22;border:1px solid #cdbf9566;border-radius:12px;width:min(460px,90vw);max-height:90dvh;padding:28px;box-shadow:0 20px 80px #0006}.dialog::backdrop{background:#0b150cbc;backdrop-filter:blur(4px)}.dialog h2{font:500 25px/1.4 'Songti SC','SimSun',serif;margin:12px 0 18px}.dialog p{line-height:1.8;font-size:14px}.dialog .eyebrow{color:#d8c394;font-size:11px}.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}.primary{background:#e4d2a7;color:#263124;border-color:#e4d2a7}.primary:hover:not(:disabled){background:#f2dfb1}
+@keyframes arrive{from{opacity:0}to{opacity:1}}@keyframes reveal{from{opacity:0;translate:0 7px}to{opacity:1;translate:0 0}}
+.rotation{display:none}@media(orientation:portrait) and (max-width:700px){.rotation{position:fixed;inset:0;z-index:10;background:#191d17;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:24px;text-align:center}.stage{visibility:hidden}}
+@media(max-height:500px) and (orientation:landscape){.heading h1{font-size:23px}.heading p{display:none}.footer{bottom:2%;gap:3px}.footer>span{font-size:10px}.back{padding:8px 12px}.dialog{padding:18px}.dialog h2{font-size:22px;margin:8px 0}.actions{margin-top:15px}}
+@media(prefers-reduced-motion:reduce){.stage,.door{animation:none}.door{transition:none}}

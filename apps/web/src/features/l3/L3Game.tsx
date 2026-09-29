@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
+import {LevelHeading} from "../shared/LevelHeading";
 import {useRouter} from "next/navigation";
 import {assets,Scene} from "./Scene";
 import {SAVE_KEY,MAX_EVENTS,items,initialState,stormComplete,transition,isRepeatedDecision,serialize,restore,describe,type State,type Segment,type Decision,type Item,type Action} from "./model";
@@ -123,7 +124,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   return <main className={`${styles.game} ${segment==="carry"?styles.carryGame:""} ${reduced?styles.reduced:""}`} data-segment={segment}>
     <section className={styles.stage} aria-label={preview?"第三幕本地预览舞台":"第三幕服务器旅程舞台"}>
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <header className={styles.heading}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1><span>{preview?"本地预览 · 未上传服务器":server.busy?"正在同步服务器…":server.error||conflict?"服务器同步待恢复":loaded?"服务器存档 · 原旅程":"正在连接原旅程…"}</span></header>
+      <LevelHeading className={styles.heading} ready={ready&&loaded&&!portrait}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1></LevelHeading>
       <button className={styles.menu} aria-label={preview?"打开预览菜单":"打开第三幕菜单"} onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
       {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} aria-label="物品近景选择">
         <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>也可以收起清单，直接点击房间里的物品。指南针图像待补，保留文字选择。</p>
@@ -137,7 +138,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
         {selected&&<div className={styles.itemPreview}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<span>指南针 · 图像待补</span>}</div>}
         <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={styles.primary} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
       </section>}
-      {done&&<section className={styles.result} aria-label={preview?"本地选择结果":"服务器选择结果"}><h2>{state.item?`已选择携带${items[state.item]}`:"已选择不带物品"}</h2><p>{state.item?"物品已收好。":"你决定不带走任何物品。"}{preview?"本次选择已保存在本地。":"本次选择已由服务器保存。"}</p><button onClick={()=>setModal("trace")}>{preview?"查看本地记录":"查看服务器记录"}</button></section>}
+      {done&&<section className={styles.result} aria-label="走出密室提示"><h2>是时候走出密室了</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}门外，四条不同的路正在等待你。</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本地记录":"查看服务器记录"}</button><button className={styles.primary} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
       <aside className={styles.inventory} aria-label="随身物品"><span>物品</span>{state.item?<><span className={segment==="carry"?styles.inventoryName:undefined}>{items[state.item]}</span>{state.item!=="compass"&&<img src={`/game/l3/${state.item}.png`} alt={items[state.item]}/>}</>:<small>{segment==="carry"?"空":"尚未携带"}</small>}</aside>
       {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} aria-label="场景提示">
         <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"你可以带走一件东西以备不时之需，要带吗？":prompt==="confirm"?`确定只携带${selected?items[selected]:"这一件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>

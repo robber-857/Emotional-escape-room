@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import {LevelHeading} from "../shared/LevelHeading";
 import { woodAtGap, ropeAtGap, repairMaterialsReady } from "./geometry";
 import { Sprite } from "./Sprite";
 import { Scene, asset, assetNames } from "./Scene";
@@ -363,9 +364,9 @@ export function L1Game() {
           effect={effect}
           disabled={blocked}
         />
-        <div className="sceneHeading">
+        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait}>
           <h1>分离之河</h1>
-        </div>
+        </LevelHeading>
         {!started && (
           <div className="welcome">
             <div>
