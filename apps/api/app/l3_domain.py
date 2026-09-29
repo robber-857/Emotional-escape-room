@@ -1,4 +1,4 @@
-"""Confirmed L3 flow. Preview logs and legacy fan slots are not server input."""
+"""Confirmed L3 flow. Preview logs are not server input."""
 from copy import deepcopy
 
 RULES_VERSION = "l3-flow-v1"

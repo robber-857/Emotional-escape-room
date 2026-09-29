@@ -103,16 +103,31 @@ def register_l3(app, authorize):
                 code = None
                 state = row["state"]
                 changed = False
+                validation = dict(source="server", authenticated=True, l1_complete=True, l2_complete=True,
+                                  rules_supported=row["rules_version"] == RULES_VERSION,
+                                  expected_version=body.expected_version, actual_version=row["version"],
+                                  version_matches=row["version"] == body.expected_version,
+                                  flow_evaluated=False, flow_allowed=None, event_budget_allowed=None)
                 if row["rules_version"] != RULES_VERSION:
                     code = "RULES_VERSION_UNSUPPORTED"
                 elif row["version"] != body.expected_version:
                     code = "VERSION_CONFLICT"
                 if not code:
                     try:
+                        validation["flow_evaluated"] = True
                         state, changed = apply_action(state, payload["action"])
+                        validation["flow_allowed"] = True
+                        validation["event_budget_allowed"] = True
+                        # A replaceable draft must not consume the final confirm slot.
+                        if changed and body.action.type == "draft" and row["version"] >= MAX_EVENTS - 1:
+                            validation["event_budget_allowed"] = False
+                            raise ValueError("CONFIRM_SLOT_RESERVED")
                         if changed and row["version"] >= MAX_EVENTS:
+                            validation["event_budget_allowed"] = False
                             raise ValueError("SESSION_EVENT_LIMIT")
                     except ValueError as exc:
+                        if validation["flow_allowed"] is None:
+                            validation["flow_allowed"] = False
                         code, state, changed = str(exc), row["state"], False
                 accepted = code is None
                 version = row["version"] + int(changed)
@@ -120,7 +135,7 @@ def register_l3(app, authorize):
                 result = dict(accepted=accepted, code=code or ("ACCEPTED" if changed else "ALREADY_RECORDED"),
                               version=version, previous_version=row["version"], state_changed=changed,
                               action=payload["action"], rules_version=row["rules_version"],
-                              validation_version=VALIDATION_VERSION, authority=AUTHORITY,
+                              validation_version=VALIDATION_VERSION, authority=AUTHORITY, validation=validation,
                               outcome=outcome(state) if accepted else None,
                               scoring=pending_scoring() if accepted else None)
                 if changed:

@@ -182,6 +182,55 @@ def test_receipt_insert_failure_rolls_back_state(client):
     assert client.post(url+"/actions", headers=h, json=body).json()["version"] == 1
 
 
+def test_last_event_slot_is_reserved_for_confirmation(client):
+    _, h, url, s = open_l3(client)
+    storm(client, url, h, s)
+    act(client, url, h, s, dict(type="carry", yes=True))
+    act(client, url, h, s, dict(type="draft", item="doll"))
+    with app.state.engine.begin() as conn:
+        conn.execute(update(l3_runs).where(l3_runs.c.session_id == s["id"]).values(version=399))
+    s["version"] = 399
+    response, _ = act(client, url, h, s, dict(type="draft", item="rope"))
+    assert response.json()["code"] == "CONFIRM_SLOT_RESERVED"
+    assert response.json()["validation"]["event_budget_allowed"] is False
+    assert s["state"]["draft"] == "doll" and s["version"] == 399
+    assert act(client, url, h, s, dict(type="confirm"))[0].status_code == 200
+    assert s["completion"] == "complete" and s["state"]["item"] == "doll" and s["version"] == 400
+
+
+def test_validation_evidence_is_server_generated_and_immutable(client):
+    _, h, url, s = open_l3(client)
+    r, body = act(client, url, h, s, dict(type="carry", yes=False))
+    evidence = r.json()["validation"]
+    assert evidence == dict(source="server", authenticated=True, l1_complete=True, l2_complete=True,
+                            rules_supported=True, expected_version=0, actual_version=0, version_matches=True,
+                            flow_evaluated=True, flow_allowed=False, event_budget_allowed=None)
+    r, _ = act(client, url, h, s, dict(type="decision", slot="open", yes=False))
+    assert r.json()["validation"]["flow_allowed"] is True
+    r, _ = act(client, url, h, s, dict(type="decision", slot="close", yes=False), version=0)
+    assert r.json()["validation"]["version_matches"] is False
+    assert r.json()["validation"]["flow_evaluated"] is False
+    assert r.json()["validation"]["flow_allowed"] is None
+    assert client.post(url+"/actions", headers=h, json=body).json()["validation"] == evidence
+    row = next(r for r in client.get(url+"/events", headers=h).json() if r["action_id"] == body["action_id"])
+    assert row["validation"] == evidence and row["validation_version"] == "l3-validation-v2"
+    forged = dict(body, action_id=str(uuid4()), validation={"flow_allowed": True})
+    assert client.post(url+"/actions", headers=h, json=forged).status_code == 422
+
+
+def test_legacy_receipts_are_not_rewritten_with_new_evidence(client):
+    from app.db import l3_events
+    _, h, url, s = open_l3(client)
+    _, body = act(client, url, h, s, dict(type="decision", slot="open", yes=False))
+    with app.state.engine.begin() as conn:
+        q = select(l3_events.c.result).where(l3_events.c.session_id == s["id"], l3_events.c.action_id == body["action_id"])
+        legacy = dict(conn.execute(q).scalar_one());legacy.pop("validation");legacy["validation_version"] = "l3-validation-v1"
+        conn.execute(update(l3_events).where(l3_events.c.session_id == s["id"], l3_events.c.action_id == body["action_id"]).values(result=legacy))
+    replay = client.post(url+"/actions", headers=h, json=body).json()
+    assert "validation" not in replay and replay["validation_version"] == "l3-validation-v1"
+    assert "validation" not in client.get(url+"/events", headers=h).json()[0]
+
+
 @pytest.mark.skipif(not os.getenv("TEST_DATABASE_URL"), reason="requires isolated PostgreSQL")
 def test_concurrent_starts_actions_and_same_id(client):
     _, h, url = completed_l2(client)
