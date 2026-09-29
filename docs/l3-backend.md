@@ -2,6 +2,8 @@
 
 当前已实现服务器 API、状态机、不可变回执、迁移及正式前端接入。本机 3100/8000 与游戏数据库已更新，浏览器自动化已验证；Git 交付索引见 [L3 交接](l3-backend-handoff.md)；未生产部署，真机与 George 验收待完成。
 
+最新 Review / UAT3：见 [审查结论](l3-backend-review.md) 与 [可执行测试说明](../apps/api/tests/uat3/README.md)。新回执使用 `l3-validation-v2`，在动作事务内保存鉴权/前置、版本、流程及额度校验证据；旧 v1 回执不回填。前端逐条展示服务器来源及校验，不以当前状态重建历史。当前工作区修复尚未提交推送。
+
 ## 会话与流程
 
 - 复用 L1 原 session ID 与 Bearer token；L1 complete 且 L2 出口已解锁才能启动。兼容已有 L2 tidy 存档的出口判定，不回写旧档。
@@ -40,7 +42,7 @@
 - 同 ID、同完整请求重试返回原回执，`duplicate=true`；附带 `session` 是当前快照，不能用它改写原回执 outcome。同 ID 改 payload 返回 409。
 - 旧版本请求返回 `VERSION_CONFLICT`；拒绝也有回执。客户端应保留待发送 ID/完整请求直到结果明确，断网/响应丢失用原请求重试；冲突后读取最新快照，再由新操作生成新 ID。
 - `/events` 按接收时间、ID 稳定排序；时间相同不能据数组位置推断因果，按 `action_id` 对账、按版本解释状态变化。事件时间由服务器生成。
-- 单会话最多 400 次状态变化；重复否和原 ID 重试不消耗该额度。审计回执数可能多于流程事件数。
+- 单会话最多 400 次状态变化；第 399 版停止接受物品更换并保留预选，为最终 confirm 预留额度（`CONFIRM_SLOT_RESERVED`）。重复否和原 ID 重试不消耗该额度。审计回执数可能多于流程事件数。
 - 业务拒绝 HTTP 409，格式错误 422，鉴权失败 404，数据库错误 503。未启动的 GET 返回 `L3_NOT_STARTED`，不是空历史。
 
 所有评分保持 `pending_configuration`，policy_version / contributions / totals 为 null。已提供的 L3-01 向量保留在交接文档，尚未启用；电视向量版本、L3-02 向量和正式报告另行推进。

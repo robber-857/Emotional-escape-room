@@ -5,6 +5,8 @@ L2 已接服务器校验、存档与家具通关，沿用完成 L1 的原会话�
 
 L3 当前范围、API 与测试：[L3 后端](docs/l3-backend.md)；接续入口：[L3 交接](docs/l3-backend-handoff.md)。新代码的迁移目标为 `0003_l3`，更新本地服务需运行下述 Compose 构建/迁移流程。
 
+测试入口总表：[UAT 测试速查与命令](docs/uat-test-matrix.md)。L3 一键验收：双击 [UAT3/run.cmd](apps/api/tests/uat3/run.cmd)，或查看 [运行说明](apps/api/tests/uat3/README.md)。默认 SQLite 明确跳过并发；独立 PostgreSQL 模式包含并发校验，浏览器验证桌面/模拟触屏与逐事件服务器回执对账。[后端 Review](docs/l3-backend-review.md) 记录发现、修复及尚未完成的验收。
+
 ## George：Docker 启动（推荐）
 
 安装 Git 和 Docker Desktop（Windows 使用 Linux containers / WSL2）。克隆项目并切换到包含本次改动的分支后，在仓库根目录运行：
