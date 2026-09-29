@@ -1,5 +1,7 @@
 # L1 UAT 自动化执行与人工验收
 
+L2 的独立可执行验收入口已放到相邻目录 [uat2](../uat2/README.md)：Windows 双击 `../uat2/run.cmd`，或运行 `powershell -ExecutionPolicy Bypass -File apps/api/tests/uat2/run.ps1`。包含 L2 后端用例、L1→L2 真实浏览器流程和服务器记录逐条对账；本目录旧脚本保留兼容。
+
 本目录为真实浏览器到 FastAPI/PostgreSQL 的可重复验收脚本，不用假的 API 成功响应，也不改写客户端游戏状态。仅使用本地或明确授权的测试环境；每次执行创建新测试会话，记录留在数据库中，不清理已有玩家数据。
 
 ## Windows / PowerShell（从仓库根目录）
@@ -46,6 +48,24 @@ Remove-Item Env:TEST_DATABASE_URL
 自动化实际执行结果见 [2026-09-28 执行记录](RESULTS-2026-09-28.md)。George 的审查、项目负责人对剧情/交互的签认、真实手机 Safari/Chrome 测试需另行记录，不代签。正式评分尚未实现，其 UAT 标为 Blocked，不把当前状态版本当分数。
 
 ## L2-01 前端预览验证
+
+2026-09-28 后端接入后，默认 `/l2` 使用真实服务器并要求完成 L1；以下原七个前端脚本已明确进入 `/l2?preview=1`。真实衔接与恢复单独执行：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File apps/api/tests/uat/run-l2.ps1 -BaseUrl http://127.0.0.1:3100 -Cases l2-server
+```
+
+`l2-server.js` 在独立桌面/触屏上下文中通过 UI 完成 L1 并进入同会话 L2，覆盖钥匙、耳环刷新、家具、活动时长暂停、断网、多标签和丢弃已提交响应后刷新重试。使用真实 API/PostgreSQL，不伪造成功回执；创建的测试会话保留在本地库中，不清理已有玩家数据。正式计分和真机验收不在通过范围内。
+
+完整 L2 回归入口（七个脚本，独立浏览器上下文，不要求 L2 API）：
+
+```powershell
+powershell -ExecutionPolicy Bypass -File apps/api/tests/uat/run-l2.ps1 -BaseUrl http://127.0.0.1:3100
+```
+
+覆盖 L2-01、触屏、门锁、L2-02、L2-03、L2-04，以及 `l2-storage.js` 的满额/损坏存档、重置取消/确认、多标签冲突和写入失败。存档边界脚本明确注入隔离的本机测试数据并模拟拒绝写入，仅用于异常路径测试，不是实际玩家行为或后端 UAT 证据。每次日志保存在独立的 `output/playwright/uat/l2-uat-*` 目录；失败以非零退出码停止，运行结束关闭自己的浏览器会话。此入口不运行 L1 的服务端验收。
+
+只复跑某一脚本可加 `-Cases l2-storage`（或其他脚本名，不带 `.js`）。
 
 2026-09-28：桌面及触屏模拟两组通过，具体范围见 docs/progress.md 的 L2-01 记录。这不代表 L2 服务器校验或真机 UAT。
 

@@ -2,10 +2,10 @@ export const furnitureIds=["armchair","chair","sofa","table-chair"] as const;
 export type FurnitureId=typeof furnitureIds[number];
 export type Point={u:number;v:number};
 export type Layout=Record<FurnitureId,Point>;
-export const layoutRuleVersion="l2-placement-v2";
+export const layoutRuleVersion="l2-placement-v4";
 // Calibrated trapezoid ground plane; parameters are prototype values, not scoring policy.
-export const project=({u,v}:Point)=>({x:960+(u-.5)*(1100+820*v),y:760+270*v});
-export const unproject=(x:number,y:number):Point=>{const v=(y-760)/270;return {u:.5+(x-960)/(1100+820*v),v};};
+export const project=({u,v}:Point)=>({x:960+(u-.5)*(1100+820*Math.max(0,v)),y:760+270*v});
+export const unproject=(x:number,y:number):Point=>{const v=(y-760)/270;return {u:.5+(x-960)/(1100+820*Math.max(0,v)),v};};
 export const furniture={
  armchair:{name:"单人沙发",anchor:{x:285,y:990},w:.19,d:.20},
  chair:{name:"窗边椅",anchor:{x:1145,y:810},w:.085,d:.13},
@@ -21,20 +21,25 @@ const area=(r:Rect)=>(r.right-r.left)*(r.bottom-r.top);
 const intersection=(a:Rect,b:Rect)=>Math.max(0,Math.min(a.right,b.right)-Math.max(a.left,b.left))*Math.max(0,Math.min(a.bottom,b.bottom)-Math.max(a.top,b.top));
 export const overlapRatio=(a:Rect,b:Rect)=>intersection(a,b)/Math.min(area(a),area(b));
 const overlap=(a:Rect,b:Rect)=>overlapRatio(a,b)>placementRules.maxOverlapRatio+1e-9;
+// Keep the original projection/save coordinates. The visible left floor extends
+// beyond u=0 in the middle depth, tapering back inside the canvas at the front.
+export const leftFloorEdge=(v:number)=>Math.max(-.12*Math.max(0,Math.min(1,(v-.10)/.45)),.5+(35-960)/(1100+820*Math.max(0,v)));
+export const suspensionToleranceCm=1.4;
+export const suspensionTolerancePx=suspensionToleranceCm*96/2.54;
+export const suspensionGapPx=(b:Rect)=>Math.max(0,-b.top*270);
+export const insideFloor=(b:Rect)=>suspensionGapPx(b)<=suspensionTolerancePx+1e-9&&b.bottom<=1&&b.right<=1&&b.left>=Math.max(leftFloorEdge(b.top),leftFloorEdge(b.bottom))-1e-9;
 export function validLayout(layout:Layout){
  if(!layout||furnitureIds.some(id=>!layout[id]||!Number.isFinite(layout[id].u)||!Number.isFinite(layout[id].v)))return false;
  const boxes=furnitureIds.map(id=>footprint(id,layout[id]));
- return boxes.every((b,i)=>b.left>=0&&b.right<=1&&b.top>=0&&b.bottom<=1&&!fixed.some(f=>overlap(b,f))&&!boxes.slice(i+1).some(c=>overlap(b,c)));
+ return boxes.every((b,i)=>insideFloor(b)&&!fixed.some(f=>overlap(b,f))&&!boxes.slice(i+1).some(c=>overlap(b,c)));
 }
 export function moveLayout(layout:Layout,id:FurnitureId,p:Point):Layout|null{
  if(!furnitureIds.includes(id)||!Number.isFinite(p.u)||!Number.isFinite(p.v))return null;
- const halfW=furniture[id].w/2,halfD=furniture[id].d/2;
- // Snap only small boundary errors; do not teleport a piece dragged onto a wall.
- const clamp=(n:number,min:number,max:number)=>n>=min-.015&&n<=max+.015?Math.max(min,Math.min(max,n)):n;
- const next={...layout,[id]:{u:clamp(p.u,halfW,1-halfW),v:clamp(p.v,halfD,1-halfD)}};
- return validLayout(next)?next:null;
+ // Bounds protect malformed payloads, not furniture arrangement. Preserve the drop exactly.
+ if(p.u < -4 || p.u > 4 || p.v < -4 || p.v > 4)return null;
+ return {...layout,[id]:{...p}};
 }
-export function transformFurniture(id:FurnitureId,p:Point){const at=project(p),base=furniture[id].anchor;const scale=(.78+.25*p.v)/(.78+.25*unproject(base.x,base.y).v);return `translate(${at.x} ${at.y}) scale(${scale}) translate(${-base.x} ${-base.y})`;}
+export function transformFurniture(id:FurnitureId,p:Point){const at=project(p),base=furniture[id].anchor;const scale=(.78+.25*Math.max(0,p.v))/(.78+.25*unproject(base.x,base.y).v);return `translate(${at.x} ${at.y}) scale(${scale}) translate(${-base.x} ${-base.y})`;}
 // "Open placement" evaluates the moved object's destination, never remaining room area.
 export function classifyLayout(layout:Layout,baseline:Layout=initialLayout(),already={tidy:false,openPlacement:false}){
  const reasonable=validLayout(layout);
@@ -45,11 +50,11 @@ export function classifyLayout(layout:Layout,baseline:Layout=initialLayout(),alr
   const nearestGap=Math.min(...others.map(o=>Math.hypot(Math.max(o.left-b.right,b.left-o.right,0),Math.max(o.top-b.bottom,b.top-o.bottom,0))));
   const g=requiredClearance*2;
   const sides:Rect[]=[{...b,left:b.left-g,right:b.left},{...b,left:b.right,right:b.right+g},{...b,top:b.top-g,bottom:b.top},{...b,top:b.bottom,bottom:b.bottom+g}];
-  const openSides=sides.filter(r=>r.left>=0&&r.right<=1&&r.top>=0&&r.bottom<=1&&!others.some(o=>intersection(r,o)>1e-9)).length;
+  const openSides=sides.filter(r=>insideFloor(r)&&!others.some(o=>intersection(r,o)>1e-9)).length;
   return {id,from:baseline[id],to:layout[id],nearestGap,requiredClearance,openSides,open:reasonable&&nearestGap>=requiredClearance&&openSides>=placementRules.minOpenSides};
  });
  const tidy=reasonable&&movedIds.length>0,openPlacement=reasonable&&placements.some(p=>p.open);
  const events: ("tidy"|"open-placement")[]=[];
  if(tidy&&!already.tidy)events.push("tidy");if(openPlacement&&!already.openPlacement)events.push("open-placement");
- return {reasonable,tidy,openPlacement,movedIds,placements,events,ruleVersion:layoutRuleVersion};
+ return {reasonable,tidy,openPlacement,movedIds,placements,events,suspensionToleranceCm,suspensionTolerancePx,suspensionGapsPx:Object.fromEntries(furnitureIds.map(id=>[id,suspensionGapPx(footprint(id,layout[id]))])),ruleVersion:layoutRuleVersion};
 }

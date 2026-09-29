@@ -1,7 +1,7 @@
 async original => {
  const context=await original.context().browser().newContext({viewport:{width:1280,height:720}});
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
- const url=original.url().split('/').slice(0,3).join('/')+'/l2';
+ const url=original.url().split('/').slice(0,3).join('/')+'/l2?preview=1';
  const prompt='桌上有两把钥匙，你想先选哪一把？';
  const save=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('emotional:l2:preview:v2')));
  const check=(ok,msg)=>{if(!ok)throw new Error(msg);};

@@ -62,3 +62,11 @@
 @media(max-height:500px) and (orientation:landscape){.layoutTools {grid-area:3/2/7/23;}.layoutTools button {padding:5px 8px;font-size:11px;}}
 
 .game button {touch-action:manipulation;}
+.serverTrace {overflow-wrap:anywhere;}
+.serverTrace ol {padding-inline-start:22px;}
+.serverTrace li {margin-block:16px;padding-block:12px;border-bottom:1px solid #cabd9766;}
+.serverTrace dl {display:grid;grid-template-columns:minmax(90px,1fr) minmax(0,3fr);gap:6px 12px;font-size:13px;}
+.serverTrace dd {margin:0;}
+.serverTrace pre {white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#24291f;padding:12px;}
+.serverTrace select {max-width:100%;color:inherit;background:#33382e;padding:6px;}
+.serverTrace summary {cursor:pointer;margin-block:12px;}

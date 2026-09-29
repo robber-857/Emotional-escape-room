@@ -11,7 +11,7 @@ function ImageLayer({id,x,y,w,h,crop=[0,0,1,1],opacity=1}:{id:string;x:number;y:
   <image href={`/game/l2/${id}.png`} x={crop[0]*w} y={crop[1]*h} width={crop[2]*w} height={crop[3]*h} preserveAspectRatio="none" />
  </svg>;
 }
-export function Scene({state,disabled,onSeat,onTable,onDoor,onKey,onSearch,onFind,onMove}:{state:State;disabled:boolean;onSeat:(seat:Seat)=>void;onTable:()=>void;onDoor:()=>void;onKey:(key:KeyId)=>void;onSearch:()=>void;onFind:()=>void;onMove:(id:FurnitureId,p:Point)=>void}){
+export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearch,onFind,onMove}:{state:State;disabled:boolean;onSeat:(seat:Seat)=>void;onTable:()=>void;onDoor:()=>void;onExit:()=>void;onKey:(key:KeyId)=>void;onSearch:()=>void;onFind:()=>void;onMove:(id:FurnitureId,p:Point)=>void}){
  function hit(name:string,x:number,y:number,w:number,h:number,fn:()=>void){
   return <g role="button" aria-label={name} aria-disabled={disabled} tabIndex={disabled?-1:0} className={styles.hotspot}
    onClick={()=>{if(!disabled)fn();}} onKeyDown={e=>{if(!disabled&&(e.key==="Enter"||e.key===" ")){e.preventDefault();fn();}}}>
@@ -35,6 +35,11 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onKey,onSearch,onFin
  return <svg className={`${styles.scene} ${state.furniture.editing?styles.arranging:""}`} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：大厅">
   <defs><mask id="l2-cabinet-mask" maskUnits="userSpaceOnUse" x="-46.501" y="286.393" width="288.908" height="870.419" style={{maskType:"alpha"}}><image href="/game/l2/cabinet-mask.svg" x="-46.501" y="286.393" width="288.908" height="870.419" /></mask></defs>
   <ImageLayer id="room" x={0} y={0} w={1919.008} h={1048.989}/>
+  {state.exitDoorOpen&&<g data-layer="l2-exit-door">
+   <defs><clipPath id="l2-exit-leaf"><path d="M444 223 L579 242 L579 787 L444 799 Z"/></clipPath><linearGradient id="l2-exit-depth"><stop stopColor="#161218"/><stop offset="1" stopColor="#332932"/></linearGradient></defs>
+   <path d="M444 223 L579 242 L579 787 L444 799 Z" fill="url(#l2-exit-depth)"/>
+   <g transform="translate(579 0) scale(.23 1) translate(-579 0)"><image clipPath="url(#l2-exit-leaf)" href="/game/l2/room.png" width="1919.008" height="1048.989" preserveAspectRatio="none"/></g>
+  </g>}
   {state.doorOpen&&<g data-layer="half-open-door">
    <svg x="761" y="271" width="156" height="505" overflow="hidden"><image href="/game/l2/door-panel.png" x={-763-1919.008*.0153} y={-267+1048.989*.0014} width={1919.008*1.0755} height={1048.989*1.0589} preserveAspectRatio="none"/></svg>
    <rect x="917" y="269" width="17" height="507" fill="#050505" style={{filter:"blur(3.6px)"}}/>
@@ -54,6 +59,7 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onKey,onSearch,onFin
   {!state.furniture.editing&&<g mask="url(#l2-cabinet-mask)"><ImageLayer id="cabinet" x={-46} y={166.77} w={302.458} h={1076.751}/></g>}
   {!state.furniture.editing&&hit(state.doorOpen?"查看半开的门":"查看门锁",745,285,180,480,onDoor)}
 
+  {state.exitDoorOpen&&!state.furniture.editing&&hit("查看通往第三幕的门",444,242,135,390,onExit)}
   {state.keys.length<2&&<title>{`桌上有${2-state.keys.length}把尚未拿起的钥匙`}</title>}
  </svg>;
 }

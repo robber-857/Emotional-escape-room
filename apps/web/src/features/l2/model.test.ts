@@ -1,10 +1,19 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { initialState, transition, restore, keysAvailable, seats, type Action, type State } from "./model";
+import { initialState, transition, restore, keysAvailable, seats, MAX_EVENTS, type Action, type State } from "./model";
 let index=0;
 const event=(action:Action)=>({id:`event-${++index}`,at:"2026-09-28T00:00:00Z",action});
 const act=(s:State,a:Action)=>transition(s,event(a));
 const save=(s:State)=>JSON.stringify({version:1,events:s.events});
+
+test("a full journal remains replayable and rejects new actions without losing records",()=>{
+ let s=initialState();
+ for(let i=0;i<MAX_EVENTS;i++)s=act(s,{type:"sit",seat:"chair",yes:false});
+ assert.equal(s.events.length,MAX_EVENTS);
+ assert.deepEqual(restore(save(s)),s);
+ assert.equal(act(s,{type:"arrive-table"}),s);
+ assert.throws(()=>restore(JSON.stringify({version:1,events:[...s.events,event({type:"arrive-table"})]})));
+});
 test("arriving at the table alone unlocks key choice without choosing a seat or key",()=>{
  const s=act(initialState(),{type:"arrive-table"});assert.equal(keysAvailable(s),true);assert.equal(s.seat,null);assert.deepEqual(s.keys,[]);assert.equal(s.selectedKey,null);
 });
