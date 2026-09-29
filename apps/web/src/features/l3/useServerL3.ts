@@ -28,7 +28,7 @@ export function useServerL3(enabled:boolean){
    apply(next);setConflict(false);return true;
   }catch(e){
    if(ticket===epoch.current){
-    if(e instanceof api.RejectedAction){apply(e.session);setConflict(false);setError(e.code==="VERSION_CONFLICT"?"进度已由其他页面更新，本次操作未生效。请重试同步后继续。":`服务器未接受本次操作（${e.code}），请重试同步。`);}
+    if(e instanceof api.RejectedAction){apply(e.session);setConflict(false);setError(e.code==="VERSION_CONFLICT"?"进度已由其他页面更新，本次操作未生效。请重试同步后继续。":e.code==="CONFIRM_SLOT_RESERVED"?"更换物品的记录额度已满，当前预选已保留。请重试同步后确认携带。":`服务器未接受本次操作（${e.code}），请重试同步。`);}
     else setError(e instanceof Error?e.message:"无法连接服务器，请重试同步。");
    }
    return false;

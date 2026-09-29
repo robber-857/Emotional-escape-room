@@ -5,7 +5,8 @@ export type ServerAction = Action;
 export type Session = {id:string;version:number;source:"server_database";rules_version:string;
  state:{segment:"storm"|"carry";choices:Record<Decision,boolean|null>;carry:boolean|null;draft:State["draft"];item:State["item"];completion:string;events:{id:string;at:string;action:ServerAction}[]}};
 export type Pending = {sessionId:string;action_id:string;expected_version:number;action:ServerAction};
-export type Receipt = {action_id:string;received_at:string;action:ServerAction;accepted:boolean;code:string;previous_version:number;version:number;state_changed:boolean;rules_version:string;validation_version:string;authority:{record_source:string;decision_source:string};outcome:unknown;scoring:unknown};
+export type Validation = {source:string;authenticated:boolean;l1_complete:boolean;l2_complete:boolean;rules_supported:boolean;expected_version:number;actual_version:number;version_matches:boolean;flow_evaluated:boolean;flow_allowed:boolean|null;event_budget_allowed:boolean|null};
+export type Receipt = {action_id:string;received_at:string;action:ServerAction;accepted:boolean;code:string;previous_version:number;version:number;state_changed:boolean;rules_version:string;validation_version:string;authority?:{record_source?:string;decision_source?:string;input_source?:string};validation?:Validation;outcome:unknown;scoring:unknown};
 export const pendingKey=(id:string)=>`emotional:l3:pending:${id}`;
 export const changeKey=(id:string)=>`emotional:l3:revision:${id}`;
 export class RejectedAction extends Error {constructor(public session:Session,public code:string){super(code);}}
