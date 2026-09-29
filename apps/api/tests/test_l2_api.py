@@ -67,7 +67,7 @@ def test_furniture_exit_after_optional_exploration_persists(client, explore):
     assert s["scoring"]["totals"] is None
     assert client.get(url, headers=h).json() == s
     assert client.post(url+"/actions", headers=h, json=body).json()["duplicate"]
-    receipt = client.get(url+"/events", headers=h).json()[-1]
+    receipt = next(r for r in client.get(url+"/events", headers=h).json() if r["action_id"] == body["action_id"])
     assert receipt["outcome"]["exit_door_open"]
     assert client.get(f"/api/v1/sessions/{parent['id']}", headers=h).json()["state"] == parent["state"]
 
@@ -208,12 +208,13 @@ def test_server_receipts_have_immutable_outcomes_and_rejections(client):
     unlock(client, url, h, s)
     rows = client.get(url+"/events", headers=h).json()
     assert len(rows) == 6
-    assert rows[0]["outcome"] is None and not rows[0]["accepted"]
+    rejected = next(r for r in rows if r["action"]["type"] == "curtain-click")
+    assert rejected["outcome"] is None and not rejected["accepted"]
     for r in rows:
         assert r["authority"] == dict(record_source="server_database", decision_source="server", input_source="client_claim")
         assert r["validation_version"] == "l2-validation-v4"
         assert r["previous_version"] + int(r["accepted"]) == r["version"]
-    first, second = [r for r in rows if r["action"]["type"] == "try-door"]
+    first, second = sorted([r for r in rows if r["action"]["type"] == "try-door"], key=lambda r: r["version"])
     assert first["outcome"]["attempt"] == 1 and not first["outcome"]["door_open"]
     assert second["outcome"]["attempt"] == 2 and second["outcome"]["door_open"]
     assert first in client.get(url+"/events", headers=h).json()

@@ -19,7 +19,7 @@ try {
     if ($TestDatabaseUrl -and $TestDatabaseUrl -notmatch '^postgresql(?:\+[^:]+)?://') { throw 'TestDatabaseUrl must be a dedicated PostgreSQL test database URL.' }
     Get-Command $cli -ErrorAction Stop | Out-Null
     $ready = Invoke-RestMethod ($BaseUrl.TrimEnd('/') + '/api/v1/ready')
-    if (-not $ready.persistence_ready -or $ready.schema_version -ne '0002_l2') { throw 'L2 database migration is not ready.' }
+    if (-not $ready.persistence_ready -or $ready.schema_version -notin @('0002_l2', '0003_l3')) { throw 'L2 database migration is not ready.' }
     if ($TestDatabaseUrl) { $env:TEST_DATABASE_URL=$TestDatabaseUrl } else { Remove-Item Env:TEST_DATABASE_URL -ErrorAction SilentlyContinue }
     Push-Location (Join-Path $repoRoot 'apps/api')
     try {
