@@ -1,0 +1,59 @@
+"""Server copy of the versioned L2 prototype geometry; never a scoring policy."""
+from copy import deepcopy
+from math import hypot, isfinite
+
+VERSION = "l2-placement-v4"
+FURNITURE = {"armchair": (285, 990, .19, .20), "chair": (1145, 810, .085, .13),
+             "sofa": (1510, 925, .31, .23), "table-chair": (1510, 1013, .41, .10)}
+
+def initial_layout():
+    return {key: dict(u=.5+(x-960)/(1100+820*((y-760)/270)), v=(y-760)/270)
+            for key, (x, y, _, _) in FURNITURE.items()}
+
+def footprint(key, p):
+    _, _, w, d = FURNITURE[key]
+    return dict(left=p["u"]-w/2, right=p["u"]+w/2, top=p["v"]-d/2, bottom=p["v"]+d/2)
+
+def area(r): return (r["right"]-r["left"])*(r["bottom"]-r["top"])
+def intersection(a, b):
+    return max(0, min(a["right"], b["right"])-max(a["left"], b["left"]))*max(0, min(a["bottom"], b["bottom"])-max(a["top"], b["top"]))
+def left_floor_edge(v):
+    return max(-.12*max(0, min(1, (v-.10)/.45)), .5+(35-960)/(1100+820*max(0,v)))
+
+SUSPENSION_TOLERANCE_CM = 1.4
+SUSPENSION_TOLERANCE_PX = SUSPENSION_TOLERANCE_CM*96/2.54
+
+def suspension_gap_px(b): return max(0, -b["top"]*270)
+
+def inside(b):
+    return suspension_gap_px(b) <= SUSPENSION_TOLERANCE_PX+1e-9 and b["bottom"] <= 1 and b["right"] <= 1 and b["left"] >= max(left_floor_edge(b["top"]), left_floor_edge(b["bottom"]))-1e-9
+def valid_layout(layout):
+    if any(k not in layout or any(not isfinite(layout[k][axis]) for axis in ("u", "v")) for k in FURNITURE): return False
+    boxes = [footprint(k, layout[k]) for k in FURNITURE]
+    return all(inside(b) and all(intersection(b, c)/min(area(b), area(c)) <= .20+1e-9 for c in boxes[i+1:]) for i, b in enumerate(boxes))
+
+def move_layout(layout, key, point):
+    if key not in FURNITURE or any(not isfinite(point[a]) or not -4 <= point[a] <= 4 for a in ("u", "v")):
+        raise ValueError("INVALID_PLACEMENT")
+    result = deepcopy(layout)
+    result[key] = dict(point)
+    return result
+
+
+def classify(layout, baseline, triggered):
+    reasonable = valid_layout(layout)
+    moved = [k for k in FURNITURE if hypot(layout[k]["u"]-baseline[k]["u"], layout[k]["v"]-baseline[k]["v"]) >= .02]
+    placements = []
+    for k in moved:
+        b = footprint(k, layout[k]); others = [footprint(j, layout[j]) for j in FURNITURE if j != k]
+        clearance = max(.025, min(FURNITURE[k][2:])*.30)
+        gap = min(hypot(max(o["left"]-b["right"], b["left"]-o["right"], 0), max(o["top"]-b["bottom"], b["top"]-o["bottom"], 0)) for o in others)
+        g = 2*clearance
+        sides = [dict(b, left=b["left"]-g, right=b["left"]), dict(b, left=b["right"], right=b["right"]+g),
+                 dict(b, top=b["top"]-g, bottom=b["top"]), dict(b, top=b["bottom"], bottom=b["bottom"]+g)]
+        count = sum(inside(r) and not any(intersection(r, o) > 1e-9 for o in others) for r in sides)
+        placements.append(dict(id=k, **{"from": baseline[k]}, to=layout[k], nearestGap=gap, requiredClearance=clearance, openSides=count,
+                               open=reasonable and gap >= clearance and count >= 3))
+    tidy = reasonable and bool(moved); open_placement = reasonable and any(p["open"] for p in placements)
+    events = (["tidy"] if tidy and not triggered["tidy"] else []) + (["open-placement"] if open_placement and not triggered["openPlacement"] else [])
+    return dict(reasonable=reasonable, tidy=tidy, openPlacement=open_placement, movedIds=moved, placements=placements, events=events, suspensionToleranceCm=SUSPENSION_TOLERANCE_CM, suspensionTolerancePx=SUSPENSION_TOLERANCE_PX, suspensionGapsPx={k: suspension_gap_px(footprint(k, layout[k])) for k in FURNITURE}, ruleVersion=VERSION)

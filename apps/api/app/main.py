@@ -1,4 +1,4 @@
-"""Authoritative anonymous L1 sessions. Run Alembic before starting the API."""
+"""Authoritative anonymous L1/L2 sessions. Run Alembic before starting the API."""
 import hashlib
 import hmac
 import logging
@@ -14,7 +14,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import select, insert, update, text
 from sqlalchemy.exc import SQLAlchemyError
-from .db import make_engine, sessions, events
+from .db import make_engine, sessions, events, l2_runs, l2_events
 from .domain import initial_state, apply_action, RULES_VERSION
 
 log = logging.getLogger("uvicorn.error")
@@ -41,7 +41,7 @@ async def lifespan(app):
     yield
     app.state.engine.dispose()
 
-app = FastAPI(title="Emotional Escape Room API", version="0.2.0", lifespan=lifespan)
+app = FastAPI(title="Emotional Escape Room API", version="0.3.0", lifespan=lifespan)
 
 @app.middleware("http")
 async def no_cache(request, call_next):
@@ -68,8 +68,8 @@ def snapshot(row):
 
 @app.get("/api/v1/health", tags=["operations"])
 def health():
-    return dict(status="ok", environment=os.getenv("APP_ENV", "development"), version="0.2.0",
-                game_api_ready=True, scoring_ready=False, persistence_ready=False)
+    return dict(status="ok", environment=os.getenv("APP_ENV", "development"), version="0.3.0",
+                game_api_ready=True, l2_api_ready=True, scoring_ready=False, persistence_ready=False)
 
 @app.get("/api/v1/ready", tags=["operations"])
 def ready():
@@ -77,7 +77,9 @@ def ready():
         revision = conn.execute(text("SELECT version_num FROM alembic_version")).scalar_one()
         conn.execute(select(sessions.c.id).limit(1))
         conn.execute(select(events.c.action_id).limit(1))
-    if revision != "0001_l1": raise HTTPException(503, "MIGRATION_REQUIRED")
+        conn.execute(select(l2_runs.c.session_id).limit(1))
+        conn.execute(select(l2_events.c.action_id).limit(1))
+    if revision != "0002_l2": raise HTTPException(503, "MIGRATION_REQUIRED")
     return dict(status="ok", persistence_ready=True, schema_version=revision, scoring_ready=False)
 
 @app.post("/api/v1/sessions", status_code=201, tags=["L1"])
@@ -132,3 +134,6 @@ def action(sid: UUID, body: ActionRequest, authorization: str = Header(default="
             result = dict(result, duplicate=False, session=snapshot(row))
     log.info("L1 action session=%s action_id=%s accepted=%s code=%s version=%s", sid, body.action_id, result["accepted"], result["code"], result["version"])
     return JSONResponse(status_code=200 if result["accepted"] else 409, content=result)
+
+from .l2_api import register_l2
+register_l2(app, authorize)
