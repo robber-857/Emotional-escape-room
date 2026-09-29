@@ -51,8 +51,8 @@ const slots: Record<string, Rect> = {
   sparkles: { x: 1109.38, y: 781.77, w: 818.39, h: 560.73 },
   "sparkles-small": { x: 1348, y: 770, w: 480, h: 480 },
   planks: { x: 2209.5, y: 1285.5, w: 473.71, h: 282.5 },
-  person: { x: 901, y: 884, w: 160, h: 515 },
-  woman: { x: 715, y: 899, w: 150, h: 500 },
+  person: { x: 1795, y: 949, w: 96, h: 309 },
+  woman: { x: 390, y: 910, w: 150, h: 500 },
   "lamp-off": { x: 311, y: 1291, w: 146, h: 216 },
   "lamp-on": { x: 311, y: 1291, w: 146, h: 216 },
 };
@@ -72,7 +72,7 @@ export function Scene({
   onSelect: (subject: Subject) => void;
   onMove: (positions: Positions) => void;
   disabled: boolean;
-  effect: "oar" | "repair" | null;
+  effect: "oar" | "repair" | "rope" | null;
 }) {
   const svg = useRef<SVGSVGElement>(null);
   const drag = useRef<{
@@ -151,7 +151,9 @@ export function Scene({
   }
   function layer(id: string, subject?: Subject, movable = false) {
     const r = slots[id],
-      delta = draft[id] || positions[id] || { x: 0, y: 0 };
+      delta = id === "rope" && state.ropeClicks < 5
+        ? { x: 350 / W, y: -490 / H }
+        : draft[id] || positions[id] || { x: 0, y: 0 };
     const isBoat = (id === "boat" || id === "oar") && state.rowing;
     const dx = delta.x * W + (isBoat ? -state.strokes * 60 : 0);
     const dy = delta.y * H + (isBoat ? -state.strokes * 22 : 0);
@@ -168,7 +170,7 @@ export function Scene({
             ? `${id === "oar" ? "船桨（草丛中）" : labels[subject]}${movable ? "，可拖动；方向键微调位置" : ""}`
             : undefined
         }
-        className={subject ? "sceneObject" : "decoration"}
+        className={`${subject ? "sceneObject" : "decoration"}${id === "rope" && effect === "rope" ? " ropeDrop" : ""}`}
         onClick={
           subject
             ? () => {
@@ -239,6 +241,7 @@ export function Scene({
           className={shake === subject && subject ? "shake" : undefined}
           onAnimationEnd={() => setShake(null)}
         >
+          <g transform={id === "rope" ? "translate(2104.5 1413.5) scale(0.75) translate(-2104.5 -1413.5)" : undefined}>
           <Sprite id={id} />
           {subject && (
             <rect
@@ -250,6 +253,7 @@ export function Scene({
               rx="20"
             />
           )}
+          </g>
         </g>
       </g>
     );
@@ -377,6 +381,7 @@ export function Scene({
           </g>
           <g data-layer="props">
             {layer("boat", "boat")}
+            {!state.repaired && layer("rope", "rope", state.ropeClicks === 5)}
             {layer("ring", "ring", true)}
             {state.oar && (
               <g
@@ -386,7 +391,6 @@ export function Scene({
                 {layer("oar")}
               </g>
             )}
-            {!state.repaired && layer("rope", "rope", true)}
             {layer("bush", "bush")}
             {!state.repaired && layer("planks", "planks", true)}
           </g>

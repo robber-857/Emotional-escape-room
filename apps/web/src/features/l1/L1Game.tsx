@@ -24,7 +24,7 @@ export function L1Game() {
   const [pendingSync, setPendingSync] = useState(false);
   const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [syncError, setSyncError] = useState("");
-  const [effect, setEffect] = useState<"oar" | "repair" | null>(null);
+  const [effect, setEffect] = useState<"oar" | "repair" | "rope" | null>(null);
   useEffect(() => {
     if (!effect) return;
     const timer = setTimeout(() => setEffect(null), 1200);
@@ -205,6 +205,7 @@ export function L1Game() {
     } finally { requestLock.current = false; setSyncing(false); }
     if (!before.oar && next.oar) setEffect("oar");
     if (!before.repaired && next.repaired) setEffect("repair");
+    if (before.ropeClicks < 5 && next.ropeClicks === 5) setEffect("rope");
     if (action.type === "paddle") {
       strokeLock.current = true;
       setStrokeBusy(true);
@@ -225,6 +226,10 @@ export function L1Game() {
         `${choiceLabels[action.choice]}${action.choice === "enter" ? "，第一幕体验已结束。" : "。"}`,
       );
       if (action.choice === "search") setSelected(next.oar ? "boat" : "bush");
+      else if (action.choice === "take-rope") {
+        setSelected("rope");
+        setMessage(next.ropeClicks === 5 ? "绳子掉到了岸边，现在可以拖动它修桥。" : `再点击${5 - next.ropeClicks}次就可以拿下来了。`);
+      }
       else if (action.choice === "repair") setSelected("bridge");
       else if (action.choice === "greet") setSelected("person");
       else if (action.choice === "greet-woman") setSelected("woman");
@@ -254,6 +259,7 @@ export function L1Game() {
     save(stateRef.current, next);
     if (
       repairMaterialsReady(next) &&
+      stateRef.current.ropeClicks === 5 &&
       !stateRef.current.repaired &&
       stateRef.current.scene === "river" &&
       !stateRef.current.rowing
@@ -312,6 +318,7 @@ export function L1Game() {
     !state.repaired &&
     !state.rowing &&
     selected &&
+    !(selected === "rope" && state.ropeClicks < 5) &&
     ["bridge", "planks", "rope"].includes(selected)
   ) {
     const woodReady = positions.planks && woodAtGap(positions.planks);
@@ -326,6 +333,8 @@ export function L1Game() {
     setSelected(subject);
     if (subject === "bush" && !state.oar)
       act({ type: "choose", choice: "search", yes: true });
+    if (subject === "rope" && state.ropeClicks < 5)
+      act({ type: "choose", choice: "take-rope", yes: true });
   }
   const anchor: Record<Subject, [number, number]> = {
     bridge: [33, 65],
@@ -334,15 +343,15 @@ export function L1Game() {
     ring: [82, 65],
     bush: [88, 53],
     planks: [83, 81],
-    rope: [71.5, 83],
-    person: [33.3, 56],
-    woman: [26.8, 57],
+    rope: state.ropeClicks < 5 ? [83.4, 51.6] : [71.5, 83],
+    person: [62.6, 60.5],
+    woman: [15.8, 58],
     lamp: state.lampTaken ? [91, 81] : [13, 83],
     door: [43, 49],
   };
   const activeSubject = state.rowing ? "boat" : selected;
   const baseAnchor = anchor[activeSubject || "bridge"];
-  const delta = activeSubject && positions[activeSubject];
+  const delta = activeSubject && !(activeSubject === "rope" && state.ropeClicks < 5) ? positions[activeSubject] : undefined;
   const bubbleX = Math.max(
     20,
     Math.min(80, baseAnchor[0] + (delta?.x || 0) * 100),
@@ -527,6 +536,11 @@ export function L1Game() {
                         拨开草丛 · {state.bushClicks} / 5
                       </button>
                     )}
+                    {prompt.action === "take-rope" && (
+                      <button className="primary" onClick={() => act({ type: "choose", choice: "take-rope", yes: true })}>
+                        拿下绳子 · {state.ropeClicks} / 5
+                      </button>
+                    )}
                     {prompt.action === "paddle" && (
                       <button
                         className="primary"
@@ -588,7 +602,7 @@ export function L1Game() {
                   <h2>
                     {state.scene === "river"
                       ? "你想怎样到达对岸？"
-                      : "门边，有人和一盏灯"}
+                      : "岸边，有人和一盏灯"}
                   </h2>
                   <p>{message}</p>
                 </>
@@ -667,7 +681,7 @@ export function L1Game() {
               点击场景中的物件，在物件上方选择“是”或“否”。关闭提示不会替你作出选择。
             </p>
             <p>
-              木板、绳子与救生圈可以拖动，键盘聚焦后可用方向键移动。木板和绳子的中心都落到发光的断桥缺口内才会修桥；落在其他位置会保留摆放。修好桥后仍需确认才过河。
+              绳子挂在救生圈后方的木桩上，点击绳子或“拿下绳子”共五次后，会掉到岸边原位置。拿下后可拖动绳子；木板和救生圈也可以拖动，键盘聚焦后可用方向键移动。木板和绳子的中心都落到发光的断桥缺口内才会修桥；落在其他位置会保留摆放。修好桥后仍需确认才过河。
             </p>
             <p>
               点击草丛或拨草提示共五次，船桨会跳出并安装到小船。确认上船后，按五次“划桨一次”抵达对岸。人物、拿灯、点灯和进门分别决定；可以带未点亮的灯离开。

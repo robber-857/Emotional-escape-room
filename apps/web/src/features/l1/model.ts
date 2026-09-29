@@ -12,6 +12,7 @@ export type Subject =
   | "lamp"
   | "door";
 export type Choice =
+  | "take-rope"
   | "collect-wood"
   | "repair"
   | "cross-bridge"
@@ -33,6 +34,7 @@ export type L1State = {
   scene: "river" | "shore" | "complete";
   wood: boolean;
   repaired: boolean;
+  ropeClicks: number;
   oar: boolean;
   bushClicks: number;
   rowing: boolean;
@@ -48,6 +50,7 @@ export const initialState = (): L1State => ({
   scene: "river",
   wood: false,
   repaired: false,
+  ropeClicks: 0,
   oar: false,
   bushClicks: 0,
   rowing: false,
@@ -73,10 +76,12 @@ export function canChoose(s: L1State, choice: Choice): boolean {
   }
   if (s.rowing) return false;
   switch (choice) {
+    case "take-rope":
+      return s.ropeClicks < 5 && !s.repaired;
     case "collect-wood":
-      return !s.wood && !s.repaired;
+      return s.ropeClicks === 5 && !s.wood && !s.repaired;
     case "repair":
-      return s.wood && !s.repaired;
+      return s.ropeClicks === 5 && s.wood && !s.repaired;
     case "cross-bridge":
       return s.repaired;
     case "swim":
@@ -112,6 +117,8 @@ export function transition(s: L1State, event: GameEvent): L1State {
   // An explicit no is evidence; closing a prompt is not a refusal.
   if (!a.yes) return next;
   switch (a.choice) {
+    case "take-rope":
+      return { ...next, ropeClicks: s.ropeClicks + 1 };
     case "collect-wood":
       return { ...next, wood: true };
     case "repair":
@@ -148,7 +155,7 @@ export type Prompt = {
   body: string;
   choice?: Choice;
   yes?: string;
-  action?: "paddle" | "search";
+  action?: "paddle" | "search" | "take-rope";
   next?: Subject;
 };
 export function promptFor(s: L1State, subject: Subject): Prompt {
@@ -182,6 +189,12 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
               yes: "查看木板",
             };
     case "rope":
+      if (s.ropeClicks < 5 && !s.repaired) return {
+        title: "拿下绳子",
+        body: `再点击${5 - s.ropeClicks}次就可以拿下来了。`,
+        action: "take-rope",
+        yes: "拿下绳子",
+      };
       return {
         title: s.repaired ? "绳子已用于修桥" : "用绳子固定木板",
         body: "把绳子和木板都移到断桥缺口，才能修好木桥。可以先搬任意一件。",
@@ -243,7 +256,7 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
           }
         : {
             title: "要和她打招呼吗？",
-            body: "她静静站在门边。你可以打个招呼，也可以继续探索。",
+            body: "她静静站在左侧草地上。你可以打个招呼，也可以继续探索。",
             choice: "greet-woman",
             yes: "是，打个招呼",
           };
@@ -255,7 +268,7 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
           }
         : {
             title: "要和他打招呼吗？",
-            body: "有人静静站在门边。你可以向他打招呼，也可以继续自己的探索。",
+            body: "他静静站在右侧岸边。你可以向他打招呼，也可以继续自己的探索。",
             choice: "greet",
             yes: "是，打个招呼",
           };
@@ -295,12 +308,13 @@ export const labels: Record<Subject, string> = {
   bush: "草丛",
   planks: "木板",
   rope: "绳子",
-  person: "门边的男子",
-  woman: "门边的女子",
+  person: "右侧岸边的男子",
+  woman: "左侧草地的女子",
   lamp: "灯",
   door: "房门",
 };
 export const choiceLabels: Record<Choice, string> = {
+  "take-rope": "拿下绳子",
   "collect-wood": "拾起木板",
   repair: "拾起绳子和木板修桥",
   "cross-bridge": "从桥过河",

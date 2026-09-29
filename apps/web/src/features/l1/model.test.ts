@@ -31,6 +31,8 @@ test("bridge requires wood and repair; repairing alone does not cross", () => {
   let s = initialState();
   assert.equal(choose(s, "cross-bridge"), s);
   assert.equal(choose(s, "repair"), s);
+  assert.equal(choose(s, "collect-wood"), s);
+  for (let i = 0; i < 5; i++) s = choose(s, "take-rope");
   s = choose(s, "collect-wood");
   assert.equal(s.wood, true);
   s = choose(s, "repair");
@@ -51,6 +53,23 @@ test("explicit no records refusal without locking subsequent yes", () => {
   s = choose(s, "swim");
   assert.equal(s.scene, "shore");
   assert.equal(s.route, "swim");
+});
+
+test("rope releases on fifth unique click and survives resume", () => {
+  let s = initialState();
+  assert.equal(promptFor(s, "rope").title, "拿下绳子");
+  for (let i = 1; i <= 5; i++) {
+    assert.equal(promptFor(s, "rope").body, `再点击${6 - i}次就可以拿下来了。`);
+    const e = event({ type: "choose", choice: "take-rope", yes: true });
+    s = transition(s, e);
+    assert.equal(s.ropeClicks, i);
+    assert.equal(transition(s, e), s);
+    s = restore(saved(s)).state;
+    assert.equal(s.ropeClicks, i);
+  }
+  assert.equal(promptFor(s, "rope").action, undefined);
+  assert.equal(choose(s, "take-rope"), s);
+  assert.equal(choose(choose(initialState(), "swim"), "take-rope").ropeClicks, 0);
 });
 
 test("ring is a separate crossing route", () => {

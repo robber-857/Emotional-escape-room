@@ -15,14 +15,14 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import select, insert, update, text
 from sqlalchemy.exc import SQLAlchemyError
 from .db import make_engine, sessions, events, l2_runs, l2_events, l3_runs, l3_events, l4_runs, l4_events
-from .domain import initial_state, apply_action, RULES_VERSION
+from .domain import initial_state, normalize_state, apply_action, RULES_VERSION, SUPPORTED_RULES_VERSIONS
 
 log = logging.getLogger("uvicorn.error")
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 class Choose(StrictModel):
     type: Literal["choose"]
-    choice: Literal["collect-wood", "repair", "cross-bridge", "swim", "use-ring", "search", "board", "greet", "greet-woman", "take-lamp", "light-lamp", "enter"]
+    choice: Literal["take-rope", "collect-wood", "repair", "cross-bridge", "swim", "use-ring", "search", "board", "greet", "greet-woman", "take-lamp", "light-lamp", "enter"]
     yes: StrictBool
 class Paddle(StrictModel):
     type: Literal["paddle"]
@@ -64,7 +64,8 @@ def authorize(conn, sid, authorization, lock=False):
     return row
 
 def snapshot(row):
-    return {key: row[key] for key in ("id", "rules_version", "version", "state", "positions")}
+    return {**{key: row[key] for key in ("id", "rules_version", "version", "positions")},
+            "state": normalize_state(row["state"])}
 
 @app.get("/api/v1/health", tags=["operations"])
 def health():
@@ -117,7 +118,7 @@ def action(sid: UUID, body: ActionRequest, authorization: str = Header(default="
             result = dict(old["result"], duplicate=True, session=snapshot(row))
         else:
             code = None
-            if row["rules_version"] != RULES_VERSION: code = "RULES_VERSION_UNSUPPORTED"
+            if row["rules_version"] not in SUPPORTED_RULES_VERSIONS: code = "RULES_VERSION_UNSUPPORTED"
             elif row["version"] != body.expected_version: code = "VERSION_CONFLICT"
             elif row["version"] >= 1000: code = "SESSION_EVENT_LIMIT"
             state = row["state"]
@@ -128,7 +129,7 @@ def action(sid: UUID, body: ActionRequest, authorization: str = Header(default="
             accepted = code is None
             version = row["version"] + int(accepted)
             result = dict(accepted=accepted, code=code or "ACCEPTED", version=version,
-                          action=payload["action"], rules_version=RULES_VERSION)
+                          action=payload["action"], rules_version=row["rules_version"])
             if accepted:
                 state["events"].append(dict(id=str(body.action_id), at=now, action=payload["action"]))
                 conn.execute(update(sessions).where(sessions.c.id == str(sid)).values(state=state, positions=payload["positions"], version=version))

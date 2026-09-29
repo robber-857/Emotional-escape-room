@@ -747,6 +747,18 @@ body {
 .oarFlight {
   animation: oarJump 1.2s ease-in-out both;
 }
+.ropeDrop {
+  animation: ropeDrop 0.9s ease-in both;
+}
+@keyframes ropeDrop {
+  0% { transform: translate(350px, -490px); }
+  82% { transform: translate(0, 12px); }
+  100% { transform: translate(0, 0); }
+}
+.still .ropeDrop { animation: none; }
+@media (prefers-reduced-motion: reduce) {
+  .ropeDrop { animation: none; }
+}
 @keyframes oarJump {
   0% {
     transform: translate(0, 0);

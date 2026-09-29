@@ -6,9 +6,9 @@ async page => {
  await click('打开游戏菜单');await click('重新开始旅程');const start=page.waitForResponse(r=>r.url().endsWith('/sessions')&&r.request().method()==='POST');await click('确认重新开始');const created=await(await start).json();console.log('SESSION_SWIM',created.id);
  await click('河面');const no=await action('否');check(no.session.state.scene==='river','refusal moved scene');
  await click('河面');const swim=await action('是');check(swim.session.state.route==='swim','swim route');
- await click('门边的男子');const man=await action('是');check(man.session.state.greeted&&!man.session.state.greetedWoman,'greetings coupled');
- await click('关闭提示，继续探索');await click('门边的女子');const womanNo=await action('否');check(!womanNo.session.state.greetedWoman,'woman refusal ignored');
- await click('门边的女子');const woman=await action('是');check(woman.session.state.greetedWoman,'woman greeting failed');
+ await click('右侧岸边的男子');const man=await action('是');check(man.session.state.greeted&&!man.session.state.greetedWoman,'greetings coupled');
+ await click('关闭提示，继续探索');await click('左侧草地的女子');const womanNo=await action('否');check(!womanNo.session.state.greetedWoman,'woman refusal ignored');
+ await click('左侧草地的女子');const woman=await action('是');check(woman.session.state.greetedWoman,'woman greeting failed');
  await click('关闭提示，继续探索');await click('灯');
  const lampWait=page.waitForResponse(r=>r.url().endsWith('/actions'));await page.getByRole('button',{name:'是',exact:true}).first().click();await snap();const lamp=await(await lampWait).json();check(lamp.session.state.lampTaken&&!lamp.session.state.lampLit,'take lamp');
  const unlit=await action('否');check(!unlit.session.state.lampLit,'lamp refusal');

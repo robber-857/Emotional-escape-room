@@ -67,6 +67,7 @@ export function readDraft(session: Session): Positions {
       if (!["planks", "rope", "ring", "oar"].includes(key) || !pos || !Number.isFinite(pos.x) || !Number.isFinite(pos.y) || Math.abs(pos.x) > 1 || Math.abs(pos.y) > 1) return session.positions;
       draft[key] = pos;
     }
+    if (session.state.ropeClicks < 5) delete draft.rope;
     return draft;
   } catch { return session.positions; }
 }
