@@ -1,5 +1,7 @@
 # George：另一台电脑启动与检查
 
+> **2026-09-30 更新：请以 [最新四关启动交接](george-start-2026-09-30.md) 为准。** 下文为旧版记录，其中末尾的 0002_l2 和 L3/L4 未完成状态已过时；当前迁移目标为 0004_l4。
+
 ## 首次启动
 
 1. 安装 Git、Docker Desktop 并启动 Linux 容器引擎。Windows 需要启用 WSL2；macOS 直接使用 Docker Desktop。

@@ -1,0 +1,4288 @@
+{
+  "as_of": "2026-09-30",
+  "base_commit": "21b0dc0e271a8fb3f835df46c28f66326d42b77d",
+  "scope": "本地工作树；L2差异未推送",
+  "source_file": "情感密室_V6.2_评分表修改后26Aug(2).xlsx",
+  "source_sha256": "7f8aade7935530918617c64ba3ece8b527cd5b32a1d3037a6ab463978506ccb9",
+  "source_sheets": [
+    "变更说明",
+    "修订评分表"
+  ],
+  "options": [
+    {
+      "id": "V62-R04",
+      "source_row": 4,
+      "level": "L1",
+      "node_id": "N01",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "找木板修桥后过河",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": 1
+      },
+      "raw": [
+        "L1 分离之河",
+        "过河路径（强制四选一，四条路径需同等显眼）",
+        "找木板修桥后过河",
+        1,
+        "null",
+        "null",
+        1,
+        "四条路径改为强制四选一并需同等显眼，避免'先发现什么就走什么'的能力/曝光混淆；船桨跳跃次数不计分（机械动作，逐次计分会放大 5 倍）；原 6 行合并，消除同一意图重复计分。层级 E：受操作能力影响。"
+      ],
+      "note": "四条路径改为强制四选一并需同等显眼，避免'先发现什么就走什么'的能力/曝光混淆；船桨跳跃次数不计分（机械动作，逐次计分会放大 5 倍）；原 6 行合并，消除同一意图重复计分。层级 E：受操作能力影响。",
+      "status": "可映射终态",
+      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
+      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+    },
+    {
+      "id": "V62-R05",
+      "source_row": 5,
+      "level": "L1",
+      "node_id": "N01",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "无游泳圈直接游泳",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": -2
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "无游泳圈直接游泳",
+        -1,
+        "null",
+        "null",
+        -2,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
+      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+    },
+    {
+      "id": "V62-R06",
+      "source_row": 6,
+      "level": "L1",
+      "node_id": "N01",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "找到游泳圈过河",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": 1
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "找到游泳圈过河",
+        -1,
+        "null",
+        "null",
+        1,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
+      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+    },
+    {
+      "id": "V62-R07",
+      "source_row": 7,
+      "level": "L1",
+      "node_id": "N01",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "修船后过河（船桨跳跃次数不计分）",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": 0
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "修船后过河（船桨跳跃次数不计分）",
+        1,
+        "null",
+        "null",
+        0,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
+      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+    },
+    {
+      "id": "V62-R08",
+      "source_row": 8,
+      "level": "L1",
+      "node_id": "N02",
+      "node": "线索取舍（线索须定义为不含指向性的提示牌）",
+      "option": "采用线索",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": -1,
+        "F": null
+      },
+      "raw": [
+        "L1 分离之河",
+        "线索取舍（线索须定义为不含指向性的提示牌）",
+        "采用线索",
+        "null",
+        "null",
+        -1,
+        "null",
+        "补全'采用线索'选项（原表只有'不采用'，不对称）；只载 T（对外部提示的依赖度）。线索内容需在开发文档中定义为不含指向性的提示。"
+      ],
+      "note": "补全'采用线索'选项（原表只有'不采用'，不对称）；只载 T（对外部提示的依赖度）。线索内容需在开发文档中定义为不含指向性的提示。",
+      "status": "缺服务器事件",
+      "evidence": "无 clue/hint-choice 事件；打开提示仅前端",
+      "gap": "需定义线索内容并增加明确采用/不采用事件，不能把关提示当不采用"
+    },
+    {
+      "id": "V62-R09",
+      "source_row": 9,
+      "level": "L1",
+      "node_id": "N02",
+      "node": "线索取舍（线索须定义为不含指向性的提示牌）",
+      "option": "不采用线索",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "不采用线索",
+        "null",
+        "null",
+        1,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "缺服务器事件",
+      "evidence": "无 clue/hint-choice 事件；打开提示仅前端",
+      "gap": "需定义线索内容并增加明确采用/不采用事件，不能把关提示当不采用"
+    },
+    {
+      "id": "V62-R10",
+      "source_row": 10,
+      "level": "L1",
+      "node_id": "N03",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "点选人物并主动交谈",
+      "vectors": {
+        "A": null,
+        "V": -2,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L1 分离之河",
+        "对岸人物（模糊的熟悉身影）",
+        "点选人物并主动交谈",
+        "null",
+        -2,
+        "null",
+        "null",
+        "对岸人物只在本节点计 V，人物统一设定为'模糊的熟悉身影'。原'是否交谈-否 A+2'删除（对陌生人的社交谨慎 ≠ 依恋焦虑），并与'不点选人 A-1'的方向矛盾。层级 R：直接关系行为。"
+      ],
+      "note": "对岸人物只在本节点计 V，人物统一设定为'模糊的熟悉身影'。原'是否交谈-否 A+2'删除（对陌生人的社交谨慎 ≠ 依恋焦虑），并与'不点选人 A-1'的方向矛盾。层级 R：直接关系行为。",
+      "status": "证据不足",
+      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
+      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+    },
+    {
+      "id": "V62-R11",
+      "source_row": 11,
+      "level": "L1",
+      "node_id": "N03",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "点选人物，仅打招呼即止",
+      "vectors": {
+        "A": null,
+        "V": 0,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "点选人物，仅打招呼即止",
+        "null",
+        0,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "证据不足",
+      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
+      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+    },
+    {
+      "id": "V62-R12",
+      "source_row": 12,
+      "level": "L1",
+      "node_id": "N03",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "完全不点选，绕开人物",
+      "vectors": {
+        "A": null,
+        "V": 2,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "完全不点选，绕开人物",
+        "null",
+        2,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "证据不足",
+      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
+      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+    },
+    {
+      "id": "V62-R13",
+      "source_row": 13,
+      "level": "L1",
+      "node_id": "N04",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "点亮并带走",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 2
+      },
+      "raw": [
+        "L1 分离之河",
+        "对岸的灯（点亮 × 带走，四种终态）",
+        "点亮并带走",
+        "null",
+        "null",
+        "null",
+        2,
+        "灯为非关系资源，只载 F（完成/闭合）；与人物节点解耦，消除'取走灯系列'与人物行的多行重复计分，删除 (-1,-1,-1,-1)、(+1,+1,+1,+1) 等四维同号向量。"
+      ],
+      "note": "灯为非关系资源，只载 F（完成/闭合）；与人物节点解耦，消除'取走灯系列'与人物行的多行重复计分，删除 (-1,-1,-1,-1)、(+1,+1,+1,+1) 等四维同号向量。",
+      "status": "可映射终态",
+      "evidence": "L1 enter 接受时 lampLit/lampTaken 的四种组合；按事件顺序重放或冻结终态",
+      "gap": "L1 /events 未存逐动作 outcome；不能拿未结束时未操作推定终态"
+    },
+    {
+      "id": "V62-R14",
+      "source_row": 14,
+      "level": "L1",
+      "node_id": "N04",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "点亮，不带走",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 0
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "点亮，不带走",
+        "null",
+        "null",
+        "null",
+        0,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 enter 接受时 lampLit/lampTaken 的四种组合；按事件顺序重放或冻结终态",
+      "gap": "L1 /events 未存逐动作 outcome；不能拿未结束时未操作推定终态"
+    },
+    {
+      "id": "V62-R15",
+      "source_row": 15,
+      "level": "L1",
+      "node_id": "N04",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "不点亮，但带走",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 0
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "不点亮，但带走",
+        "null",
+        "null",
+        "null",
+        0,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 enter 接受时 lampLit/lampTaken 的四种组合；按事件顺序重放或冻结终态",
+      "gap": "L1 /events 未存逐动作 outcome；不能拿未结束时未操作推定终态"
+    },
+    {
+      "id": "V62-R16",
+      "source_row": 16,
+      "level": "L1",
+      "node_id": "N04",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "不点亮，不带走",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": -2
+      },
+      "raw": [
+        "L1 分离之河",
+        null,
+        "不点亮，不带走",
+        "null",
+        "null",
+        "null",
+        -2,
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L1 enter 接受时 lampLit/lampTaken 的四种组合；按事件顺序重放或冻结终态",
+      "gap": "L1 /events 未存逐动作 outcome；不能拿未结束时未操作推定终态"
+    },
+    {
+      "id": "V62-R17",
+      "source_row": 17,
+      "level": "L2",
+      "node_id": "N05",
+      "node": "进门座位",
+      "option": "坐靠窗椅子",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "进门座位",
+        "坐靠窗椅子",
+        1,
+        "null",
+        "null",
+        "null",
+        "座位偏好属空间偏好，仅弱载 A（安全基地寻求），层级 E；原 T/F 分值与'偏向自我'备注矛盾，取消。"
+      ],
+      "note": "座位偏好属空间偏好，仅弱载 A（安全基地寻求），层级 E；原 T/F 分值与'偏向自我'备注矛盾，取消。",
+      "status": "可映射终态",
+      "evidence": "L2 sit seat=chair yes=true；outcome.seat=chair",
+      "gap": "重复换座可发生，取哪次需节点截止规则"
+    },
+    {
+      "id": "V62-R18",
+      "source_row": 18,
+      "level": "L2",
+      "node_id": "N05",
+      "node": "进门座位",
+      "option": "坐靠中心椅子",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "坐靠中心椅子",
+        -1,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "名称需确认",
+      "evidence": "L2 sit seat=table-seat yes=true；outcome.seat=table-seat",
+      "gap": "本地叫桌前椅，表叫靠中心椅；不是已确认同一语义"
+    },
+    {
+      "id": "V62-R19",
+      "source_row": 19,
+      "level": "L2",
+      "node_id": "N05",
+      "node": "进门座位",
+      "option": "不坐，直接去桌边",
+      "vectors": {
+        "A": 0,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "不坐，直接去桌边",
+        0,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可派生但未封口",
+      "evidence": "L2 arrive-table 且此前无成功 sit",
+      "gap": "arrive-table后仍能坐下；首选/最终座位及封口时点待确认"
+    },
+    {
+      "id": "V62-R20",
+      "source_row": 20,
+      "level": "L2",
+      "node_id": "N06",
+      "node": "钥匙策略（首把设计为必失败）",
+      "option": "直接尝试一把",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": -1
+      },
+      "raw": [
+        "L2 失联房间",
+        "钥匙策略（首把设计为必失败）",
+        "直接尝试一把",
+        "null",
+        "null",
+        "null",
+        -1,
+        "只载 F（对确定性/确认的需要）。原 A+2/T+1 等多维载荷取消。"
+      ],
+      "note": "只载 F（对确定性/确认的需要）。原 A+2/T+1 等多维载荷取消。",
+      "status": "证据不足",
+      "evidence": "L2 select-key、try-door 的接受事件及顺序",
+      "gap": "同一已选钥匙重复点选不产生新选择；无比较/反复确认事件或判定阈值，不能把两把必经选择当反复比较"
+    },
+    {
+      "id": "V62-R21",
+      "source_row": 21,
+      "level": "L2",
+      "node_id": "N06",
+      "node": "钥匙策略（首把设计为必失败）",
+      "option": "反复比较确认后再尝试",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 1
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "反复比较确认后再尝试",
+        "null",
+        "null",
+        "null",
+        1,
+        null
+      ],
+      "note": "",
+      "status": "证据不足",
+      "evidence": "L2 select-key、try-door 的接受事件及顺序",
+      "gap": "同一已选钥匙重复点选不产生新选择；无比较/反复确认事件或判定阈值，不能把两把必经选择当反复比较"
+    },
+    {
+      "id": "V62-R22",
+      "source_row": 22,
+      "level": "L2",
+      "node_id": "N07",
+      "node": "首把失败后",
+      "option": "尝试第二把",
+      "vectors": {
+        "A": null,
+        "V": -1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "首把失败后",
+        "尝试第二把",
+        "null",
+        -1,
+        "null",
+        "null",
+        "首把必失败为设计；只载 V（受挫后是否继续接触）。放弃后需有兜底推进机制（见'变更说明·配套改动'）。"
+      ],
+      "note": "首把必失败为设计；只载 V（受挫后是否继续接触）。放弃后需有兜底推进机制（见'变更说明·配套改动'）。",
+      "status": "可映射终态",
+      "evidence": "L2 第二次不同 key 的 try-door；outcome.attempt=2, door_open=true",
+      "gap": "首把不论key必失败，第二把成功"
+    },
+    {
+      "id": "V62-R23",
+      "source_row": 23,
+      "level": "L2",
+      "node_id": "N07",
+      "node": "首把失败后",
+      "option": "放弃，不再尝试",
+      "vectors": {
+        "A": null,
+        "V": 1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "放弃，不再尝试",
+        "null",
+        1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可派生但未封口",
+      "evidence": "L2 attempts长度=1 且通过家具确认完成该关",
+      "gap": "没有明确放弃动作；需在完成关卡时判定，不等同浏览器关闭"
+    },
+    {
+      "id": "V62-R24",
+      "source_row": 24,
+      "level": "L2",
+      "node_id": "N08",
+      "node": "钥匙开门后屋内黑（仅当 N2-3=尝试第二把 时出现）",
+      "option": "停在门口，不进入",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "钥匙开门后屋内黑（仅当 N2-3=尝试第二把 时出现）",
+        "停在门口，不进入",
+        1,
+        "null",
+        "null",
+        "null",
+        "原'否'合计 +9，是全表最大单项；混入怕黑与游戏惯性，降为 A±1，仅当尝试第二把后出现。"
+      ],
+      "note": "原'否'合计 +9，是全表最大单项；混入怕黑与游戏惯性，降为 A±1，仅当尝试第二把后出现。",
+      "status": "节点重叠待拆分",
+      "evidence": "L2 同一 explore yes=false/true；进入 view=bedroom",
+      "gap": "开锁后的黑屋与半开门共用 explore；不可与下一节点重复加分"
+    },
+    {
+      "id": "V62-R25",
+      "source_row": 25,
+      "level": "L2",
+      "node_id": "N08",
+      "node": "钥匙开门后屋内黑（仅当 N2-3=尝试第二把 时出现）",
+      "option": "进入黑暗空间探索",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "进入黑暗空间探索",
+        -1,
+        null,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "节点重叠待拆分",
+      "evidence": "L2 同一 explore yes=false/true；进入 view=bedroom",
+      "gap": "开锁后的黑屋与半开门共用 explore；不可与下一节点重复加分"
+    },
+    {
+      "id": "V62-R26",
+      "source_row": 26,
+      "level": "L2",
+      "node_id": "N09",
+      "node": "半开的门（池）",
+      "option": "直接进入",
+      "vectors": {
+        "A": null,
+        "V": -2,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "半开的门（池）",
+        "直接进入",
+        "null",
+        -2,
+        1,
+        "null",
+        "原'否'与'否，然后处理其他'重叠，合并为三个互斥终态；不再载 A（接近-回避摆动由摆动规则处理）；T 载'改口一致性'。同一道具在 L3 亦出现，建议 L2/L3 版本区分。"
+      ],
+      "note": "原'否'与'否，然后处理其他'重叠，合并为三个互斥终态；不再载 A（接近-回避摆动由摆动规则处理）；T 载'改口一致性'。同一道具在 L3 亦出现，建议 L2/L3 版本区分。",
+      "status": "节点重叠待拆分",
+      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
+      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+    },
+    {
+      "id": "V62-R27",
+      "source_row": 27,
+      "level": "L2",
+      "node_id": "N09",
+      "node": "半开的门（池）",
+      "option": "先退后进（摆动）",
+      "vectors": {
+        "A": null,
+        "V": 0,
+        "T": -2,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "先退后进（摆动）",
+        "null",
+        0,
+        -2,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "节点重叠待拆分",
+      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
+      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+    },
+    {
+      "id": "V62-R28",
+      "source_row": 28,
+      "level": "L2",
+      "node_id": "N09",
+      "node": "半开的门（池）",
+      "option": "不进入，转去处理别的",
+      "vectors": {
+        "A": null,
+        "V": 2,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "不进入，转去处理别的",
+        "null",
+        2,
+        1,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "节点重叠待拆分",
+      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
+      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+    },
+    {
+      "id": "V62-R29",
+      "source_row": 29,
+      "level": "L2",
+      "node_id": "N10",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "不寻找",
+      "vectors": {
+        "A": -2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "没有配对的耳环（池；点击触发，非 hover）",
+        "不寻找",
+        -2,
+        "null",
+        "null",
+        "null",
+        "只载 A；补全 >=15 秒后离开的状态归入'持续寻找'；15 秒为初始阈值，建议按试玩搜寻时长中位数校准；hover 改为点击（手机无 hover）。原 F-2/F+3 冲突取消。"
+      ],
+      "note": "只载 A；补全 >=15 秒后离开的状态归入'持续寻找'；15 秒为初始阈值，建议按试玩搜寻时长中位数校准；hover 改为点击（手机无 hover）。原 F-2/F+3 冲突取消。",
+      "status": "可映射终态",
+      "evidence": "L2 search-choice yes=false；outcome.search.status=declined",
+      "gap": "允许之后重新开始寻找，终态截止待定"
+    },
+    {
+      "id": "V62-R30",
+      "source_row": 30,
+      "level": "L2",
+      "node_id": "N10",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "寻找 <15 秒后放弃",
+      "vectors": {
+        "A": 0,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "寻找 <15 秒后放弃",
+        0,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "有事实但边界待定",
+      "evidence": "L2 return-hall 且 search.status=returned、activeMs<15000",
+      "gap": "时长是有墙钟上界的客户端报告；timing_verified=false；找到后离开不属于放弃"
+    },
+    {
+      "id": "V62-R31",
+      "source_row": 31,
+      "level": "L2",
+      "node_id": "N10",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "持续寻找 >=15 秒",
+      "vectors": {
+        "A": 2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "持续寻找 >=15 秒",
+        2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "阈值冲突",
+      "evidence": "L2 search-time / return-hall / curtain-click；search.activeMs/status",
+      "gap": "V6.2 >=15000；当前long用>15000；找到耳环但不足15秒没有对应选项；不得直接照搬long标志"
+    },
+    {
+      "id": "V62-R32",
+      "source_row": 32,
+      "level": "L2",
+      "node_id": "N11",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "靠墙/窗程度 最高四分位",
+      "vectors": {
+        "A": 2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+        "靠墙/窗程度 最高四分位",
+        2,
+        "null",
+        "null",
+        "null",
+        "原 2×3 分类无法处理 5 件物品混合摆放，且与备注矛盾（'空旷=真我高'但 T=-2）。改为三个连续指标，按试玩四分位计分：本行为靠墙/窗程度→A。"
+      ],
+      "note": "原 2×3 分类无法处理 5 件物品混合摆放，且与备注矛盾（'空旷=真我高'但 T=-2）。改为三个连续指标，按试玩四分位计分：本行为靠墙/窗程度→A。",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
+      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+    },
+    {
+      "id": "V62-R33",
+      "source_row": 33,
+      "level": "L2",
+      "node_id": "N11",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "次高四分位",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次高四分位",
+        1,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
+      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+    },
+    {
+      "id": "V62-R34",
+      "source_row": 34,
+      "level": "L2",
+      "node_id": "N11",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "次低四分位",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次低四分位",
+        -1,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
+      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+    },
+    {
+      "id": "V62-R35",
+      "source_row": 35,
+      "level": "L2",
+      "node_id": "N11",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "最低四分位（多在空旷处）",
+      "vectors": {
+        "A": -2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "最低四分位（多在空旷处）",
+        -2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
+      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+    },
+    {
+      "id": "V62-R36",
+      "source_row": 36,
+      "level": "L2",
+      "node_id": "N12",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "整齐度 最高四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 2
+      },
+      "raw": [
+        "L2 失联房间",
+        "重摆沙发椅子：整齐度（池，四分位）",
+        "整齐度 最高四分位",
+        "null",
+        "null",
+        "null",
+        2,
+        "整齐度→F（收尾/整理）。计算方法：物件朝向与间距的规整程度（开发按试玩定义）。"
+      ],
+      "note": "整齐度→F（收尾/整理）。计算方法：物件朝向与间距的规整程度（开发按试玩定义）。",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
+      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+    },
+    {
+      "id": "V62-R37",
+      "source_row": 37,
+      "level": "L2",
+      "node_id": "N12",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "次高四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 1
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次高四分位",
+        "null",
+        "null",
+        "null",
+        1,
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
+      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+    },
+    {
+      "id": "V62-R38",
+      "source_row": 38,
+      "level": "L2",
+      "node_id": "N12",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "次低四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": -1
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次低四分位",
+        "null",
+        "null",
+        "null",
+        -1,
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
+      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+    },
+    {
+      "id": "V62-R39",
+      "source_row": 39,
+      "level": "L2",
+      "node_id": "N12",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "最低四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": -2
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "最低四分位",
+        "null",
+        "null",
+        "null",
+        -2,
+        null
+      ],
+      "note": "",
+      "status": "缺指标与常模",
+      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
+      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+    },
+    {
+      "id": "V62-R40",
+      "source_row": 40,
+      "level": "L2",
+      "node_id": "N13",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "调整次数 最少四分位（一步到位）",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": 2,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        "重摆沙发椅子：调整次数（池，四分位）",
+        "调整次数 最少四分位（一步到位）",
+        "null",
+        "null",
+        2,
+        "null",
+        "调整次数→T（是否一步到位、不反复改动）。'靠近床'无对应物件，删除；不再宣称可测'是否自在'。"
+      ],
+      "note": "调整次数→T（是否一步到位、不反复改动）。'靠近床'无对应物件，删除；不再宣称可测'是否自在'。",
+      "status": "可计数但缺常模",
+      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
+      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+    },
+    {
+      "id": "V62-R41",
+      "source_row": 41,
+      "level": "L2",
+      "node_id": "N13",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "次少四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次少四分位",
+        "null",
+        "null",
+        1,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可计数但缺常模",
+      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
+      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+    },
+    {
+      "id": "V62-R42",
+      "source_row": 42,
+      "level": "L2",
+      "node_id": "N13",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "次多四分位",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": -1,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "次多四分位",
+        "null",
+        "null",
+        -1,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可计数但缺常模",
+      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
+      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+    },
+    {
+      "id": "V62-R43",
+      "source_row": 43,
+      "level": "L2",
+      "node_id": "N13",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "最多四分位（反复挪动）",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": -2,
+        "F": null
+      },
+      "raw": [
+        "L2 失联房间",
+        null,
+        "最多四分位（反复挪动）",
+        "null",
+        "null",
+        -2,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可计数但缺常模",
+      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
+      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+    },
+    {
+      "id": "V62-R44",
+      "source_row": 44,
+      "level": "L3",
+      "node_id": "N14",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "不打开，保持半开",
+      "vectors": {
+        "A": null,
+        "V": 2,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        "半开的门与风暴（风暴无论选择都会来临）",
+        "不打开，保持半开",
+        "null",
+        2,
+        1,
+        "null",
+        "三个互斥终态；风暴无论选择都来临（消除'关上才触发风暴'的因果矛盾，且 L2 结尾已听到风雨）；删除 (+2,+2,+2,+2) 四维同号向量；F 不载以保持 V/T 正交。"
+      ],
+      "note": "三个互斥终态；风暴无论选择都来临（消除'关上才触发风暴'的因果矛盾，且 L2 结尾已听到风雨）；删除 (+2,+2,+2,+2) 四维同号向量；F 不载以保持 V/T 正交。",
+      "status": "可映射但有额外组合",
+      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
+      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+    },
+    {
+      "id": "V62-R45",
+      "source_row": 45,
+      "level": "L3",
+      "node_id": "N14",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "打开并保持",
+      "vectors": {
+        "A": null,
+        "V": -2,
+        "T": 1,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "打开并保持",
+        "null",
+        -2,
+        1,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射但有额外组合",
+      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
+      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+    },
+    {
+      "id": "V62-R46",
+      "source_row": 46,
+      "level": "L3",
+      "node_id": "N14",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "打开后又关上（摆动）",
+      "vectors": {
+        "A": null,
+        "V": 0,
+        "T": -2,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "打开后又关上（摆动）",
+        "null",
+        0,
+        -2,
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射但有额外组合",
+      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
+      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+    },
+    {
+      "id": "V62-R47",
+      "source_row": 47,
+      "level": "L3",
+      "node_id": "N15",
+      "node": "坐稳等待",
+      "option": "坐在沙发等待",
+      "vectors": {
+        "A": 1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        "坐稳等待",
+        "坐在沙发等待",
+        1,
+        "null",
+        "null",
+        "null",
+        "只载 A（等待回应的倾向）。"
+      ],
+      "note": "只载 A（等待回应的倾向）。",
+      "status": "可映射终态",
+      "evidence": "L3 decision slot=wait yes=true/false；outcome.choices.wait",
+      "gap": "重复false回执ALREADY_RECORDED不重复记分；false可改true，取终态"
+    },
+    {
+      "id": "V62-R48",
+      "source_row": 48,
+      "level": "L3",
+      "node_id": "N15",
+      "node": "坐稳等待",
+      "option": "不等待，继续行动",
+      "vectors": {
+        "A": -1,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "不等待，继续行动",
+        -1,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 decision slot=wait yes=true/false；outcome.choices.wait",
+      "gap": "重复false回执ALREADY_RECORDED不重复记分；false可改true，取终态"
+    },
+    {
+      "id": "V62-R49",
+      "source_row": 49,
+      "level": "L3",
+      "node_id": "N16",
+      "node": "右窗窗帘（环境控制）",
+      "option": "拉开窗帘，看清风暴",
+      "vectors": {
+        "A": null,
+        "V": -1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        "右窗窗帘（环境控制）",
+        "拉开窗帘，看清风暴",
+        "null",
+        -1,
+        "null",
+        "null",
+        "窗帘/左窗/风扇三项'环境控制'原各载四维，本质是同一变量计三次。拆分：窗帘→V（面对/遮挡），层级 E。"
+      ],
+      "note": "窗帘/左窗/风扇三项'环境控制'原各载四维，本质是同一变量计三次。拆分：窗帘→V（面对/遮挡），层级 E。",
+      "status": "可映射终态",
+      "evidence": "L3 decision slot=curtain yes=true/false；outcome.choices.curtain",
+      "gap": "按终态取一次"
+    },
+    {
+      "id": "V62-R50",
+      "source_row": 50,
+      "level": "L3",
+      "node_id": "N16",
+      "node": "右窗窗帘（环境控制）",
+      "option": "留帘作屏障",
+      "vectors": {
+        "A": null,
+        "V": 1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "留帘作屏障",
+        "null",
+        1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 decision slot=curtain yes=true/false；outcome.choices.curtain",
+      "gap": "按终态取一次"
+    },
+    {
+      "id": "V62-R51",
+      "source_row": 51,
+      "level": "L3",
+      "node_id": "N17",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "关窗 + 关风扇",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 2
+      },
+      "raw": [
+        "L3 风暴大厅",
+        "左窗与风扇电源（环境控制，合并为收尾度）",
+        "关窗 + 关风扇",
+        "null",
+        "null",
+        "null",
+        2,
+        "左窗+风扇合并为收尾度→F，层级 E；消除'打开后不关门 F+2'与'窗继续开着 F-2'的方向矛盾。"
+      ],
+      "note": "左窗+风扇合并为收尾度→F，层级 E；消除'打开后不关门 F+2'与'窗继续开着 F-2'的方向矛盾。",
+      "status": "道具语义冲突",
+      "evidence": "L3 choices.window 和 choices.television",
+      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+    },
+    {
+      "id": "V62-R52",
+      "source_row": 52,
+      "level": "L3",
+      "node_id": "N17",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "关窗，不关风扇",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 0
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "关窗，不关风扇",
+        "null",
+        "null",
+        "null",
+        0,
+        null
+      ],
+      "note": "",
+      "status": "道具语义冲突",
+      "evidence": "L3 choices.window 和 choices.television",
+      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+    },
+    {
+      "id": "V62-R53",
+      "source_row": 53,
+      "level": "L3",
+      "node_id": "N17",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "不关窗，关风扇",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": 0
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "不关窗，关风扇",
+        "null",
+        "null",
+        "null",
+        0,
+        null
+      ],
+      "note": "",
+      "status": "道具语义冲突",
+      "evidence": "L3 choices.window 和 choices.television",
+      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+    },
+    {
+      "id": "V62-R54",
+      "source_row": 54,
+      "level": "L3",
+      "node_id": "N17",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "都不关",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": -2
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "都不关",
+        "null",
+        "null",
+        "null",
+        -2,
+        null
+      ],
+      "note": "",
+      "status": "道具语义冲突",
+      "evidence": "L3 choices.window 和 choices.television",
+      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+    },
+    {
+      "id": "V62-R55",
+      "source_row": 55,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "不带走任何东西",
+      "vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+        "不带走任何东西",
+        "null",
+        "null",
+        "null",
+        "null",
+        "按行为含义归类计分，而非'物件直接对应分数'的固定向量；'不带走'=NA；取消'带走 = 四维 +2'的基础分；围巾/登山绳 A 方向矛盾已理顺；T/F 不载。"
+      ],
+      "note": "按行为含义归类计分，而非'物件直接对应分数'的固定向量；'不带走'=NA；取消'带走 = 四维 +2'的基础分；围巾/登山绳 A 方向矛盾已理顺；T/F 不载。",
+      "status": "明确NA",
+      "evidence": "L3 carry yes=false；completion=complete、item=null",
+      "gap": "四维NA；不是缺分，也不是四个0"
+    },
+    {
+      "id": "V62-R56",
+      "source_row": 56,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "围巾（陪伴/温度）",
+      "vectors": {
+        "A": -1,
+        "V": -2,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "围巾（陪伴/温度）",
+        -1,
+        -2,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=scarf、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R57",
+      "source_row": 57,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "小灯笼（寻找回应）",
+      "vectors": {
+        "A": 2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "小灯笼（寻找回应）",
+        2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=lantern、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R58",
+      "source_row": 58,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "雨伞（自我保护/边界）",
+      "vectors": {
+        "A": null,
+        "V": 2,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "雨伞（自我保护/边界）",
+        "null",
+        2,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=umbrella、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R59",
+      "source_row": 59,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "指南针（自己判断方向）",
+      "vectors": {
+        "A": -2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "指南针（自己判断方向）",
+        -2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=compass、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R60",
+      "source_row": 60,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "小玩偶（依恋/熟悉）",
+      "vectors": {
+        "A": 1,
+        "V": -1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "小玩偶（依恋/熟悉）",
+        1,
+        -1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=doll、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R61",
+      "source_row": 61,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "钥匙（保留选择/主动权）",
+      "vectors": {
+        "A": null,
+        "V": 1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "钥匙（保留选择/主动权）",
+        "null",
+        1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=key、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R62",
+      "source_row": 62,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "日记本（内在世界/自我安定）",
+      "vectors": {
+        "A": -2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "日记本（内在世界/自我安定）",
+        -2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=journal、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R63",
+      "source_row": 63,
+      "level": "L3",
+      "node_id": "N18",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "登山绳（抓住连接）",
+      "vectors": {
+        "A": 2,
+        "V": null,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L3 风暴大厅",
+        null,
+        "登山绳（抓住连接）",
+        2,
+        "null",
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L3 confirm 接受且 outcome.item=rope、completion=complete",
+      "gap": "只有最终confirm计分；draft换物品不计；carry=yes不再加基础分"
+    },
+    {
+      "id": "V62-R64",
+      "source_row": 64,
+      "level": "L4",
+      "node_id": "N19",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "微光门（寻求连接与安全）",
+      "vectors": {
+        "A": -1,
+        "V": -1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L4 远方之门",
+        "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+        "微光门（寻求连接与安全）",
+        -1,
+        -1,
+        "null",
+        "null",
+        "四扇门恰对应 A/V 四象限（安全/焦虑/回避/恐惧），A/V 严格正交。L4 语义直白、易受社会赞许影响，诊断性下调，幅度 ±1；T/F 不载。对玩家展示的门名建议中性化、位置随机。"
+      ],
+      "note": "四扇门恰对应 A/V 四象限（安全/焦虑/回避/恐惧），A/V 严格正交。L4 语义直白、易受社会赞许影响，诊断性下调，幅度 ±1；T/F 不载。对玩家展示的门名建议中性化、位置随机。",
+      "status": "可映射终态",
+      "evidence": "L4 confirm door=village；outcome.door",
+      "gap": "分值可对应当前门名；门名中性化、位置随机尚未实现；预览不计分"
+    },
+    {
+      "id": "V62-R65",
+      "source_row": 65,
+      "level": "L4",
+      "node_id": "N19",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "静塔门（保持距离、独立观察）",
+      "vectors": {
+        "A": 1,
+        "V": 1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L4 远方之门",
+        null,
+        "静塔门（保持距离、独立观察）",
+        1,
+        1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L4 confirm door=coast；outcome.door",
+      "gap": "分值可对应当前门名；门名中性化、位置随机尚未实现；预览不计分"
+    },
+    {
+      "id": "V62-R66",
+      "source_row": 66,
+      "level": "L4",
+      "node_id": "N19",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "森林门（主动探索、自由寻求）",
+      "vectors": {
+        "A": -1,
+        "V": 1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L4 远方之门",
+        null,
+        "森林门（主动探索、自由寻求）",
+        -1,
+        1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L4 confirm door=forest；outcome.door",
+      "gap": "分值可对应当前门名；门名中性化、位置随机尚未实现；预览不计分"
+    },
+    {
+      "id": "V62-R67",
+      "source_row": 67,
+      "level": "L4",
+      "node_id": "N19",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "宫殿门（稳定关系与确定性）",
+      "vectors": {
+        "A": 1,
+        "V": -1,
+        "T": null,
+        "F": null
+      },
+      "raw": [
+        "L4 远方之门",
+        null,
+        "宫殿门（稳定关系与确定性）",
+        1,
+        -1,
+        "null",
+        "null",
+        null
+      ],
+      "note": "",
+      "status": "可映射终态",
+      "evidence": "L4 confirm door=castle；outcome.door",
+      "gap": "分值可对应当前门名；门名中性化、位置随机尚未实现；预览不计分"
+    }
+  ],
+  "events": [
+    {
+      "id": "L1.take-rope.true",
+      "level": "L1",
+      "label": "拿下绳子：是",
+      "payload": {
+        "type": "choose",
+        "choice": "take-rope",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "ropeClicks从0至5；第5次释放",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "机械动作不逐次计分",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.take-rope.false",
+      "level": "L1",
+      "label": "拿下绳子：否",
+      "payload": {
+        "type": "choose",
+        "choice": "take-rope",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.collect-wood.true",
+      "level": "L1",
+      "label": "材料拾取：是",
+      "payload": {
+        "type": "choose",
+        "choice": "collect-wood",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "wood=true；两件材料中心到缺口",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "修桥过程，不独立计路径分",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.collect-wood.false",
+      "level": "L1",
+      "label": "材料拾取：否",
+      "payload": {
+        "type": "choose",
+        "choice": "collect-wood",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.repair.true",
+      "level": "L1",
+      "label": "修桥：是",
+      "payload": {
+        "type": "choose",
+        "choice": "repair",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "repaired=true；wood=false；仍在河岸",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "修桥过程，过桥后才取路径终态",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.repair.false",
+      "level": "L1",
+      "label": "修桥：否",
+      "payload": {
+        "type": "choose",
+        "choice": "repair",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.cross-bridge.true",
+      "level": "L1",
+      "label": "走桥过河：是",
+      "payload": {
+        "type": "choose",
+        "choice": "cross-bridge",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "scene=shore; route=bridge",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "最终路径",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.cross-bridge.false",
+      "level": "L1",
+      "label": "走桥过河：否",
+      "payload": {
+        "type": "choose",
+        "choice": "cross-bridge",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "4",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.swim.true",
+      "level": "L1",
+      "label": "直接游泳：是",
+      "payload": {
+        "type": "choose",
+        "choice": "swim",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "scene=shore; route=swim",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "5",
+      "scoring": "最终路径",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.swim.false",
+      "level": "L1",
+      "label": "直接游泳：否",
+      "payload": {
+        "type": "choose",
+        "choice": "swim",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "5",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.use-ring.true",
+      "level": "L1",
+      "label": "救生圈过河：是",
+      "payload": {
+        "type": "choose",
+        "choice": "use-ring",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "scene=shore; route=ring",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "6",
+      "scoring": "最终路径",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.use-ring.false",
+      "level": "L1",
+      "label": "救生圈过河：否",
+      "payload": {
+        "type": "choose",
+        "choice": "use-ring",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "6",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.search.true",
+      "level": "L1",
+      "label": "拨草找桨：是",
+      "payload": {
+        "type": "choose",
+        "choice": "search",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "bushClicks从0至5；第5次oar=true",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "7",
+      "scoring": "机械动作不逐次计分",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.search.false",
+      "level": "L1",
+      "label": "拨草找桨：否",
+      "payload": {
+        "type": "choose",
+        "choice": "search",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "7",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.board.true",
+      "level": "L1",
+      "label": "上船：是",
+      "payload": {
+        "type": "choose",
+        "choice": "board",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "rowing=true；需要oar",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "7",
+      "scoring": "路径过程，不额外加分",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.board.false",
+      "level": "L1",
+      "label": "上船：否",
+      "payload": {
+        "type": "choose",
+        "choice": "board",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "7",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet.true",
+      "level": "L1",
+      "label": "向男子打招呼：是",
+      "payload": {
+        "type": "choose",
+        "choice": "greet",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "greeted=true",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:12",
+      "scoring": "仅能证明打招呼，不能证明交谈",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet.false",
+      "level": "L1",
+      "label": "向男子打招呼：否",
+      "payload": {
+        "type": "choose",
+        "choice": "greet",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:12",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet-woman.true",
+      "level": "L1",
+      "label": "向女子打招呼：是",
+      "payload": {
+        "type": "choose",
+        "choice": "greet-woman",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "greetedWoman=true",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:12",
+      "scoring": "两个独立人物的节点合并待定",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet-woman.false",
+      "level": "L1",
+      "label": "向女子打招呼：否",
+      "payload": {
+        "type": "choose",
+        "choice": "greet-woman",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:12",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.take-lamp.true",
+      "level": "L1",
+      "label": "拿灯：是",
+      "payload": {
+        "type": "choose",
+        "choice": "take-lamp",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "lampTaken=true",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "13:16",
+      "scoring": "灯四种终态归并",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.take-lamp.false",
+      "level": "L1",
+      "label": "拿灯：否",
+      "payload": {
+        "type": "choose",
+        "choice": "take-lamp",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "13:16",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.light-lamp.true",
+      "level": "L1",
+      "label": "点灯：是",
+      "payload": {
+        "type": "choose",
+        "choice": "light-lamp",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "lampLit=true；可先点后拿",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "13:16",
+      "scoring": "灯四种终态归并",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.light-lamp.false",
+      "level": "L1",
+      "label": "点灯：否",
+      "payload": {
+        "type": "choose",
+        "choice": "light-lamp",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "13:16",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.enter.true",
+      "level": "L1",
+      "label": "进门结束L1：是",
+      "payload": {
+        "type": "choose",
+        "choice": "enter",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "scene=complete；冻结路线/灯/人物结果",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:16",
+      "scoring": "完成和终态截止，不另加基础分",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.enter.false",
+      "level": "L1",
+      "label": "进门结束L1：否",
+      "payload": {
+        "type": "choose",
+        "choice": "enter",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "仅记录明确拒绝；状态保持；可重选",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "10:16",
+      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.paddle",
+      "level": "L1",
+      "label": "划桨一次（1–5）",
+      "payload": {
+        "type": "paddle"
+      },
+      "visibility": "服务器动作",
+      "facts": "strokes+1；第5次scene=shore,route=boat",
+      "source": "apps/api/app/domain.py:35",
+      "v62_rows": "7",
+      "scoring": "五次是机械过程，只取boat路径终态",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.arrive-table",
+      "level": "L2",
+      "label": "arrive-table",
+      "payload": {
+        "type": "arrive-table"
+      },
+      "visibility": "服务器动作",
+      "facts": "atTable=true",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "19",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.return-hall",
+      "level": "L2",
+      "label": "return-hall",
+      "payload": {
+        "type": "return-hall"
+      },
+      "visibility": "服务器动作",
+      "facts": "view=room；searching变returned",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "30:31",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.curtain-click",
+      "level": "L2",
+      "label": "curtain-click",
+      "payload": {
+        "type": "curtain-click"
+      },
+      "visibility": "服务器动作",
+      "facts": "curtainClicks+1；第3次status=found",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "29:31",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-start",
+      "level": "L2",
+      "label": "layout-start",
+      "payload": {
+        "type": "layout-start"
+      },
+      "visibility": "服务器动作",
+      "facts": "editing=true",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-exit",
+      "level": "L2",
+      "label": "layout-exit",
+      "payload": {
+        "type": "layout-exit"
+      },
+      "visibility": "服务器动作",
+      "facts": "editing=false",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-confirm",
+      "level": "L2",
+      "label": "layout-confirm",
+      "payload": {
+        "type": "layout-confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "exitDoorOpen=true；保存confirmed/baseline/classification",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "本地v2任意确认开出口；GitHub v1仅tidy确认开出口；当前分类不是V6.2分位",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-undo",
+      "level": "L2",
+      "label": "layout-undo",
+      "payload": {
+        "type": "layout-undo"
+      },
+      "visibility": "服务器动作",
+      "facts": "从history回退layout",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-reset",
+      "level": "L2",
+      "label": "layout-reset",
+      "payload": {
+        "type": "layout-reset"
+      },
+      "visibility": "服务器动作",
+      "facts": "layout回初始；原布局入history",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.explore.true",
+      "level": "L2",
+      "label": "explore：是",
+      "payload": {
+        "type": "explore",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "24:28",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "拒绝后可重选，节点截止未定义",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.explore.false",
+      "level": "L2",
+      "label": "explore：否",
+      "payload": {
+        "type": "explore",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "24:28",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "拒绝后可重选，节点截止未定义",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.search-choice.true",
+      "level": "L2",
+      "label": "search-choice：是",
+      "payload": {
+        "type": "search-choice",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "29:31",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "拒绝后可重选，节点截止未定义",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.search-choice.false",
+      "level": "L2",
+      "label": "search-choice：否",
+      "payload": {
+        "type": "search-choice",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "29:31",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "拒绝后可重选，节点截止未定义",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.chair.true",
+      "level": "L2",
+      "label": "窗边椅坐下",
+      "payload": {
+        "type": "sit",
+        "seat": "chair",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "17:19",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.chair.false",
+      "level": "L2",
+      "label": "窗边椅不坐",
+      "payload": {
+        "type": "sit",
+        "seat": "chair",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "17:19",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.table-seat.true",
+      "level": "L2",
+      "label": "桌前椅坐下",
+      "payload": {
+        "type": "sit",
+        "seat": "table-seat",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "17:19",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.table-seat.false",
+      "level": "L2",
+      "label": "桌前椅不坐",
+      "payload": {
+        "type": "sit",
+        "seat": "table-seat",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "17:19",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.select-key.key-1",
+      "level": "L2",
+      "label": "select-key key-1",
+      "payload": {
+        "type": "select-key",
+        "key": "key-1"
+      },
+      "visibility": "服务器动作",
+      "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "20:25",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "keys不是比较次数；同一key不能重复试门",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.select-key.key-2",
+      "level": "L2",
+      "label": "select-key key-2",
+      "payload": {
+        "type": "select-key",
+        "key": "key-2"
+      },
+      "visibility": "服务器动作",
+      "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "20:25",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "keys不是比较次数；同一key不能重复试门",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.try-door.key-1",
+      "level": "L2",
+      "label": "try-door key-1",
+      "payload": {
+        "type": "try-door",
+        "key": "key-1"
+      },
+      "visibility": "服务器动作",
+      "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "20:25",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "keys不是比较次数；同一key不能重复试门",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.try-door.key-2",
+      "level": "L2",
+      "label": "try-door key-2",
+      "payload": {
+        "type": "try-door",
+        "key": "key-2"
+      },
+      "visibility": "服务器动作",
+      "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "20:25",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "keys不是比较次数；同一key不能重复试门",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.view.room",
+      "level": "L2",
+      "label": "切换视图 room",
+      "payload": {
+        "type": "view",
+        "view": "room"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.view；进入table需要available",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "",
+      "scoring": "导航过程无独立分值",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.view.table",
+      "level": "L2",
+      "label": "切换视图 table",
+      "payload": {
+        "type": "view",
+        "view": "table"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.view；进入table需要available",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "",
+      "scoring": "导航过程无独立分值",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.search-time",
+      "level": "L2",
+      "label": "上报搜寻活动时长",
+      "payload": {
+        "type": "search-time",
+        "activeMs": "<累计毫秒>"
+      },
+      "visibility": "服务器动作",
+      "facts": "activeMs/long；每次增量<=10000；API墙钟上界+250ms；timing_verified=false",
+      "source": "apps/api/app/l2_api.py:96",
+      "v62_rows": "30:31",
+      "scoring": "时长证据不足以证明真人持续注意；>=与>冲突",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-move.armchair",
+      "level": "L2",
+      "label": "移动家具 armchair",
+      "payload": {
+        "type": "layout-move",
+        "id": "armchair",
+        "point": {
+          "u": "<number>",
+          "v": "<number>"
+        }
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
+      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-move.chair",
+      "level": "L2",
+      "label": "移动家具 chair",
+      "payload": {
+        "type": "layout-move",
+        "id": "chair",
+        "point": {
+          "u": "<number>",
+          "v": "<number>"
+        }
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
+      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-move.sofa",
+      "level": "L2",
+      "label": "移动家具 sofa",
+      "payload": {
+        "type": "layout-move",
+        "id": "sofa",
+        "point": {
+          "u": "<number>",
+          "v": "<number>"
+        }
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
+      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.layout-move.table-chair",
+      "level": "L2",
+      "label": "移动家具 table-chair",
+      "payload": {
+        "type": "layout-move",
+        "id": "table-chair",
+        "point": {
+          "u": "<number>",
+          "v": "<number>"
+        }
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
+      "source": "apps/api/app/l2_domain.py:22",
+      "v62_rows": "32:43",
+      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
+      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.open.true",
+      "level": "L3",
+      "label": "open：是",
+      "payload": {
+        "type": "decision",
+        "slot": "open",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.open；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "44:46",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.open.false",
+      "level": "L3",
+      "label": "open：否",
+      "payload": {
+        "type": "decision",
+        "slot": "open",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.open；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "44:46",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.close.true",
+      "level": "L3",
+      "label": "close：是",
+      "payload": {
+        "type": "decision",
+        "slot": "close",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.close；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "44:46",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.close.false",
+      "level": "L3",
+      "label": "close：否",
+      "payload": {
+        "type": "decision",
+        "slot": "close",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.close；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "44:46",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.wait.true",
+      "level": "L3",
+      "label": "wait：是",
+      "payload": {
+        "type": "decision",
+        "slot": "wait",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.wait；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "47:48",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.wait.false",
+      "level": "L3",
+      "label": "wait：否",
+      "payload": {
+        "type": "decision",
+        "slot": "wait",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.wait；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "47:48",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.curtain.true",
+      "level": "L3",
+      "label": "curtain：是",
+      "payload": {
+        "type": "decision",
+        "slot": "curtain",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.curtain；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "49:50",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.curtain.false",
+      "level": "L3",
+      "label": "curtain：否",
+      "payload": {
+        "type": "decision",
+        "slot": "curtain",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.curtain；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "49:50",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.window.true",
+      "level": "L3",
+      "label": "window：是",
+      "payload": {
+        "type": "decision",
+        "slot": "window",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.window；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "51:54",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.window.false",
+      "level": "L3",
+      "label": "window：否",
+      "payload": {
+        "type": "decision",
+        "slot": "window",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.window；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "51:54",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.television.true",
+      "level": "L3",
+      "label": "television：是",
+      "payload": {
+        "type": "decision",
+        "slot": "television",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.television；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "51:54",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.decision.television.false",
+      "level": "L3",
+      "label": "television：否",
+      "payload": {
+        "type": "decision",
+        "slot": "television",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.choices.television；六项均回答后segment=carry",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "51:54",
+      "scoring": "需按V6.2节点终态归并",
+      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.carry.true",
+      "level": "L3",
+      "label": "是否带物品：True",
+      "payload": {
+        "type": "carry",
+        "yes": true
+      },
+      "visibility": "服务器动作",
+      "facts": "carry=false直接complete,item=null；true等待draft/confirm",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "55:63",
+      "scoring": "false全维NA；true本身不加基础分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.carry.false",
+      "level": "L3",
+      "label": "是否带物品：False",
+      "payload": {
+        "type": "carry",
+        "yes": false
+      },
+      "visibility": "服务器动作",
+      "facts": "carry=false直接complete,item=null；true等待draft/confirm",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "55:63",
+      "scoring": "false全维NA；true本身不加基础分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.scarf",
+      "level": "L3",
+      "label": "暂选 scarf",
+      "payload": {
+        "type": "draft",
+        "item": "scarf"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "56",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.scarf",
+      "level": "L3",
+      "label": "最终带走 scarf",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "56",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.lantern",
+      "level": "L3",
+      "label": "暂选 lantern",
+      "payload": {
+        "type": "draft",
+        "item": "lantern"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "57",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.lantern",
+      "level": "L3",
+      "label": "最终带走 lantern",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "57",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.umbrella",
+      "level": "L3",
+      "label": "暂选 umbrella",
+      "payload": {
+        "type": "draft",
+        "item": "umbrella"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "58",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.umbrella",
+      "level": "L3",
+      "label": "最终带走 umbrella",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "58",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.compass",
+      "level": "L3",
+      "label": "暂选 compass",
+      "payload": {
+        "type": "draft",
+        "item": "compass"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "59",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.compass",
+      "level": "L3",
+      "label": "最终带走 compass",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "59",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.doll",
+      "level": "L3",
+      "label": "暂选 doll",
+      "payload": {
+        "type": "draft",
+        "item": "doll"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "60",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.doll",
+      "level": "L3",
+      "label": "最终带走 doll",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "60",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.key",
+      "level": "L3",
+      "label": "暂选 key",
+      "payload": {
+        "type": "draft",
+        "item": "key"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "61",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.key",
+      "level": "L3",
+      "label": "最终带走 key",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "61",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.journal",
+      "level": "L3",
+      "label": "暂选 journal",
+      "payload": {
+        "type": "draft",
+        "item": "journal"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "62",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.journal",
+      "level": "L3",
+      "label": "最终带走 journal",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "62",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.rope",
+      "level": "L3",
+      "label": "暂选 rope",
+      "payload": {
+        "type": "draft",
+        "item": "rope"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "63",
+      "scoring": "草稿不计分",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.rope",
+      "level": "L3",
+      "label": "最终带走 rope",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "63",
+      "scoring": "按最终物品取一次V6.2向量",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.draft.backpack",
+      "level": "L3",
+      "label": "暂选 backpack",
+      "payload": {
+        "type": "draft",
+        "item": "backpack"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.draft更新；item仍未最终确认",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "",
+      "scoring": "草稿不计分",
+      "note": "backpack背包不在V6.2表",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.confirm.backpack",
+      "level": "L3",
+      "label": "最终带走 backpack",
+      "payload": {
+        "type": "confirm"
+      },
+      "visibility": "服务器动作",
+      "facts": "服务器取已存draft为item；completion=complete",
+      "source": "apps/api/app/l3_domain.py:16",
+      "v62_rows": "",
+      "scoring": "缺失分值，待用户补充",
+      "note": "confirm请求无item，不能绕过draft",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.confirm.village",
+      "level": "L4",
+      "label": "确认出口 village",
+      "payload": {
+        "type": "confirm",
+        "door": "village"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.door/item/completion=complete；后续新动作拒绝",
+      "source": "apps/api/app/l4_domain.py:13",
+      "v62_rows": "64",
+      "scoring": "终态一次；T/F为NA",
+      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.confirm.coast",
+      "level": "L4",
+      "label": "确认出口 coast",
+      "payload": {
+        "type": "confirm",
+        "door": "coast"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.door/item/completion=complete；后续新动作拒绝",
+      "source": "apps/api/app/l4_domain.py:13",
+      "v62_rows": "65",
+      "scoring": "终态一次；T/F为NA",
+      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.confirm.forest",
+      "level": "L4",
+      "label": "确认出口 forest",
+      "payload": {
+        "type": "confirm",
+        "door": "forest"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.door/item/completion=complete；后续新动作拒绝",
+      "source": "apps/api/app/l4_domain.py:13",
+      "v62_rows": "66",
+      "scoring": "终态一次；T/F为NA",
+      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.confirm.castle",
+      "level": "L4",
+      "label": "确认出口 castle",
+      "payload": {
+        "type": "confirm",
+        "door": "castle"
+      },
+      "visibility": "服务器动作",
+      "facts": "outcome.door/item/completion=complete；后续新动作拒绝",
+      "source": "apps/api/app/l4_domain.py:13",
+      "v62_rows": "67",
+      "scoring": "终态一次；T/F为NA",
+      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.meta.object-open",
+      "level": "L1",
+      "label": "object-open",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "查看人物/道具、关提示、拖动物品摆放（未触发业务动作）不进事件表",
+      "source": "apps/api/app/main.py:111",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.meta.restart",
+      "level": "L1",
+      "label": "restart",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "POST sessions创建新旅程，旧会话保留，不是一次拒绝",
+      "source": "apps/api/app/main.py:111",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.meta.start",
+      "level": "L2",
+      "label": "start",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "POST levels/l2幂等建run，不写业务事件；要求L1完成",
+      "source": "apps/api/app/l2_api.py:96",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.meta.start",
+      "level": "L3",
+      "label": "start",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "POST levels/l3幂等建run，要求L2出口开",
+      "source": "apps/api/app/l3_api.py:90",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.meta.start",
+      "level": "L4",
+      "label": "start",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "POST levels/l4幂等建run，携带L3最终item",
+      "source": "apps/api/app/l4_api.py:94",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.meta.preview",
+      "level": "L4",
+      "label": "preview",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "选门预览/取消无业务事件，只有confirm写入",
+      "source": "apps/api/app/main.py:111",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "ALL.meta.resume",
+      "level": "ALL",
+      "label": "resume",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "GET快照/GET events/结果读取不写业务事件",
+      "source": "apps/api/app/main.py:111",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "ALL.meta.rejection",
+      "level": "ALL",
+      "label": "rejection",
+      "payload": {},
+      "visibility": "系统/前端边界",
+      "facts": "409业务拒绝入回执但不加分；422结构错误/认证失败不写事件表；同ID换载荷409直接拒绝",
+      "source": "apps/api/app/main.py:111",
+      "v62_rows": "",
+      "scoring": "非计分动作",
+      "note": "",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    }
+  ],
+  "notes": [
+    [
+      "变更说明",
+      1,
+      [
+        "情感密室｜评分体系修订（变更单附件）",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      2,
+      [
+        "基于 V6.1 完整四幕游戏设计确认稿；建议形成 V6.2。本附件为建议稿，不替代已签署的 V6.1 内容，经双方确认并另签变更单后生效。",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      4,
+      [
+        "一、修订目标",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      5,
+      [
+        "1",
+        "消除系统性偏移：等概率随机玩家不应被判为某一类型（V6.1 下 47% 落入恐惧象限，笃定象仅 0.5%）。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      6,
+      [
+        "2",
+        "让 A/V/T/F 四个维度相互独立，T/F 不再等同于 V/A 的影子。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      7,
+      [
+        "3",
+        "去除重复计分、方向矛盾、四维同号向量；每个选项只载必要维度，未测量的维度为 NA（空白），不再用 0 代替。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      8,
+      [
+        "4",
+        "给出可审计的归一化公式、判定规则与常模更新方法，并附可复算的模拟脚本。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      10,
+      [
+        "二、变更摘要（V6.1 → 建议 V6.2）",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      11,
+      [
+        "项目",
+        "V6.1 现状",
+        "建议修订"
+      ]
+    ],
+    [
+      "变更说明",
+      12,
+      [
+        "计分粒度",
+        "每次点击/每行独立累加 -3~+3；同一意图可命中多行（如'不点选人'命中 4 行）。",
+        "以'决策节点终态'计分，一个节点只取一个选项；原 68 行重排为 19 个节点、64 个选项（见'修订评分表'与'V6.1原分值对照'）。"
+      ]
+    ],
+    [
+      "变更说明",
+      13,
+      [
+        "聚合与归一化",
+        "未定义；累加使路径越长分越极端（船桨 ×5 时 F 一项 +10）。",
+        "场景内加权均值 + 收缩先验 κ，再按场景权重合并，总分落在 [-3,+3]；公式见'计算器'。重复动作封顶。"
+      ]
+    ],
+    [
+      "变更说明",
+      14,
+      [
+        "0 与缺失",
+        "'0 = 中性或证据不足'混用。",
+        "空白 = NA（不提供证据，不计入分母）；0 仅表示确有证据显示中性。"
+      ]
+    ],
+    [
+      "变更说明",
+      15,
+      [
+        "零均值",
+        "行均值 A/V 为 +0.18，'犹豫/谨慎'类选项系统性偏正。",
+        "每个节点在每个维度上所有选项分值之和为 0（'零和校验'页自动检验）。"
+      ]
+    ],
+    [
+      "变更说明",
+      16,
+      [
+        "维度载荷",
+        "68 行中 46 行四维全非零；7 行四维同号（如 +2,+2,+2,+2）。",
+        "见'变更说明'下方统计；每个选项只载 1–3 个维度，其余 NA；无四维同号向量。"
+      ]
+    ],
+    [
+      "变更说明",
+      17,
+      [
+        "T / F 的含义",
+        "T 与 IFS、Winnicott 真我混用；第一章称不作评分维度，第三章却计分。",
+        "统一按行为操作化：T = 自发性与一致性（不依赖外部提示、不反复改口）；F = 收尾与确认倾向（完形闭合）。两者是游戏化修饰轴，不宣称为经过验证的心理构念。"
+      ]
+    ],
+    [
+      "变更说明",
+      18,
+      [
+        "重复与矛盾条目",
+        "见 V6.1 逐条核对（L2-04 备注与分值矛盾、L1 对岸 A 方向矛盾等）。",
+        "逐行处理见'V6.1原分值对照'：保留/改写/合并/拆分/删除，均附理由。"
+      ]
+    ],
+    [
+      "变更说明",
+      19,
+      [
+        "类型判定",
+        "阈值 0 固定；无临界处理；求和抵消导致恐惧型（接近-回避摆动）无法识别。",
+        "按常模 z 分数判定，|z|<0.25 标为临界；增加摆动规则（N2-5 先退后进、N3-1 开后又关同时发生，且 A/V 不低于临界，归入恐惧象限）。"
+      ]
+    ],
+    [
+      "变更说明",
+      20,
+      [
+        "场景操作数",
+        "L2 共 4 块操作、L3-01 有 5–6 个动作，与'每场景最多 3 个主要操作'不符。",
+        "L2-02/03/04 作为随机池（每局 3 选 2），L3 环境控制合并为 1 个主要操作；计算公式已支持节点缺失。"
+      ]
+    ],
+    [
+      "变更说明",
+      21,
+      [
+        "L4 权重",
+        "单一决策可决定 A/V 的大部分走向。",
+        "幅度降为 ±1、场景权重 0.2；场景对总方差贡献比见'模拟结果'。"
+      ]
+    ],
+    [
+      "变更说明",
+      22,
+      [
+        "载荷统计（新表）",
+        "V6.1：68 行，其中 46 行四维全非零，平均每行 3.65 个维度非零。",
+        "=\"新表：共 \"&ROWS(修订评分表!#REF!)&\" 个选项，其中 \"&SUMPRODUCT((修订评分表!$D$4:$D$67<>\"\")*(修订评分表!$E$4:$E$67<>\"\")*(修订评分表!$F$4:$F$67<>\"\")*(修订评分表!$G$4:$G$67<>\"\"))&\" 个四维全载；平均每个选项载 \"&TEXT(COUNT(修订评分表!$D$4:$G$67)/ROWS(修订评分表!#REF!),\"0.00\")&\" 个维度。\""
+      ]
+    ],
+    [
+      "变更说明",
+      24,
+      [
+        "三、维度定义卡（锚点行为）",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      25,
+      [
+        "维度",
+        "正极（+）锚点",
+        "负极（-）锚点"
+      ]
+    ],
+    [
+      "变更说明",
+      26,
+      [
+        "A 依恋焦虑",
+        "持续搜寻缺失的对象；需要额外确认与回应；抓住连接；等待回应。",
+        "接受缺失；自主探索；不追问、不紧抓。"
+      ]
+    ],
+    [
+      "变更说明",
+      27,
+      [
+        "V 依恋回避",
+        "绕开人物、放弃接触、独处、保持距离、遮挡外部刺激。",
+        "主动接近、接受陪伴、面对外部情境。"
+      ]
+    ],
+    [
+      "变更说明",
+      28,
+      [
+        "T 自发/一致（真我修饰轴）",
+        "选择不依赖外部提示；前后一致；一步到位。",
+        "依赖外部提示；改口、反复挪动。"
+      ]
+    ],
+    [
+      "变更说明",
+      29,
+      [
+        "F 收尾/确认（完形修饰轴）",
+        "点亮、关闭、整理、反复确认；把事情做完。",
+        "留白、放任未完成、不确认。"
+      ]
+    ],
+    [
+      "变更说明",
+      31,
+      [
+        "四、图例与使用",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      32,
+      [
+        "蓝色字体",
+        "可调参数或示例输入（'参数'页、'计算器'页的选项序号/出现开关）。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      33,
+      [
+        "黄色底色",
+        "需要双方确认的关键假设。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      34,
+      [
+        "空白分值",
+        "NA：该选项对该维度不提供证据，不参与计算。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      35,
+      [
+        "层级 R / M / E",
+        "证据层级：R 直接关系行为；M 间接关系隐喻；E 环境或空间偏好（受操作、审美、界面影响，权重低）。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      36,
+      [
+        "使用顺序",
+        "①读'变更说明'→②核对'修订评分表'与'V6.1原分值对照'→③'零和校验'应全部通过→④在'计算器'里输入示例路径复算→⑤'模拟结果'为脚本输出（qinggan_scoring_sim.py 可复现）。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      38,
+      [
+        "五、配套改动（非分值，建议同步写入开发文档）",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      39,
+      [
+        "•",
+        "状态机补全：对岸不交谈后的走向；L2 黑屋停在门口后的二次提示与兜底推进；L2-03 搜寻 >=15 秒后离开；L3 不开门时的分支。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      40,
+      [
+        "•",
+        "L3 风暴无论玩家选择都来临；L2 结尾已有风雨提示，保持因果一致。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      41,
+      [
+        "•",
+        "L2-03 的 hover 改为点击触发；手机端无 hover。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      42,
+      [
+        "•",
+        "L4 门名对玩家中性化、位置随机；不设'宫殿'等有等级暗示的名称。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      43,
+      [
+        "•",
+        "L1 线索需定义内容；L1 对岸人物设定统一为'模糊的熟悉身影'。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      44,
+      [
+        "•",
+        "L1 出现两个 L1-01 编号，章节号缺五、六、七、九、十一；象限名'逃避/混乱'与 16 型表的'回避/恐惧'需统一。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      45,
+      [
+        "•",
+        "版本与签署：乙方签字日期（9/20）早于 9/23 增补内容，建议以 V6.2 + 变更单重新确认。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      47,
+      [
+        "六、待双方确认的参数",
+        null,
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      48,
+      [
+        "证据层级权重 R/M/E、场景权重 W、收缩先验 κ",
+        "'参数'页；初始值为设计假设，非实证估计。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      49,
+      [
+        "临界带 0.25 与摆动规则是否启用",
+        "试玩前默认启用摆动规则；试玩后按恐惧象限的外部校标结果决定保留与否。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      50,
+      [
+        "常模 μ/σ",
+        "当前来自等概率随机玩家模拟；试玩样本 >=300 后替换为真实样本均值/标准差，并每季度复核。",
+        null
+      ]
+    ],
+    [
+      "变更说明",
+      51,
+      [
+        "外部校标",
+        "建议随试玩收集 ECR-R 等量表，检验 A/V 与外部量表的相关；T/F 无标准量表，仅做行为稳定性与重测信度检验。",
+        null
+      ]
+    ]
+  ]
+}

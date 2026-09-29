@@ -1,0 +1,185 @@
+{
+  "migration": "0004_l4",
+  "L1": [
+    {
+      "type": "choose",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 345
+    },
+    {
+      "type": "paddle",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 35
+    }
+  ],
+  "L2": [
+    {
+      "type": "arrive-table",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 24
+    },
+    {
+      "type": "curtain-click",
+      "accepted": "false",
+      "code": "ACTION_NOT_ALLOWED",
+      "count": 6
+    },
+    {
+      "type": "curtain-click",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 42
+    },
+    {
+      "type": "explore",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 32
+    },
+    {
+      "type": "layout-confirm",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 70
+    },
+    {
+      "type": "layout-exit",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 31
+    },
+    {
+      "type": "layout-move",
+      "accepted": "false",
+      "code": "INVALID_PLACEMENT",
+      "count": 42
+    },
+    {
+      "type": "layout-move",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 120
+    },
+    {
+      "type": "layout-reset",
+      "accepted": "false",
+      "code": "NO_CHANGE",
+      "count": 7
+    },
+    {
+      "type": "layout-reset",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 2
+    },
+    {
+      "type": "layout-start",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 102
+    },
+    {
+      "type": "layout-undo",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 4
+    },
+    {
+      "type": "return-hall",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 21
+    },
+    {
+      "type": "search-choice",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 15
+    },
+    {
+      "type": "search-time",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 72
+    },
+    {
+      "type": "select-key",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 53
+    },
+    {
+      "type": "sit",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 5
+    },
+    {
+      "type": "try-door",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 53
+    },
+    {
+      "type": "view",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 46
+    }
+  ],
+  "L3": [
+    {
+      "type": "carry",
+      "accepted": "false",
+      "code": "STORM_NOT_COMPLETE",
+      "count": 12
+    },
+    {
+      "type": "carry",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 21
+    },
+    {
+      "type": "confirm",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 12
+    },
+    {
+      "type": "decision",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 126
+    },
+    {
+      "type": "decision",
+      "accepted": "true",
+      "code": "ALREADY_RECORDED",
+      "count": 14
+    },
+    {
+      "type": "draft",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 12
+    }
+  ],
+  "L4": [
+    {
+      "type": "confirm",
+      "accepted": "false",
+      "code": "L4_COMPLETE",
+      "count": 4
+    },
+    {
+      "type": "confirm",
+      "accepted": "true",
+      "code": "ACCEPTED",
+      "count": 7
+    }
+  ]
+}

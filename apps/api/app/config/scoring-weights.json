@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "active_version": "Scoring_weight_version_1",
+  "versions": {
+    "Scoring_weight_version_1": {
+      "L1": 0.2,
+      "L2": 0.3,
+      "L3": 0.3,
+      "L4": 0.2
+    }
+  }
+}
