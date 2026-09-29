@@ -1,0 +1,98 @@
+.game {min-height:100dvh;display:grid;place-items:center;background:#17151a;color:#fff8ef;}
+.stage {display:grid;grid-template-columns:repeat(24,minmax(0,1fr));grid-template-rows:repeat(16,minmax(0,1fr));width:min(100vw,183.031dvh);aspect-ratio:1920/1049;isolation:isolate;}
+.scene {grid-area:1/1/-1/-1;width:100%;height:100%;overflow:hidden;}
+.heading {grid-area:1/2/4/16;align-self:center;pointer-events:none;z-index:1;text-shadow:0 2px 10px #000;}
+.heading p {font-size:11px;letter-spacing:.2em;margin-bottom:5px;}
+.heading h1 {font:600 clamp(20px,2.4vw,38px)/1.2 'Songti SC','SimSun',serif;letter-spacing:.12em;}
+.heading span {display:block;font-size:11px;margin-top:8px;}
+.menu {grid-area:1/23/3/25;align-self:center;justify-self:center;background:#25212ac9;z-index:4;font-size:21px;padding:3px 12px;}
+.hotspot {cursor:pointer;outline:none;touch-action:manipulation;}
+.hotspot > rect {fill:transparent;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;}
+.hotspot:not([aria-disabled=true]):hover > rect,.hotspot:focus-visible > rect {fill:#fff2d90a;stroke:#edc7a1bb;}
+.hotspot[aria-disabled=true] {cursor:default;}
+.bubble {align-self:center;justify-self:center;width:min(350px,44vw);max-height:74dvh;overflow:auto;padding:16px;background:#302c35ef;border:1px solid #dbc6b36b;border-radius:14px;z-index:4;box-shadow:0 10px 40px #0005;animation:appear .2s ease-out;}
+.doorBubble {grid-area:5/7/12/17;}.rightBubble {grid-area:5/14/12/24;}.centerBubble {grid-area:5/8/13/20;}
+.bubbleTitle {display:flex;align-items:start;gap:10px;justify-content:space-between;}
+.bubble h2 {font-size:clamp(14px,1.3vw,18px);line-height:1.7;outline:none;}
+.bubbleTitle button {padding:0;min-width:32px;min-height:32px;font-size:23px;flex-shrink:0;}
+.bubble p {font-size:12px;line-height:1.7;margin-block:12px;}
+.actions {display:flex;gap:10px;justify-content:end;flex-wrap:wrap;margin-top:14px;}
+.primary {background:#765540;border-color:#cbb196;}
+.status {grid-area:15/2/17/20;align-self:center;justify-self:center;padding:8px 13px;background:#231f2be3;border-radius:12px;font-size:clamp(10px,.85vw,13px);line-height:1.6;text-align:center;z-index:1;pointer-events:none;}
+.inventory {grid-area:13/21/17/24;display:grid;justify-items:center;align-content:center;align-self:center;gap:6px;min-height:90px;background:#211d26c9;border:1px solid #f8edd044;border-radius:13px;z-index:2;padding:10px;font-size:12px;}
+.inventory img {width:60px;height:60px;object-fit:contain;}.inventory small {font-size:10px;}
+.carryStart {grid-area:7/9/10/18;align-self:center;justify-self:center;background:#302c35ed;z-index:2;}
+.selection {grid-area:4/7/15/21;align-self:center;display:grid;gap:9px;padding:18px;background:#28242bf2;border:1px solid #d8c4a963;border-radius:16px;z-index:3;max-height:74dvh;overflow:auto;}
+.selection h2 {font:500 clamp(16px,1.6vw,24px)/1.3 'Songti SC',serif;}.selection p {font-size:12px;}
+.items {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
+.items button {display:grid;justify-items:center;align-content:center;gap:3px;min-width:0;padding:4px;font-size:12px;background:#ffffff08;}
+.items button[aria-pressed=true] {border-color:#e3c39d;background:#dfb88025;}
+.items img {height:clamp(36px,6dvh,70px);width:100%;object-fit:contain;}
+.missing {height:clamp(36px,6dvh,70px);display:grid;place-items:center;color:#c1b8ac;font-size:11px;}
+.result {grid-area:6/7/13/20;align-self:center;padding:24px;background:#27232df2;border:1px solid #d8c4a963;border-radius:14px;z-index:3;}
+.result h2 {font-size:23px;}.result p {font-size:13px;line-height:1.8;margin-block:15px;}
+.loading {grid-area:1/1/-1/-1;z-index:5;display:grid;place-content:center;justify-items:center;gap:16px;background:#211d29ec;}
+.notice {grid-area:7/3/14/23;align-self:center;z-index:6;padding:20px;background:#322630fa;border:1px solid #b49475;border-radius:12px;}.notice p{margin-bottom:12px;}
+.dialog {background:#29262f;color:#fff8ef;border:1px solid #cbb19666;border-radius:12px;padding:24px;max-width:min(92vw,580px);max-height:90dvh;overflow:auto;}
+.dialog::backdrop {background:#100e16b8;backdrop-filter:blur(3px);}
+.dialog h2 {font-size:22px;margin-bottom:14px;}.dialog p {font-size:14px;line-height:1.8;margin-bottom:15px;}
+.dialog ol {padding-left:22px;}.dialog li {margin-block:16px;font-size:13px;}.dialog small {display:block;overflow-wrap:anywhere;margin-top:6px;color:#c2bcb2;}
+.close {float:right;min-height:32px;padding:0 8px;font-size:23px;}
+.menuActions {display:grid;gap:8px;}.menuActions a,.gate a {padding:12px;border:1px solid #cbb19655;border-radius:7px;}
+.gate {min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:start;gap:22px;max-width:700px;margin:auto;padding:30px;}.gate p{line-height:1.8;}
+.storm {animation:shake .4s ease-out 1;}
+.reduced * {animation:none!important;transition:none!important;}
+@keyframes shake {25%{transform:translateX(2px)}75%{transform:translateX(-2px)}}
+@keyframes appear {from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+@media(max-height:500px) and (orientation:landscape) {
+ .heading {grid-area:1/2/4/17;}.heading h1{font-size:20px;}.heading span{margin-top:3px;font-size:10px;}.heading p{display:none;}
+ .bubble {padding:11px;max-height:86dvh;}.selection {grid-area:3/8/15/21;max-height:76dvh;padding:10px;gap:5px;}
+ .selection h2{font-size:16px;}.selection p{font-size:10px;}.items{gap:4px;}.items button{font-size:10px;}.items img,.missing{height:32px;}
+ .selection>button{min-height:38px;padding:6px;}.inventory{padding:6px;min-height:65px;}.inventory img{width:34px;height:34px;}
+ .status{font-size:10px;padding:5px 8px;}.result{padding:16px;}.result h2{font-size:18px;}
+}
+@media(prefers-reduced-motion:reduce){.game *{animation:none;transition:none;}}
+
+.marker {pointer-events:none;}
+.marker rect {fill:#29242be8;stroke:#ddc5ab88;stroke-width:1;}
+.marker text {fill:#fff5e7;font:30px 'Microsoft YaHei',sans-serif;}
+.hotspot[aria-disabled=true] .marker {opacity:.45;}
+.windowBubble {grid-area:5/8/12/18;}
+.waitBubble {grid-area:9/7/16/18;}
+.pickable {cursor:pointer;outline:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.carryHint {cursor:pointer;outline:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
+.carryHint text {fill:#fff;font:25px 'Microsoft YaHei',sans-serif;}
+.carryHint:focus-visible {filter:drop-shadow(0 0 5px #e9d7bc);}
+.carryHint[aria-disabled=true] {opacity:.5;cursor:default;}
+.pickable > rect {fill:transparent;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;}
+.pickable:not([aria-disabled=true]):hover > rect,.pickable:focus-visible > rect,.picked > rect {fill:#fff1c410;stroke:#ead6b4;}
+.itemLabel {opacity:0;pointer-events:none;}
+.itemLabel rect {fill:#25222ae8;stroke:#d4bda988;stroke-width:1;}
+.itemLabel text {fill:#fff9ec;font:26px 'Microsoft YaHei',sans-serif;}
+.pickable:not([aria-disabled=true]):hover .itemLabel,.pickable:focus-visible .itemLabel,.picked .itemLabel {opacity:1;}
+.pickable[aria-disabled=true] {cursor:default;}
+.carryGame .stage {position:relative;}
+.carryGame .carryStart {grid-area:5/4/8/10;background:#27242be6;border-radius:16px;backdrop-filter:blur(12px);font-size:clamp(11px,1vw,16px);}
+.carryChoice {grid-area:4/13/10/23;align-self:start;justify-self:end;z-index:2;max-width:340px;padding:14px;background:#28242be8;border:1px solid #dbc6b355;border-radius:14px;backdrop-filter:blur(12px);}
+.carryChoice p {font-size:13px;line-height:1.6;}
+.carryChoice .actions {gap:7px;margin-top:10px;}
+.carryChoice button {font-size:12px;padding:8px 12px;}
+.itemPreview {height:105px;display:grid;place-items:center;margin-top:6px;}
+.itemPreview img {width:140px;height:105px;object-fit:contain;}
+.itemPreview span {font-size:12px;color:#ddd2c6;}
+.confirmImage {height:100px;display:grid;place-items:center;}
+.confirmImage img {width:140px;height:100px;object-fit:contain;}
+.carryGame .result {grid-area:5/10/10/22;padding:18px;max-width:420px;justify-self:center;}
+.carryGame .result h2 {font-size:clamp(16px,1.6vw,23px);}
+.carryGame .inventory {position:absolute;left:89.84375%;top:83.509%;width:5.83333%;height:14.3906%;min-height:0;grid-area:auto;padding:6px 4px;gap:4px;align-self:auto;align-content:start;background:#000b;border:0;border-radius:clamp(7px,.95vw,18px);font-size:clamp(9px,.761vw,15px);}
+.carryGame .inventory:after {content:"";position:absolute;left:9.78%;top:31.05%;width:80.43%;height:59.68%;border:1px solid #fff7;border-radius:clamp(4px,.634vw,12px);background:#d9d9d92e;pointer-events:none;}
+.carryGame .inventory img {position:absolute;left:12%;top:33%;width:76%;height:56%;z-index:1;}
+.carryGame .inventory small {position:absolute;top:56%;font-size:clamp(9px,.7vw,13px);}
+.carryGame .inventoryName {position:absolute;bottom:104%;white-space:nowrap;padding:3px 7px;border-radius:5px;background:#211d26d9;font-size:11px;}
+@media(max-height:500px) and (orientation:landscape) {
+ .carryChoice {grid-area:4/13/10/24;padding:9px;max-width:300px;}
+ .carryChoice p{font-size:11px;}.carryChoice .actions{margin-top:5px;}.carryChoice button{padding:5px 8px;}
+ .itemPreview,.confirmImage {height:65px;}.itemPreview img,.confirmImage img{height:65px;width:100px;}
+ .carryGame .inventory{padding:3px;}.carryGame .inventoryName{font-size:10px;}
+ .carryGame .result {grid-area:5/9/11/23;padding:12px;}.carryGame .result p{margin-block:8px;}
+}

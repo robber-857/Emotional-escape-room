@@ -1,0 +1,248 @@
+{
+  "fileKey": "Pu12R5Mu0kgIlQbU3nIIbn",
+  "frames": [
+    "83:262",
+    "83:148",
+    "83:87",
+    "91:14",
+    "83:115"
+  ],
+  "assets": [
+    {
+      "name": "entry",
+      "nodeId": "83:263",
+      "path": "apps/web/public/game/l3/entry.png",
+      "bytes": 3878826,
+      "sha256": "e11e202da9c6b736b95d164967e5afc9c289fb50e74588e744d7af2bd088021f",
+      "dimensions": [
+        2048,
+        1088
+      ]
+    },
+    {
+      "name": "outside",
+      "nodeId": "83:149",
+      "path": "apps/web/public/game/l3/outside.png",
+      "bytes": 3986361,
+      "sha256": "2a72a6874e1183d21cfc9b387f55ba2ade51faa823ab2decc8bcecb9be51da76",
+      "dimensions": [
+        2048,
+        1088
+      ]
+    },
+    {
+      "name": "storm",
+      "nodeId": "83:88",
+      "path": "apps/web/public/game/l3/storm.png",
+      "bytes": 3588729,
+      "sha256": "ab8d24f4aa5d5351d5d088b5a7a4901b78e815e3ffe11dfb04c05d9a04df3254",
+      "dimensions": [
+        2048,
+        1088
+      ]
+    },
+    {
+      "name": "closed-window",
+      "nodeId": "91:15",
+      "path": "apps/web/public/game/l3/closed-window.png",
+      "bytes": 994404,
+      "sha256": "2ea5bc2a6558500b793e703b0adac8611a352e127a70c5646e228db95d101481",
+      "dimensions": [
+        1024,
+        552
+      ]
+    },
+    {
+      "name": "curtain",
+      "nodeId": "83:166",
+      "path": "apps/web/public/game/l3/curtain.png",
+      "bytes": 3825211,
+      "sha256": "3d386628fae74f646cf1db68c64de18a74a4c1b7b903ccff39d7820a66d59aa3",
+      "dimensions": [
+        2080,
+        1120
+      ]
+    },
+    {
+      "name": "curtain-mask",
+      "nodeId": "83:165",
+      "path": "apps/web/public/game/l3/curtain-mask.svg",
+      "bytes": 539,
+      "sha256": "4fec1bf69422dab16df5210d94efda9568e1889b8441198d95ad467e0878a097"
+    },
+    {
+      "name": "detail",
+      "nodeId": "91:19",
+      "path": "apps/web/public/game/l3/detail.svg",
+      "bytes": 3230,
+      "sha256": "e520fe842d1590dd40425ebc0a72f50e0a056b4ff0e258cf72163df8b745063f"
+    },
+    {
+      "name": "scarf",
+      "nodeId": "83:173",
+      "path": "apps/web/public/game/l3/scarf.png",
+      "bytes": 869755,
+      "sha256": "240e64f3fae22c6d557107488b71850588c7df9e1c0b46aec99d2858dd56eec8",
+      "dimensions": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "name": "lantern",
+      "nodeId": "83:175",
+      "path": "apps/web/public/game/l3/lantern.png",
+      "bytes": 702727,
+      "sha256": "47524bbfdf4d72b6eaf61917ccbe5f8cae161a4846b76aa2c4a752105c8003e4",
+      "dimensions": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "name": "doll",
+      "nodeId": "83:177",
+      "path": "apps/web/public/game/l3/doll.png",
+      "bytes": 748679,
+      "sha256": "eb7a46f8bed8d9f390c6dfae46650b837a4b2d57740a671b51ba7b4b372fcd0d",
+      "dimensions": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "name": "journal",
+      "nodeId": "83:179",
+      "path": "apps/web/public/game/l3/journal.png",
+      "bytes": 1035801,
+      "sha256": "5806c75bdaa3b5a416f6626d90ed06c4c4de82843a94de54caf31a2f8c885901",
+      "dimensions": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "name": "rope",
+      "nodeId": "83:181",
+      "path": "apps/web/public/game/l3/rope.png",
+      "bytes": 807538,
+      "sha256": "87a4d833ad932fff59bd3170f7ef49bfec4ad4635bbb41052dc4c125f2d2c153",
+      "dimensions": [
+        1536,
+        1536
+      ]
+    },
+    {
+      "name": "umbrella",
+      "nodeId": "83:141",
+      "path": "apps/web/public/game/l3/umbrella.png",
+      "bytes": 346705,
+      "sha256": "26ea25cc893909767c79fa9bf0ecba00679591335754120181b7d1c0ba56bce7",
+      "dimensions": [
+        1024,
+        546
+      ]
+    },
+    {
+      "name": "backpack",
+      "nodeId": "83:299",
+      "path": "apps/web/public/game/l3/backpack.png",
+      "bytes": 252669,
+      "sha256": "68bbd90481ec2fb5a69fb99115b6dcab661e190ecbbb8cea0f13e482699ed45e",
+      "dimensions": [
+        480,
+        561
+      ]
+    },
+    {
+      "name": "key",
+      "nodeId": "83:296",
+      "path": "apps/web/public/game/l3/key.png",
+      "bytes": 41831,
+      "sha256": "ce8b5d08d8fac4c74c38db247d1cf69478d86c05555266b233c789dfd75c57d4",
+      "dimensions": [
+        384,
+        384
+      ]
+    },
+    {
+      "name": "tv",
+      "nodeId": "83:119",
+      "path": "apps/web/public/game/l3/tv.png",
+      "bytes": 204408,
+      "sha256": "7c85fd7c3c6f512f4d4a6b8ce44bb5e71bf7751b19b311df19bba60819d458d3",
+      "dimensions": [
+        480,
+        480
+      ]
+    },
+    {
+      "name": "tv-screen",
+      "nodeId": "83:118",
+      "path": "apps/web/public/game/l3/tv-screen.png",
+      "bytes": 324296,
+      "sha256": "137708013a528b884c91e7bf137c1b709b26a557a775a15b1f6604b1911ba0e2",
+      "dimensions": [
+        480,
+        320
+      ]
+    },
+    {
+      "name": "open-curtain",
+      "nodeId": "83:96",
+      "path": "apps/web/public/game/l3/open-curtain.png",
+      "bytes": 988023,
+      "sha256": "32279fe343b3cde6f8cbb8dba8279de2e39e127ad6d292f87806b75bf3745ba3",
+      "dimensions": [
+        1024,
+        552
+      ]
+    },
+    {
+      "name": "open-curtain-mask",
+      "nodeId": "83:95",
+      "path": "apps/web/public/game/l3/open-curtain-mask.svg",
+      "bytes": 539,
+      "sha256": "4fec1bf69422dab16df5210d94efda9568e1889b8441198d95ad467e0878a097"
+    },
+    {
+      "name": "carry-hint",
+      "nodeId": "83:121",
+      "path": "apps/web/public/game/l3/carry-hint.svg",
+      "bytes": 1806,
+      "sha256": "819f52816c12009a65ad92e0a01a7e32a72bb27e5c235f937ac74211d85fe68d"
+    }
+  ],
+  "missing": [
+    "L3 sofa asset and position",
+    "compass image",
+    "post-storm exit and tabletop closeup"
+  ],
+  "notes": [
+    "Source image fills are rendered through the Figma crop transforms in Scene.tsx.",
+    "The television appears in both L3 segments. The former fan choice now controls TV power; off hides the static screen.",
+    "Post-storm scene entry is an isolated preview fixture; no storm completion rule is implied."
+  ],
+  "carryScene": {
+    "nodeId": "83:115",
+    "validated": "2026-09-29",
+    "artworkSlots": [
+      "83:141",
+      "83:296",
+      "83:297",
+      "83:298",
+      "83:299",
+      "83:300",
+      "83:301",
+      "83:302"
+    ],
+    "missingItem": "compass",
+    "assetVerification": "output/l3-02-asset-check.json",
+    "notes": [
+      "Eight original item images reuse byte-identical Figma source files.",
+      "Carry prompt uses 83:121 at its original scene coordinates; placeholder text replaced with game copy.",
+      "Confirm/draft closeup and optional nine-item catalog are implementation UI; no tabletop or compass image has been invented.",
+      "Confirmed item is removed from its original slot and displayed in the inventory."
+    ]
+  }
+}
