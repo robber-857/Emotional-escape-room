@@ -33,3 +33,12 @@ l3_events = Table("l3_events", metadata,
     Column("session_id", String(36), ForeignKey("l3_runs.session_id"), primary_key=True),
     Column("action_id", String(36), primary_key=True), Column("request", JSON, nullable=False),
     Column("result", JSON, nullable=False), Column("received_at", String(40), nullable=False))
+
+l4_runs = Table("l4_runs", metadata,
+    Column("session_id", String(36), ForeignKey("l3_runs.session_id"), primary_key=True),
+    Column("rules_version", String(40), nullable=False), Column("version", Integer, nullable=False),
+    Column("state", JSON, nullable=False))
+l4_events = Table("l4_events", metadata,
+    Column("session_id", String(36), ForeignKey("l4_runs.session_id"), primary_key=True),
+    Column("action_id", String(36), primary_key=True), Column("request", JSON, nullable=False),
+    Column("result", JSON, nullable=False), Column("received_at", String(40), nullable=False))

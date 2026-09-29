@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start --hostname 127.0.0.1",
     "typecheck": "next typegen && tsc --noEmit",
-    "test": "tsx --test src/features/l1/*.test.ts src/features/l2/*.test.ts src/features/l3/*.test.ts"
+    "test": "tsx --test src/features/l1/*.test.ts src/features/l2/*.test.ts src/features/l3/*.test.ts src/features/l4/*.test.ts"
   },
   "dependencies": {
     "next": "16.3.6",

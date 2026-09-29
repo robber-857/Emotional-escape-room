@@ -33,7 +33,7 @@ def test_migration_preserves_existing_l1_l2(tmp_path, monkeypatch):
         assert client.get("/api/v1/ready").status_code == 503
         command.upgrade(config, "head")
         assert records() == before
-        assert client.get("/api/v1/ready").json()["schema_version"] == "0003_l3"
+        assert client.get("/api/v1/ready").json()["schema_version"] == "0004_l4"
         assert client.post(l3_url, headers=h, json={}).status_code == 200
         assert records() == before
         command.upgrade(config, "head")

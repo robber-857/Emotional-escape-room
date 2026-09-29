@@ -7,7 +7,7 @@ Windows 可直接双击本目录 `run.cmd`；它会打开 PowerShell 执行 `run
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/api/tests/uat2/run.ps1 -BaseUrl http://127.0.0.1:3100
 ```
 
-前置条件：本项目 Web/API/数据库已启动，schema 为 `0002_l2` 或 `0003_l3`，API 的 `.venv` 已按仓库 README 安装依赖，宿主机有 Node/npm、Chrome，首次运行可下载 Playwright CLI。脚本不会自动重建服务、删除数据或重置现有玩家存档。
+前置条件：本项目 Web/API/数据库已启动，schema 为 `0002_l2`、`0003_l3` 或 `0004_l4`，API 的 `.venv` 已按仓库 README 安装依赖，宿主机有 Node/npm、Chrome，首次运行可下载 Playwright CLI。脚本不会自动重建服务、删除数据或重置现有玩家存档。
 
 默认 API 测试使用临时 SQLite，**跳过两项 PostgreSQL 并发测试**，日志和报告明确记录这个限制。需要完整并发验证时传入专用、名称以 `_test` 结尾的 PostgreSQL 库连接串：
 

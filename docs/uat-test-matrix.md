@@ -9,6 +9,7 @@
 | UAT1 / L1 | 游泳、救生圈、船、桥四条路线；人物/灯、材料、恢复与模拟手机操作 | `apps/api/tests/uat/run.ps1` | `output/playwright/uat/` 日志和截图，重复运行可能覆盖 |
 | UAT2 / L2 | API 规则；真实 L1→L2 原会话；钥匙、卧室、耳环、家具；刷新、断网、响应丢失、冲突、服务器记录对账 | `apps/api/tests/uat2/run.ps1` | `output/playwright/uat2/<run-id>/report.json`；截图见 UAT2 README |
 | UAT3 / L3 | API/迁移；L2→L3 原会话；六项回答、television、九选一/不带；最终确认额度、恢复、重试、冲突；逐事件服务器来源/校验依据与完整回执对账 | `apps/api/tests/uat3/run.cmd` | `output/playwright/uat3/<run-id>/report.json`、日志、JUnit、截图 |
+| UAT4 / L4 | API/迁移；L3 两种离场、四门确认、终态锁定；离线/响应丢失/跨页同步；服务器回执对账、预览隔离 | `apps/api/tests/uat4/run.cmd` | `output/playwright/uat4/<run-id>/report.json`、日志、JUnit、截图 |
 | L2 本地预览回归 | 七组本地交互/存储检查，含钥匙、门、耳环、家具、异常存储；不作为服务器验收证据 | `apps/api/tests/uat/run-l2.ps1` | `output/playwright/uat/l2-uat-<id>/` |
 
 ## 可复制命令
@@ -25,11 +26,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File apps/api/tests/uat2/run.ps1 
 # UAT3：后端 + 迁移 + 浏览器
 .\apps\api\tests\uat3\run.cmd -BaseUrl http://127.0.0.1:3100
 
+# UAT4：后端 + 迁移 + 浏览器（要求 schema 0004_l4）
+.\apps\api\tests\uat4\run.cmd -BaseUrl http://127.0.0.1:3100
+
 # 可选：仅 L2 本地预览回归
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/api/tests/uat/run-l2.ps1 -BaseUrl http://127.0.0.1:3100
 ```
 
-需要 Node/npm、Chrome；UAT2/UAT3 还需要已安装依赖的 `apps/api/.venv`。UAT3 要求服务已更新到 schema `0003_l3` 及新回执代码。浏览器会在目标服务新增独立测试旅程并保留记录，不操作现有玩家会话。建议逐套运行。
+需要 Node/npm、Chrome；UAT2/UAT3/UAT4 还需要已安装依赖的 `apps/api/.venv`。UAT3 要求服务已更新到 schema `0003_l3` 或 `0004_l4` 及新回执代码。UAT4 要求 `0004_l4`。浏览器会在目标服务新增独立测试旅程并保留记录，不操作现有玩家会话。建议逐套运行。
 
 ## PostgreSQL 并发模式
 

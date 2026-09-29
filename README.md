@@ -1,9 +1,9 @@
 # Emotional Escape Room · 情感密室
 
 当前交付：L1 前端 + FastAPI 权威事件校验 + PostgreSQL 持久化 + Docker Compose。
-L2 已接服务器校验、存档与家具通关，沿用完成 L1 的原会话。L3 前后端已接入原会话存档，支持两段恢复与服务器回执，独立本地预览仍保留；正式人格评分、报告、L4、账号同步及线上部署仍未完成。评分仅留扩展接口，不计算未确认分值。第一次运行请从这里开始。
+L2 已接服务器校验、存档与家具通关，沿用完成 L1 的原会话。L3 支持两段恢复与服务器回执；L4 已接入原旅程的选门校验、终态存档和幂等回执，独立本地预览仍保留。正式人格评分、报告、账号同步及线上部署仍未完成。评分仅留扩展接口，不计算未确认分值。第一次运行请从这里开始。
 
-L3 当前范围、API 与测试：[L3 后端](docs/l3-backend.md)；接续入口：[L3 交接](docs/l3-backend-handoff.md)。新代码的迁移目标为 `0003_l3`，更新本地服务需运行下述 Compose 构建/迁移流程。
+L4 范围、API 与验证：[L4 后端](docs/l4-backend.md)，一键验收：[UAT4](apps/api/tests/uat4/README.md)。L3 参考：[L3 后端](docs/l3-backend.md)、[L3 交接](docs/l3-backend-handoff.md)。新代码的迁移目标为 `0004_l4`，更新本地服务需运行下述 Compose 构建/迁移流程。
 
 测试入口总表：[UAT 测试速查与命令](docs/uat-test-matrix.md)。L3 一键验收：双击 [UAT3/run.cmd](apps/api/tests/uat3/run.cmd)，或查看 [运行说明](apps/api/tests/uat3/README.md)。默认 SQLite 明确跳过并发；独立 PostgreSQL 模式包含并发校验，浏览器验证桌面/模拟触屏与逐事件服务器回执对账。[后端 Review](docs/l3-backend-review.md) 记录发现、修复及尚未完成的验收。
 

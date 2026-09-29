@@ -47,9 +47,9 @@ async original=>{
    for(const name of ['查看右窗窗帘','查看左窗','查看电视机电源开关']){await available(name);await click(name);await action(!mobile&&name==='查看电视机电源开关'?'是':'否');}
    await page.locator('main[data-segment=carry]').waitFor();await page.locator(`[data-television-power=${mobile?'on':'off'}]`).waitFor();
    await available('查看可携带的物品');await click('查看可携带的物品');
-   if(mobile){await action('否');await page.getByRole('heading',{name:'已选择不带物品',exact:true}).waitFor();}
-   else{await action('是');await available('查看小玩偶');await action('查看小玩偶');await page.reload();await page.getByText('已预选 · 小玩偶',{exact:true}).waitFor();await click('确认携带小玩偶');await action('是，确认携带');await page.getByRole('heading',{name:'已选择携带小玩偶',exact:true}).waitFor();}
-   await page.reload();await page.getByRole('region',{name:'服务器选择结果',exact:true}).waitFor();
+   if(mobile){await action('否');await page.getByRole('heading',{name:'是时候走出密室了',exact:true}).waitFor();}
+   else{await action('是');await available('查看小玩偶');await action('查看小玩偶');await page.reload();await page.getByText('已预选 · 小玩偶',{exact:true}).waitFor();await click('确认携带小玩偶');await action('是，确认携带');await page.getByRole('heading',{name:'是时候走出密室了',exact:true}).waitFor();}
+   await page.reload();await page.getByRole('region',{name:'走出密室提示',exact:true}).waitFor();
    const final=await get();check(final.l3.completion==='complete','not complete');check(JSON.stringify(initial.l1)===JSON.stringify(final.l1)&&JSON.stringify(initial.l2)===JSON.stringify(final.l2),'parent modified');
    await click('查看服务器记录');const list=page.getByRole('region',{name:'服务器回执列表',exact:true});await list.getByText(`服务器返回 ${final.receipts.length} 条回执。`,{exact:false}).waitFor();
    const ids=await list.locator('[data-action-id]').evaluateAll(nodes=>nodes.map(n=>n.getAttribute('data-action-id')).sort());check(JSON.stringify(ids)===JSON.stringify(final.receipts.map(r=>r.action_id).sort()),'UI receipts differ from DB');

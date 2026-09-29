@@ -6,7 +6,7 @@ Windows 双击 **`run.cmd`** 即可运行；默认检查 `http://127.0.0.1:3100`
 .\apps\api\tests\uat3\run.cmd -BaseUrl http://127.0.0.1:3100
 ```
 
-前置：按仓库 README 启动本项目 Web/API/PostgreSQL，`/api/v1/ready` 为 `0003_l3`；API 的 `.venv` 已安装依赖，Node/npm 与 Chrome 可用，首次运行 Playwright CLI 可能需要网络。先更新本地服务，确保支持 `l3-validation-v2` 回执。
+前置：按仓库 README 启动本项目 Web/API/PostgreSQL，`/api/v1/ready` 为 `0003_l3` 或 `0004_l4`；API 的 `.venv` 已安装依赖，Node/npm 与 Chrome 可用，首次运行 Playwright CLI 可能需要网络。先更新本地服务，确保支持 `l3-validation-v2` 回执。
 
 脚本会执行隔离 API 测试和桌面/模拟触屏浏览器验收。退出码 0 为通过，1 为失败；报告、API JUnit、浏览器日志、截图存放于 `output/playwright/uat3/<run-id>/`。这些是本机测试证据，不等于真机 Safari、生产部署或 George 签字。
 
