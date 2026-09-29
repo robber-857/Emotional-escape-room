@@ -1,6 +1,6 @@
 {
   "as_of": "2026-09-30",
-  "base_commit": "21b0dc0e271a8fb3f835df46c28f66326d42b77d",
+  "base_commit": "5227324e6c1fc305eec88d1c04b3d6faa099dc79",
   "scope": "本地工作树；L2差异未推送",
   "source_file": "情感密室_V6.2_评分表修改后26Aug(2).xlsx",
   "source_sha256": "7f8aade7935530918617c64ba3ece8b527cd5b32a1d3037a6ab463978506ccb9",
@@ -33,9 +33,9 @@
         "四条路径改为强制四选一并需同等显眼，避免'先发现什么就走什么'的能力/曝光混淆；船桨跳跃次数不计分（机械动作，逐次计分会放大 5 倍）；原 6 行合并，消除同一意图重复计分。层级 E：受操作能力影响。"
       ],
       "note": "四条路径改为强制四选一并需同等显眼，避免'先发现什么就走什么'的能力/曝光混淆；船桨跳跃次数不计分（机械动作，逐次计分会放大 5 倍）；原 6 行合并，消除同一意图重复计分。层级 E：受操作能力影响。",
-      "status": "可映射终态",
-      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
-      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+      "status": "当前结果的向量参考",
+      "evidence": "route=bridge/swim/ring/boat；与修桥、修好船分别列事件",
+      "gap": "原表修桥后过河/修船后过河是合并描述；拆成当前事件后分值归属待确认，同一原表分不能复制给准备与过河两次"
     },
     {
       "id": "V62-R05",
@@ -61,9 +61,9 @@
         null
       ],
       "note": "",
-      "status": "可映射终态",
-      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
-      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+      "status": "当前结果的向量参考",
+      "evidence": "route=bridge/swim/ring/boat；与修桥、修好船分别列事件",
+      "gap": "原表修桥后过河/修船后过河是合并描述；拆成当前事件后分值归属待确认，同一原表分不能复制给准备与过河两次"
     },
     {
       "id": "V62-R06",
@@ -89,9 +89,9 @@
         null
       ],
       "note": "",
-      "status": "可映射终态",
-      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
-      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+      "status": "当前结果的向量参考",
+      "evidence": "route=bridge/swim/ring/boat；与修桥、修好船分别列事件",
+      "gap": "原表修桥后过河/修船后过河是合并描述；拆成当前事件后分值归属待确认，同一原表分不能复制给准备与过河两次"
     },
     {
       "id": "V62-R07",
@@ -117,9 +117,9 @@
         null
       ],
       "note": "",
-      "status": "可映射终态",
-      "evidence": "L1 scene=shore/complete; route=bridge/swim/ring/boat；cross-bridge/swim/use-ring/第5次paddle",
-      "gap": "仅选最终过河路径；找桨/拿绳/修桥不是另一份路径分"
+      "status": "当前结果的向量参考",
+      "evidence": "route=bridge/swim/ring/boat；与修桥、修好船分别列事件",
+      "gap": "原表修桥后过河/修船后过河是合并描述；拆成当前事件后分值归属待确认，同一原表分不能复制给准备与过河两次"
     },
     {
       "id": "V62-R08",
@@ -145,9 +145,9 @@
         "补全'采用线索'选项（原表只有'不采用'，不对称）；只载 T（对外部提示的依赖度）。线索内容需在开发文档中定义为不含指向性的提示。"
       ],
       "note": "补全'采用线索'选项（原表只有'不采用'，不对称）；只载 T（对外部提示的依赖度）。线索内容需在开发文档中定义为不含指向性的提示。",
-      "status": "缺服务器事件",
-      "evidence": "无 clue/hint-choice 事件；打开提示仅前端",
-      "gap": "需定义线索内容并增加明确采用/不采用事件，不能把关提示当不采用"
+      "status": "旧抽象描述不建新事件",
+      "evidence": "L1-01修桥/搜草修船等执行结果；L1-02男女交谈等已定义事件",
+      "gap": "不要求新增泛化线索事件；原表采纳/不采纳线索的T分不能擅自套到每个具体事件"
     },
     {
       "id": "V62-R09",
@@ -173,9 +173,9 @@
         null
       ],
       "note": "",
-      "status": "缺服务器事件",
-      "evidence": "无 clue/hint-choice 事件；打开提示仅前端",
-      "gap": "需定义线索内容并增加明确采用/不采用事件，不能把关提示当不采用"
+      "status": "旧抽象描述不建新事件",
+      "evidence": "L1-01修桥/搜草修船等执行结果；L1-02男女交谈等已定义事件",
+      "gap": "不要求新增泛化线索事件；原表采纳/不采纳线索的T分不能擅自套到每个具体事件"
     },
     {
       "id": "V62-R10",
@@ -201,9 +201,9 @@
         "对岸人物只在本节点计 V，人物统一设定为'模糊的熟悉身影'。原'是否交谈-否 A+2'删除（对陌生人的社交谨慎 ≠ 依恋焦虑），并与'不点选人 A-1'的方向矛盾。层级 R：直接关系行为。"
       ],
       "note": "对岸人物只在本节点计 V，人物统一设定为'模糊的熟悉身影'。原'是否交谈-否 A+2'删除（对陌生人的社交谨慎 ≠ 依恋焦虑），并与'不点选人 A-1'的方向矛盾。层级 R：直接关系行为。",
-      "status": "证据不足",
-      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
-      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+      "status": "已确认主动交谈",
+      "evidence": "greet-woman=true / greet=true；greetedWoman/greeted",
+      "gap": "男女分别是事件；原表主动交谈V=-2供参考，不与打招呼重复计分"
     },
     {
       "id": "V62-R11",
@@ -229,9 +229,9 @@
         null
       ],
       "note": "",
-      "status": "证据不足",
-      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
-      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+      "status": "旧人物分类不适用",
+      "evidence": "当前交谈是两个具体人物的yes事件；否有回执，未交谈可在结束时判定",
+      "gap": "仅打招呼不另设档；从未点选不能替代未交谈。女生否/未做、男生否/未做缺明确分值"
     },
     {
       "id": "V62-R12",
@@ -257,9 +257,9 @@
         null
       ],
       "note": "",
-      "status": "证据不足",
-      "evidence": "L1 greet/greet-woman yes/no 可记录；greeted/greetedWoman；enter",
-      "gap": "只有打招呼，没有主动交谈事件；打开人物提示未记录，不能证明完全没点选；两个独立人物如何合并一节点待定"
+      "status": "旧人物分类不适用",
+      "evidence": "当前交谈是两个具体人物的yes事件；否有回执，未交谈可在结束时判定",
+      "gap": "仅打招呼不另设档；从未点选不能替代未交谈。女生否/未做、男生否/未做缺明确分值"
     },
     {
       "id": "V62-R13",
@@ -425,9 +425,9 @@
         null
       ],
       "note": "",
-      "status": "名称需确认",
-      "evidence": "L2 sit seat=table-seat yes=true；outcome.seat=table-seat",
-      "gap": "本地叫桌前椅，表叫靠中心椅；不是已确认同一语义"
+      "status": "以当前桌前椅为准",
+      "evidence": "sit seat=table-seat yes=true",
+      "gap": "原表中心椅A=-1仅参考，不新增另一张椅子"
     },
     {
       "id": "V62-R19",
@@ -481,9 +481,9 @@
         "只载 F（对确定性/确认的需要）。原 A+2/T+1 等多维载荷取消。"
       ],
       "note": "只载 F（对确定性/确认的需要）。原 A+2/T+1 等多维载荷取消。",
-      "status": "证据不足",
-      "evidence": "L2 select-key、try-door 的接受事件及顺序",
-      "gap": "同一已选钥匙重复点选不产生新选择；无比较/反复确认事件或判定阈值，不能把两把必经选择当反复比较"
+      "status": "当前取钥匙事件分值待补",
+      "evidence": "select-key key-1/key-2与try-door分开记录",
+      "gap": "原表直接拿第一把钥匙F=-1不明确指哪把/哪次，保留来源但不自动分配"
     },
     {
       "id": "V62-R21",
@@ -509,9 +509,9 @@
         null
       ],
       "note": "",
-      "status": "证据不足",
-      "evidence": "L2 select-key、try-door 的接受事件及顺序",
-      "gap": "同一已选钥匙重复点选不产生新选择；无比较/反复确认事件或判定阈值，不能把两把必经选择当反复比较"
+      "status": "原表描述作废",
+      "evidence": "当前只保留选钥匙和试门事件",
+      "gap": "用户确认反复比较是V6.2错误，不补事件、不补比较判定、不套F=1"
     },
     {
       "id": "V62-R22",
@@ -593,9 +593,9 @@
         "原'否'合计 +9，是全表最大单项；混入怕黑与游戏惯性，降为 A±1，仅当尝试第二把后出现。"
       ],
       "note": "原'否'合计 +9，是全表最大单项；混入怕黑与游戏惯性，降为 A±1，仅当尝试第二把后出现。",
-      "status": "节点重叠待拆分",
-      "evidence": "L2 同一 explore yes=false/true；进入 view=bedroom",
-      "gap": "开锁后的黑屋与半开门共用 explore；不可与下一节点重复加分"
+      "status": "以一个探索事件为准",
+      "evidence": "explore yes=true/false及后续view=bedroom",
+      "gap": "原表黑屋/半开门重复描述不要求拆门；现有同一探索事件只能计一次，向量有多套需选择"
     },
     {
       "id": "V62-R25",
@@ -621,9 +621,9 @@
         null
       ],
       "note": "",
-      "status": "节点重叠待拆分",
-      "evidence": "L2 同一 explore yes=false/true；进入 view=bedroom",
-      "gap": "开锁后的黑屋与半开门共用 explore；不可与下一节点重复加分"
+      "status": "以一个探索事件为准",
+      "evidence": "explore yes=true/false及后续view=bedroom",
+      "gap": "原表黑屋/半开门重复描述不要求拆门；现有同一探索事件只能计一次，向量有多套需选择"
     },
     {
       "id": "V62-R26",
@@ -649,9 +649,9 @@
         "原'否'与'否，然后处理其他'重叠，合并为三个互斥终态；不再载 A（接近-回避摆动由摆动规则处理）；T 载'改口一致性'。同一道具在 L3 亦出现，建议 L2/L3 版本区分。"
       ],
       "note": "原'否'与'否，然后处理其他'重叠，合并为三个互斥终态；不再载 A（接近-回避摆动由摆动规则处理）；T 载'改口一致性'。同一道具在 L3 亦出现，建议 L2/L3 版本区分。",
-      "status": "节点重叠待拆分",
-      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
-      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+      "status": "以一个探索事件为准",
+      "evidence": "explore yes=true/false及后续view=bedroom",
+      "gap": "原表黑屋/半开门重复描述不要求拆门；现有同一探索事件只能计一次，向量有多套需选择"
     },
     {
       "id": "V62-R27",
@@ -677,9 +677,9 @@
         null
       ],
       "note": "",
-      "status": "节点重叠待拆分",
-      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
-      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+      "status": "以一个探索事件为准",
+      "evidence": "explore yes=true/false及后续view=bedroom",
+      "gap": "原表黑屋/半开门重复描述不要求拆门；现有同一探索事件只能计一次，向量有多套需选择"
     },
     {
       "id": "V62-R28",
@@ -705,9 +705,9 @@
         null
       ],
       "note": "",
-      "status": "节点重叠待拆分",
-      "evidence": "L2 explore接受序列：直接true / false后true / false后其他操作",
-      "gap": "当前同一扇门无独立N2-4/N2-5标识；需节点拆分或确认合并、终态截止"
+      "status": "以一个探索事件为准",
+      "evidence": "explore yes=true/false及后续view=bedroom",
+      "gap": "原表黑屋/半开门重复描述不要求拆门；现有同一探索事件只能计一次，向量有多套需选择"
     },
     {
       "id": "V62-R29",
@@ -761,9 +761,9 @@
         null
       ],
       "note": "",
-      "status": "有事实但边界待定",
-      "evidence": "L2 return-hall 且 search.status=returned、activeMs<15000",
-      "gap": "时长是有墙钟上界的客户端报告；timing_verified=false；找到后离开不属于放弃"
+      "status": "采用当前<=15秒短搜索范围",
+      "evidence": "return-hall且搜索未找到；activeMs<=15000",
+      "gap": ">15000才算长；恰好15000包含在非长搜索。原表A=0为参考，找到不等于放弃"
     },
     {
       "id": "V62-R31",
@@ -789,9 +789,9 @@
         null
       ],
       "note": "",
-      "status": "阈值冲突",
-      "evidence": "L2 search-time / return-hall / curtain-click；search.activeMs/status",
-      "gap": "V6.2 >=15000；当前long用>15000；找到耳环但不足15秒没有对应选项；不得直接照搬long标志"
+      "status": "当前>15秒正确",
+      "evidence": "search-time接受且activeMs>15000；long=true",
+      "gap": "按用户确认修正原表>=为>；等于15000不算长。参考A=2，重复上报不重复得分"
     },
     {
       "id": "V62-R32",
@@ -817,9 +817,9 @@
         "原 2×3 分类无法处理 5 件物品混合摆放，且与备注矛盾（'空旷=真我高'但 T=-2）。改为三个连续指标，按试玩四分位计分：本行为靠墙/窗程度→A。"
       ],
       "note": "原 2×3 分类无法处理 5 件物品混合摆放，且与备注矛盾（'空旷=真我高'但 T=-2）。改为三个连续指标，按试玩四分位计分：本行为靠墙/窗程度→A。",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
-      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R33",
@@ -845,9 +845,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
-      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R34",
@@ -873,9 +873,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
-      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R35",
@@ -901,9 +901,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: layout、classification.placements、movedIds",
-      "gap": "没有墙/窗距离连续指标及四分位边界；现有openPlacement不是分位；当前4件非附件所述5件"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R36",
@@ -929,9 +929,9 @@
         "整齐度→F（收尾/整理）。计算方法：物件朝向与间距的规整程度（开发按试玩定义）。"
       ],
       "note": "整齐度→F（收尾/整理）。计算方法：物件朝向与间距的规整程度（开发按试玩定义）。",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
-      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R37",
@@ -957,9 +957,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
-      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R38",
@@ -985,9 +985,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
-      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R39",
@@ -1013,9 +1013,9 @@
         null
       ],
       "note": "",
-      "status": "缺指标与常模",
-      "evidence": "L2 layout-confirm: classification.reasonable/tidy、layout",
-      "gap": "tidy是合理且移动过，非朝向与间距整齐度；无旋转字段、无样本四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R40",
@@ -1041,9 +1041,9 @@
         "调整次数→T（是否一步到位、不反复改动）。'靠近床'无对应物件，删除；不再宣称可测'是否自在'。"
       ],
       "note": "调整次数→T（是否一步到位、不反复改动）。'靠近床'无对应物件，删除；不再宣称可测'是否自在'。",
-      "status": "可计数但缺常模",
-      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
-      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R41",
@@ -1069,9 +1069,9 @@
         null
       ],
       "note": "",
-      "status": "可计数但缺常模",
-      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
-      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R42",
@@ -1097,9 +1097,9 @@
         null
       ],
       "note": "",
-      "status": "可计数但缺常模",
-      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
-      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R43",
@@ -1125,9 +1125,9 @@
         null
       ],
       "note": "",
-      "status": "可计数但缺常模",
-      "evidence": "L2 接受的layout-move/reset/undo历史；同ID去重",
-      "gap": "需明确移动手势/撤销/重置如何算调整次数及统计范围；furniture.history最多50条，应用完整events；缺四分位"
+      "status": "以最后家具结果为准",
+      "evidence": "最后有效layout-confirm回执的layout/classification",
+      "gap": "不要求实现原表四分位或调整次数评分；当前结果到向量的映射待补，过程与旧确认不累加"
     },
     {
       "id": "V62-R44",
@@ -1153,9 +1153,9 @@
         "三个互斥终态；风暴无论选择都来临（消除'关上才触发风暴'的因果矛盾，且 L2 结尾已听到风雨）；删除 (+2,+2,+2,+2) 四维同号向量；F 不载以保持 V/T 正交。"
       ],
       "note": "三个互斥终态；风暴无论选择都来临（消除'关上才触发风暴'的因果矛盾，且 L2 结尾已听到风雨）；删除 (+2,+2,+2,+2) 四维同号向量；F 不载以保持 V/T 正交。",
-      "status": "可映射但有额外组合",
-      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
-      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+      "status": "当前开门和关门分别列出",
+      "evidence": "decision open/close yes/no；六个回答完成后离开storm",
+      "gap": "不以原表三个组合限制当前合法事件；组合分与单事件分不得双算，拆分向量待定"
     },
     {
       "id": "V62-R45",
@@ -1181,9 +1181,9 @@
         null
       ],
       "note": "",
-      "status": "可映射但有额外组合",
-      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
-      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+      "status": "当前开门和关门分别列出",
+      "evidence": "decision open/close yes/no；六个回答完成后离开storm",
+      "gap": "不以原表三个组合限制当前合法事件；组合分与单事件分不得双算，拆分向量待定"
     },
     {
       "id": "V62-R46",
@@ -1209,9 +1209,9 @@
         null
       ],
       "note": "",
-      "status": "可映射但有额外组合",
-      "evidence": "L3 choices.open/close 终态 + 接受事件序列",
-      "gap": "常规false/false、true/false、true/true可匹配；本地允许open=false且close=true，V6.2没有第四组合；风暴六个回答仍独立"
+      "status": "当前开门和关门分别列出",
+      "evidence": "decision open/close yes/no；六个回答完成后离开storm",
+      "gap": "不以原表三个组合限制当前合法事件；组合分与单事件分不得双算，拆分向量待定"
     },
     {
       "id": "V62-R47",
@@ -1349,9 +1349,9 @@
         "左窗+风扇合并为收尾度→F，层级 E；消除'打开后不关门 F+2'与'窗继续开着 F-2'的方向矛盾。"
       ],
       "note": "左窗+风扇合并为收尾度→F，层级 E；消除'打开后不关门 F+2'与'窗继续开着 F-2'的方向矛盾。",
-      "status": "道具语义冲突",
-      "evidence": "L3 choices.window 和 choices.television",
-      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+      "status": "当前关窗和关电视为准",
+      "evidence": "decision window/television yes/no",
+      "gap": "不要求改成电扇；原表组合F分仅保留参考，当前各事件及否的向量待补"
     },
     {
       "id": "V62-R52",
@@ -1377,9 +1377,9 @@
         null
       ],
       "note": "",
-      "status": "道具语义冲突",
-      "evidence": "L3 choices.window 和 choices.television",
-      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+      "status": "当前关窗和关电视为准",
+      "evidence": "decision window/television yes/no",
+      "gap": "不要求改成电扇；原表组合F分仅保留参考，当前各事件及否的向量待补"
     },
     {
       "id": "V62-R53",
@@ -1405,9 +1405,9 @@
         null
       ],
       "note": "",
-      "status": "道具语义冲突",
-      "evidence": "L3 choices.window 和 choices.television",
-      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+      "status": "当前关窗和关电视为准",
+      "evidence": "decision window/television yes/no",
+      "gap": "不要求改成电扇；原表组合F分仅保留参考，当前各事件及否的向量待补"
     },
     {
       "id": "V62-R54",
@@ -1433,9 +1433,9 @@
         null
       ],
       "note": "",
-      "status": "道具语义冲突",
-      "evidence": "L3 choices.window 和 choices.television",
-      "gap": "V6.2写风扇；代码是电视机；不能擅自将电视当风扇套F分值"
+      "status": "当前关窗和关电视为准",
+      "evidence": "decision window/television yes/no",
+      "gap": "不要求改成电扇；原表组合F分仅保留参考，当前各事件及否的向量待补"
     },
     {
       "id": "V62-R55",
@@ -1816,7 +1816,7 @@
       "facts": "ropeClicks从0至5；第5次释放",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "机械动作不逐次计分",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -1838,7 +1838,7 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -1860,7 +1860,7 @@
       "facts": "wood=true；两件材料中心到缺口",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "修桥过程，不独立计路径分",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -1882,7 +1882,7 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -1904,7 +1904,7 @@
       "facts": "repaired=true；wood=false；仍在河岸",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "修桥过程，过桥后才取路径终态",
+      "scoring": "双材料同时到缺口且repair成功，独立修桥事件最多一次，分值归属待确认",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -1926,7 +1926,7 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "4",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "scoring": "仅API支持否，当前UI自动提交成功；不得当成完成修桥",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -2080,7 +2080,7 @@
       "facts": "bushClicks从0至5；第5次oar=true",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "7",
-      "scoring": "机械动作不逐次计分",
+      "scoring": "仅第5次oar=true归并为修好船，最多一次；未修好/否缺分值",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -2102,7 +2102,7 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "7",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "scoring": "仅第5次oar=true归并为修好船，最多一次；未修好/否缺分值",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -2124,7 +2124,7 @@
       "facts": "rowing=true；需要oar",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "7",
-      "scoring": "路径过程，不额外加分",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -2146,7 +2146,7 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "7",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
+      "scoring": "机械过程不单独计分；分别归入修桥或划船过河",
       "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
       "proposed_vectors": {
         "A": null,
@@ -2158,7 +2158,7 @@
     {
       "id": "L1.greet.true",
       "level": "L1",
-      "label": "向男子打招呼：是",
+      "label": "主动与男生交谈：是",
       "payload": {
         "type": "choose",
         "choice": "greet",
@@ -2168,8 +2168,8 @@
       "facts": "greeted=true",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "10:12",
-      "scoring": "仅能证明打招呼，不能证明交谈",
-      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "scoring": "交谈成功按人物分别最多一次；V6.2主动交谈V=-2参考",
+      "note": "用户已确认greet动作即主动交谈；无须新增交谈API",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2180,7 +2180,7 @@
     {
       "id": "L1.greet.false",
       "level": "L1",
-      "label": "向男子打招呼：否",
+      "label": "主动与男生交谈：否",
       "payload": {
         "type": "choose",
         "choice": "greet",
@@ -2190,8 +2190,8 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "10:12",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
-      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "scoring": "显式拒绝交谈，分值缺失；不能套仅打招呼或从未点选",
+      "note": "用户已确认greet动作即主动交谈；无须新增交谈API",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2202,7 +2202,7 @@
     {
       "id": "L1.greet-woman.true",
       "level": "L1",
-      "label": "向女子打招呼：是",
+      "label": "主动与女生交谈：是",
       "payload": {
         "type": "choose",
         "choice": "greet-woman",
@@ -2212,8 +2212,8 @@
       "facts": "greetedWoman=true",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "10:12",
-      "scoring": "两个独立人物的节点合并待定",
-      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "scoring": "交谈成功按人物分别最多一次；V6.2主动交谈V=-2参考",
+      "note": "用户已确认greet动作即主动交谈；无须新增交谈API",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2224,7 +2224,7 @@
     {
       "id": "L1.greet-woman.false",
       "level": "L1",
-      "label": "向女子打招呼：否",
+      "label": "主动与女生交谈：否",
       "payload": {
         "type": "choose",
         "choice": "greet-woman",
@@ -2234,8 +2234,8 @@
       "facts": "仅记录明确拒绝；状态保持；可重选",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "10:12",
-      "scoring": "否不自动等于V6.2最终选项；按截止时终态处理",
-      "note": "L1回执无逐动作outcome，需重放接受事件；完整原始请求positions存在DB",
+      "scoring": "显式拒绝交谈，分值缺失；不能套仅打招呼或从未点选",
+      "note": "用户已确认greet动作即主动交谈；无须新增交谈API",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2386,7 +2386,7 @@
       "facts": "strokes+1；第5次scene=shore,route=boat",
       "source": "apps/api/app/domain.py:35",
       "v62_rows": "7",
-      "scoring": "五次是机械过程，只取boat路径终态",
+      "scoring": "仅第5次route=boat记划船过河一次，前4次不计",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -2406,7 +2406,7 @@
       "facts": "atTable=true",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "19",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -2426,7 +2426,7 @@
       "facts": "view=room；searching变returned",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "30:31",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -2446,7 +2446,7 @@
       "facts": "curtainClicks+1；第3次status=found",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "29:31",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -2466,8 +2466,8 @@
       "facts": "editing=true",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2486,8 +2486,8 @@
       "facts": "editing=false",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2506,8 +2506,8 @@
       "facts": "exitDoorOpen=true；保存confirmed/baseline/classification",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "本地v2任意确认开出口；GitHub v1仅tidy确认开出口；当前分类不是V6.2分位",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2526,8 +2526,8 @@
       "facts": "从history回退layout",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2546,8 +2546,8 @@
       "facts": "layout回初始；原布局入history",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2567,8 +2567,8 @@
       "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "24:28",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "拒绝后可重选，节点截止未定义",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前一个探索事件；不按V6.2拆成黑屋/半开门两次加分",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2588,8 +2588,8 @@
       "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "24:28",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "拒绝后可重选，节点截止未定义",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前一个探索事件；不按V6.2拆成黑屋/半开门两次加分",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2609,7 +2609,7 @@
       "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "29:31",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "拒绝后可重选，节点截止未定义",
       "proposed_vectors": {
         "A": null,
@@ -2630,7 +2630,7 @@
       "facts": "explore更改view；search-choice设置searching/declined并重置activeMs",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "29:31",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "拒绝后可重选，节点截止未定义",
       "proposed_vectors": {
         "A": null,
@@ -2652,8 +2652,8 @@
       "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "17:19",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "按当前窗边椅/桌前椅事件；选否与未坐下分别列出，分值未明确",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2674,8 +2674,8 @@
       "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "17:19",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "按当前窗边椅/桌前椅事件；选否与未坐下分别列出，分值未明确",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2696,8 +2696,8 @@
       "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "17:19",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "按当前窗边椅/桌前椅事件；选否与未坐下分别列出，分值未明确",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2718,8 +2718,8 @@
       "facts": "yes设置seat；table-seat额外atTable=true,view=table；no保持",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "17:19",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "桌前椅与表中中心椅需确认；支持换座",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "按当前窗边椅/桌前椅事件；选否与未坐下分别列出，分值未明确",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2739,8 +2739,8 @@
       "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "20:25",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "keys不是比较次数；同一key不能重复试门",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前按两把钥匙的选择事件列出；反复比较是原表错误，不新增或计分",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2760,8 +2760,8 @@
       "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "20:25",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "keys不是比较次数；同一key不能重复试门",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前按两把钥匙的选择事件列出；反复比较是原表错误，不新增或计分",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2781,7 +2781,7 @@
       "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "20:25",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "keys不是比较次数；同一key不能重复试门",
       "proposed_vectors": {
         "A": null,
@@ -2802,7 +2802,7 @@
       "facts": "select-key记录keys/selectedKey；try-door记录attempt,key,door_open，第一把失败第二把成功",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "20:25",
-      "scoring": "需按V6.2节点终态归并",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
       "note": "keys不是比较次数；同一key不能重复试门",
       "proposed_vectors": {
         "A": null,
@@ -2865,7 +2865,7 @@
       "facts": "activeMs/long；每次增量<=10000；API墙钟上界+250ms；timing_verified=false",
       "source": "apps/api/app/l2_api.py:96",
       "v62_rows": "30:31",
-      "scoring": "时长证据不足以证明真人持续注意；>=与>冲突",
+      "scoring": "activeMs>15000才记长搜索一次；等于15000不算；未达阈值分支单列",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -2890,8 +2890,8 @@
       "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
-      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2915,8 +2915,8 @@
       "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
-      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2940,8 +2940,8 @@
       "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
-      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2965,8 +2965,8 @@
       "facts": "服务器保存layout与history；确认时才做空间分类；移动可接受但布局未必reasonable",
       "source": "apps/api/app/l2_domain.py:22",
       "v62_rows": "32:43",
-      "scoring": "操作过程；可派生调整次数，但定义/四分位缺失",
-      "note": "4件家具；坐标[-4,4]；无朝向字段",
+      "scoring": "以最后有效layout-confirm结果一次结算；移动/撤销/重置和早期确认不累加",
+      "note": "不要求实现V6.2四分位；当前布局事实映射向量待定。triggered是历史累计，不能代替最终结果",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -2987,8 +2987,8 @@
       "facts": "outcome.choices.open；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "44:46",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3009,8 +3009,8 @@
       "facts": "outcome.choices.open；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "44:46",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3031,8 +3031,8 @@
       "facts": "outcome.choices.close；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "44:46",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3053,8 +3053,8 @@
       "facts": "outcome.choices.close；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "44:46",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3075,8 +3075,8 @@
       "facts": "outcome.choices.wait；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "47:48",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3097,8 +3097,8 @@
       "facts": "outcome.choices.wait；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "47:48",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3119,8 +3119,8 @@
       "facts": "outcome.choices.curtain；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "49:50",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3141,8 +3141,8 @@
       "facts": "outcome.choices.curtain；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "49:50",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3163,8 +3163,8 @@
       "facts": "outcome.choices.window；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "51:54",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3185,8 +3185,8 @@
       "facts": "outcome.choices.window；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "51:54",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3207,8 +3207,8 @@
       "facts": "outcome.choices.television；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "51:54",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3229,8 +3229,8 @@
       "facts": "outcome.choices.television；六项均回答后segment=carry",
       "source": "apps/api/app/l3_domain.py:16",
       "v62_rows": "51:54",
-      "scoring": "需按V6.2节点终态归并",
-      "note": "重复false新ID为accepted但state_changed=false；true锁定，false可改true；电视不等于风扇",
+      "scoring": "按当前语义事件去重；具体执行/否/未做评分见当前评分事件",
+      "note": "当前六个独立回答按实际动作列出；每事件最多一次，电视保留，不改电扇；无操作不能冒充否",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3662,7 +3662,7 @@
       "source": "apps/api/app/l4_domain.py:13",
       "v62_rows": "64",
       "scoring": "终态一次；T/F为NA",
-      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "note": "按当前固定门事件核对；不因原表建议增加随机化",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3683,7 +3683,7 @@
       "source": "apps/api/app/l4_domain.py:13",
       "v62_rows": "65",
       "scoring": "终态一次；T/F为NA",
-      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "note": "按当前固定门事件核对；不因原表建议增加随机化",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3704,7 +3704,7 @@
       "source": "apps/api/app/l4_domain.py:13",
       "v62_rows": "66",
       "scoring": "终态一次；T/F为NA",
-      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "note": "按当前固定门事件核对；不因原表建议增加随机化",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3725,7 +3725,7 @@
       "source": "apps/api/app/l4_domain.py:13",
       "v62_rows": "67",
       "scoring": "终态一次；T/F为NA",
-      "note": "门名及位置随机化未做；本地预览选择无服务器证据",
+      "note": "按当前固定门事件核对；不因原表建议增加随机化",
       "proposed_vectors": {
         "A": null,
         "V": null,
@@ -3742,7 +3742,7 @@
       "facts": "查看人物/道具、关提示、拖动物品摆放（未触发业务动作）不进事件表",
       "source": "apps/api/app/main.py:111",
       "v62_rows": "",
-      "scoring": "非计分动作",
+      "scoring": "查看线索/提示是现有交互；按修桥/修船/交谈等执行结果评审，不凭V6.2增加泛化节点",
       "note": "",
       "proposed_vectors": {
         "A": null,
@@ -4283,6 +4283,1176 @@
         "建议随试玩收集 ECR-R 等量表，检验 A/V 与外部量表的相关；T/F 无标准量表，仅做行为稳定性与重测信度检验。",
         null
       ]
+    ]
+  ],
+  "audit_revision": "current-events-v2",
+  "precedence": "2026-09-30用户确认 > 当前本地事件及触发条件 > V6.2仅供向量参考；不以原表节点数量改造游戏",
+  "confirmed_rules": [
+    "长搜索严格大于15000毫秒，等于15000不算长搜索。",
+    "反复比较不是当前事件，V6.2的这一描述作废。",
+    "greet-woman=true和greet=true分别是主动与女生/男生交谈，不需要新增交谈事件。",
+    "每个语义事件在同一旅程最多计一次；新action_id重复操作也不能重复得分。",
+    "第五次搜草oar=true记修好船一次；第五次划桨route=boat记划船过河一次。",
+    "五次拿绳、拾取木板和拖动不单独计分；双材料同时到缺口且repair接受时记修桥一次。",
+    "整理房间按最后确认的结果计分，过程移动/撤销/重置/早期确认不累加。",
+    "未做、显式否、未到达场景、尚未结束须区分；缺分不默认为0、NA或反向分。"
+  ],
+  "score_events": [
+    {
+      "id": "L1.repair",
+      "level": "L1-01",
+      "event": "修好桥",
+      "trigger": "repair=yes接受；绳子和木板同时位于缺口",
+      "evidence": "repaired=true；materials_ready(positions)；game_events",
+      "reference_rows": "4：修桥后过河（合并描述）",
+      "executed_score": "原表合并参考A=1,F=1；独立修桥分值待确认",
+      "no_score": "API有否但UI自动提交成功；无独立否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "原表将修桥和过河合写；分值归属待确认，不能复制两次。未修桥缺分",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.boat-ready",
+      "level": "L1-01",
+      "event": "修好船",
+      "trigger": "第5次search=yes；船桨跳出并安装",
+      "evidence": "bushClicks=5,oar=true；game_events",
+      "reference_rows": "7：修船后过河（合并描述）",
+      "executed_score": "原表合并参考A=1,F=0；独立修好船分值待确认",
+      "no_score": "当前UI只有拨草；API否不等于修船失败",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "原表将修船和过河合写；分值归属待确认，不能复制两次。0–4次未完成",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.cross-bridge",
+      "level": "L1-01",
+      "event": "走桥过河",
+      "trigger": "cross-bridge=yes接受并到对岸",
+      "evidence": "scene=shore,route；game_events",
+      "reference_rows": "4",
+      "executed_score": "参考：A=1,F=1；与修桥/修船共享原表合并描述，归属待确认，不双算",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "counting": "四选一最终路线；命中的路线计一次",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.swim",
+      "level": "L1-01",
+      "event": "游泳过河",
+      "trigger": "swim=yes接受并到对岸",
+      "evidence": "scene=shore,route；game_events",
+      "reference_rows": "5",
+      "executed_score": "参考：A=-1,F=-2",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "counting": "四选一最终路线；命中的路线计一次",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.use-ring",
+      "level": "L1-01",
+      "event": "救生圈过河",
+      "trigger": "use-ring=yes接受并到对岸",
+      "evidence": "scene=shore,route；game_events",
+      "reference_rows": "6",
+      "executed_score": "参考：A=-1,F=1",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "counting": "四选一最终路线；命中的路线计一次",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.boat-cross",
+      "level": "L1-01",
+      "event": "划船过河",
+      "trigger": "上船后第5次paddle到对岸",
+      "evidence": "strokes=5,route=boat,scene=shore",
+      "reference_rows": "7",
+      "executed_score": "参考：A=1,F=0；与修桥/修船共享原表合并描述，归属待确认，不双算",
+      "no_score": "划桨无否；上船否有回执但无分值",
+      "not_done_score": "未上船/未划完缺独立向量；未结束不结算",
+      "counting": "只记划船过河一次；上船与前4桨不计",
+      "gap": "拒绝上船或未完成划船的分值未明确",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet-woman",
+      "level": "L1-02",
+      "event": "主动与女生交谈",
+      "trigger": "greet-woman=yes被服务器接受",
+      "evidence": "greetedWoman=true；game_events",
+      "reference_rows": "10",
+      "executed_score": "参考：V=-2；当前交谈即主动交谈",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "男女是不同事件，各最多一次；同一人重复不加",
+      "gap": "女生交谈否/未做缺分；原表仅打招呼V=0/完全不点选V=2不能代替",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.greet",
+      "level": "L1-02",
+      "event": "主动与男生交谈",
+      "trigger": "greet=yes被服务器接受",
+      "evidence": "greeted=true；game_events",
+      "reference_rows": "10",
+      "executed_score": "参考：V=-2；当前交谈即主动交谈",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "男女是不同事件，各最多一次；同一人重复不加",
+      "gap": "男生交谈否/未做缺分；原表仅打招呼V=0/完全不点选V=2不能代替",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.take-lamp",
+      "level": "L1-02",
+      "event": "拿起灯",
+      "trigger": "take-lamp=yes接受",
+      "evidence": "lampTaken=true；game_events",
+      "reference_rows": "13:16",
+      "executed_score": "只有灯四组合参考，缺该动作的独立向量",
+      "no_score": "否无独立向量；可结合最后lampTaken/lampLit查组合",
+      "not_done_score": "未做无独立向量；灯四组合有参考",
+      "counting": "单事件最多一次；若用灯组合评分，不与单动作双算",
+      "gap": "动作分/否分需拆分确认；保留四组合F=2/0/0/-2的来源，不重复加",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.light-lamp",
+      "level": "L1-02",
+      "event": "点亮灯",
+      "trigger": "light-lamp=yes接受",
+      "evidence": "lampLit=true；game_events",
+      "reference_rows": "13:16",
+      "executed_score": "只有灯四组合参考，缺该动作的独立向量",
+      "no_score": "否无独立向量；可结合最后lampTaken/lampLit查组合",
+      "not_done_score": "未做无独立向量；灯四组合有参考",
+      "counting": "单事件最多一次；若用灯组合评分，不与单动作双算",
+      "gap": "动作分/否分需拆分确认；保留四组合F=2/0/0/-2的来源，不重复加",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L1.enter",
+      "level": "L1-02",
+      "event": "进入下一关",
+      "trigger": "enter=yes接受",
+      "evidence": "scene=complete",
+      "reference_rows": "无",
+      "executed_score": "流程完成，不另造分值",
+      "no_score": "停留，无独立分值",
+      "not_done_score": "未完成，不判作最终未做",
+      "counting": "完成标志仅供关闭L1未做分支",
+      "gap": "",
+      "source": "apps/api/app/domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.arrive-table",
+      "level": "L2",
+      "event": "走到桌边",
+      "trigger": "arrive-table接受",
+      "evidence": "outcome.at_table=true",
+      "reference_rows": "19",
+      "executed_score": "未坐下直接到桌边参考A=0；坐过再来不套该分",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未走到桌边无独立分值",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "原表有条件参考，不代表所有arrive-table都得A=0",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.chair",
+      "level": "L2",
+      "event": "坐窗边椅",
+      "trigger": "sit chair yes=true",
+      "evidence": "outcome.seat；完整接受历史",
+      "reference_rows": "17",
+      "executed_score": "参考：A=1",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未坐该椅无独立向量；直接桌边另有条件参考",
+      "counting": "每个坐椅事件最多一次；换座跨椅是否互斥待算法",
+      "gap": "该椅选否/未做缺独立分值；不能只读当前seat丢失此前坐过事实",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.sit.table-seat",
+      "level": "L2",
+      "event": "坐桌前椅",
+      "trigger": "sit table-seat yes=true",
+      "evidence": "outcome.seat；完整接受历史",
+      "reference_rows": "18",
+      "executed_score": "参考：A=-1（原表称中心椅）",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未坐该椅无独立向量；直接桌边另有条件参考",
+      "counting": "每个坐椅事件最多一次；换座跨椅是否互斥待算法",
+      "gap": "该椅选否/未做缺独立分值；不能只读当前seat丢失此前坐过事实",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.select-key.key-1",
+      "level": "L2",
+      "event": "选择钥匙 key-1",
+      "trigger": "select-key key-1接受",
+      "evidence": "outcome.selected_key/keys",
+      "reference_rows": "20；21作废",
+      "executed_score": "缺：原表直接拿第一把F=-1不能明确分到key或选择次序",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "当前两把钥匙的分值待补；不再列反复比较事件",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.select-key.key-2",
+      "level": "L2",
+      "event": "选择钥匙 key-2",
+      "trigger": "select-key key-2接受",
+      "evidence": "outcome.selected_key/keys",
+      "reference_rows": "20；21作废",
+      "executed_score": "缺：原表直接拿第一把F=-1不能明确分到key或选择次序",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "当前两把钥匙的分值待补；不再列反复比较事件",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.try-first",
+      "level": "L2",
+      "event": "第一次用钥匙试门（失败）",
+      "trigger": "try-door接受且attempt=1",
+      "evidence": "outcome.attempt=1,door_open=false",
+      "reference_rows": "无明确对应",
+      "executed_score": "缺：首次试门失败独立向量",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "counting": "同一旅程、该事件最多一次",
+      "gap": "第一次试门执行/未做向量缺失；不能因失败当拒绝回执",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.try-second",
+      "level": "L2",
+      "event": "换另一把钥匙开门成功",
+      "trigger": "try-door另一key接受且attempt=2",
+      "evidence": "outcome.attempt=2,door_open=true",
+      "reference_rows": "22:23",
+      "executed_score": "参考：再次尝试V=-1",
+      "no_score": "无否按钮",
+      "not_done_score": "尝试一次后最终未再试参考V=1；从未试门无参考",
+      "counting": "第二把开门成功最多一次",
+      "gap": "从未试门不等于失败后放弃；不将暂时停留当放弃",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.explore",
+      "level": "L2",
+      "event": "进入已解锁的卧室",
+      "trigger": "explore=yes接受",
+      "evidence": "outcome.view=bedroom；false回执不改变view",
+      "reference_rows": "24:28多个原表描述",
+      "executed_score": "多个冲突参考：A=-1 或 V=-2,T=1；先否后是另有V=0,T=-2",
+      "no_score": "多个参考：A=1 或 V=2,T=1；待选",
+      "not_done_score": "缺：未尝试探索不能直接套显式否",
+      "counting": "同一探索事件最多一次；不拆成黑屋/半开门两个节点",
+      "gap": "事件明确；执行/否的向量来源冲突，未做缺分",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.search-start",
+      "level": "L2",
+      "event": "答应寻找耳环",
+      "trigger": "search-choice=yes接受",
+      "evidence": "outcome.search.status=searching",
+      "reference_rows": "29:31",
+      "executed_score": "缺：开始寻找独立向量；不能预先给找到/长搜索分",
+      "no_score": "参考：拒绝寻找A=-2",
+      "not_done_score": "缺：未触发寻找无明确分值",
+      "counting": "开始寻找最多一次；终态与长搜索另列待分配",
+      "gap": "开始寻找及未触发缺独立分值",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.search-long",
+      "level": "L2",
+      "event": "长搜索（严格超过15秒）",
+      "trigger": "search-time接受且activeMs>15000",
+      "evidence": "search.long=true；timing_verified=false",
+      "reference_rows": "31，按用户修正>",
+      "executed_score": "参考：A=2",
+      "no_score": "无否按钮",
+      "not_done_score": "<=15000未达标：短搜索后放弃参考A=0；快速找到无独立参考",
+      "counting": "首次满足>15000最多一次；15秒整不满足",
+      "gap": "快速找到但未超过15秒的分支缺明确分值；不把它当放弃",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.earring-found",
+      "level": "L2",
+      "event": "找到另一只耳环",
+      "trigger": "第3次curtain-click接受",
+      "evidence": "curtainClicks=3,status=found",
+      "reference_rows": "无明确找到项",
+      "executed_score": "缺：找到耳环独立向量",
+      "no_score": "无否按钮",
+      "not_done_score": "拒绝/未开始/开始后未找到须分别保留；无统一未找到向量",
+      "counting": "三次点击归并找到一次",
+      "gap": "找到/未找到分值缺失；不能强套长搜索或放弃",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.return-hall",
+      "level": "L2",
+      "event": "返回大厅",
+      "trigger": "return-hall接受",
+      "evidence": "view=room；searching变returned，found保持",
+      "reference_rows": "30:31",
+      "executed_score": "未找到且<=15秒离开参考A=0；>15秒A=2是长搜索参考；找到后返回无独立分",
+      "no_score": "无否按钮",
+      "not_done_score": "仍在卧室为进行中，不强判未做",
+      "counting": "导航不另加基础分；搜索状态不能重复计同一个长搜索",
+      "gap": "不同搜索结果分别归类；不能每次返回重复给分",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L2.furniture-final",
+      "level": "L2",
+      "event": "整理房间最后确认结果",
+      "trigger": "最终有效layout-confirm被接受",
+      "evidence": "outcome.layout/classification.reasonable/tidy/openPlacement/movedIds",
+      "reference_rows": "32:43仅历史参考",
+      "executed_score": "缺：当前结果分类的向量；不套四分位",
+      "no_score": "取消/退出编辑不是确认，无独立分值",
+      "not_done_score": "尚未确认为未结算，不能当0或整理失败",
+      "counting": "只结算最后一次确认；移动/撤销/重置/之前确认不累加",
+      "gap": "最后结果到向量需补；合理/整齐/空旷/无变化/不合理按实际回执列明；最终截止待算法",
+      "source": "apps/api/app/l2_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.open",
+      "level": "L3-01",
+      "event": "打开风暴房间门",
+      "trigger": "decision open yes=true/false接受",
+      "evidence": "outcome.choices.open；state_changed",
+      "reference_rows": "44:46",
+      "executed_score": "组合参考V=-2,T=1（开后未关）",
+      "no_score": "组合参考V=2,T=1（未开且未关）",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.close",
+      "level": "L3-01",
+      "event": "关上风暴房间门",
+      "trigger": "decision close yes=true/false接受",
+      "evidence": "outcome.choices.close；state_changed",
+      "reference_rows": "44:46",
+      "executed_score": "组合参考V=0,T=-2（开后关）",
+      "no_score": "组合参考依open而变",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.wait",
+      "level": "L3-01",
+      "event": "等待",
+      "trigger": "decision wait yes=true/false接受",
+      "evidence": "outcome.choices.wait；state_changed",
+      "reference_rows": "47:48",
+      "executed_score": "参考：A=1",
+      "no_score": "参考：A=-1",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "无独立未做分支；未到达不按否计",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.curtain",
+      "level": "L3-01",
+      "event": "拉开窗帘",
+      "trigger": "decision curtain yes=true/false接受",
+      "evidence": "outcome.choices.curtain；state_changed",
+      "reference_rows": "49:50",
+      "executed_score": "参考：V=-1",
+      "no_score": "参考：V=1",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "无独立未做分支；未到达不按否计",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.window",
+      "level": "L3-01",
+      "event": "关窗",
+      "trigger": "decision window yes=true/false接受",
+      "evidence": "outcome.choices.window；state_changed",
+      "reference_rows": "51:54",
+      "executed_score": "缺独立向量；原表窗/电扇组合仅历史参考",
+      "no_score": "缺独立向量；不以原组合强套",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.television",
+      "level": "L3-01",
+      "event": "关电视",
+      "trigger": "decision television yes=true/false接受",
+      "evidence": "outcome.choices.television；state_changed",
+      "reference_rows": "51:54原表电扇",
+      "executed_score": "缺：当前关电视的向量，保留当前事件",
+      "no_score": "缺：当前不关电视的向量",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "counting": "每个成功事件最多一次；否后改是不能永久累计两套互斥分",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.carry",
+      "level": "L3-02",
+      "event": "决定携带物品",
+      "trigger": "carry=yes/no接受",
+      "evidence": "outcome.carry/completion",
+      "reference_rows": "55",
+      "executed_score": "进入选物过程，无额外基础分",
+      "no_score": "明确全维NA（不携带）",
+      "not_done_score": "进行中；未回答不能完成",
+      "counting": "携带意愿不与最终物品重复计分",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.scarf",
+      "level": "L3-02",
+      "event": "最终带走围巾",
+      "trigger": "draft选scarf后confirm接受",
+      "evidence": "outcome.item=scarf,completion=complete",
+      "reference_rows": "56",
+      "executed_score": "参考：A=-1,V=-2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.lantern",
+      "level": "L3-02",
+      "event": "最终带走灯笼",
+      "trigger": "draft选lantern后confirm接受",
+      "evidence": "outcome.item=lantern,completion=complete",
+      "reference_rows": "57",
+      "executed_score": "参考：A=2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.umbrella",
+      "level": "L3-02",
+      "event": "最终带走伞",
+      "trigger": "draft选umbrella后confirm接受",
+      "evidence": "outcome.item=umbrella,completion=complete",
+      "reference_rows": "58",
+      "executed_score": "参考：V=2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.compass",
+      "level": "L3-02",
+      "event": "最终带走指南针",
+      "trigger": "draft选compass后confirm接受",
+      "evidence": "outcome.item=compass,completion=complete",
+      "reference_rows": "59",
+      "executed_score": "参考：A=-2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.doll",
+      "level": "L3-02",
+      "event": "最终带走玩偶",
+      "trigger": "draft选doll后confirm接受",
+      "evidence": "outcome.item=doll,completion=complete",
+      "reference_rows": "60",
+      "executed_score": "参考：A=1,V=-1",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.key",
+      "level": "L3-02",
+      "event": "最终带走钥匙",
+      "trigger": "draft选key后confirm接受",
+      "evidence": "outcome.item=key,completion=complete",
+      "reference_rows": "61",
+      "executed_score": "参考：V=1",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.journal",
+      "level": "L3-02",
+      "event": "最终带走日记",
+      "trigger": "draft选journal后confirm接受",
+      "evidence": "outcome.item=journal,completion=complete",
+      "reference_rows": "62",
+      "executed_score": "参考：A=-2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.rope",
+      "level": "L3-02",
+      "event": "最终带走绳子",
+      "trigger": "draft选rope后confirm接受",
+      "evidence": "outcome.item=rope,completion=complete",
+      "reference_rows": "63",
+      "executed_score": "参考：A=2",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L3.item.backpack",
+      "level": "L3-02",
+      "event": "最终带走背包",
+      "trigger": "draft选backpack后confirm接受",
+      "evidence": "outcome.item=backpack,completion=complete",
+      "reference_rows": "",
+      "executed_score": "缺独立向量",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "counting": "九选一；draft换物不计；最终物品一次",
+      "gap": "背包向量缺失",
+      "source": "apps/api/app/l3_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.village",
+      "level": "L4",
+      "event": "确认微光门",
+      "trigger": "confirm door=village接受",
+      "evidence": "outcome.door,completion=complete",
+      "reference_rows": "64",
+      "executed_score": "参考：A=-1,V=-1",
+      "no_score": "预览取消无服务器评分事件",
+      "not_done_score": "未选其余门不另扣分；未确认属进行中",
+      "counting": "四选一最终门一次",
+      "gap": "",
+      "source": "apps/api/app/l4_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.coast",
+      "level": "L4",
+      "event": "确认静塔门",
+      "trigger": "confirm door=coast接受",
+      "evidence": "outcome.door,completion=complete",
+      "reference_rows": "65",
+      "executed_score": "参考：A=1,V=1",
+      "no_score": "预览取消无服务器评分事件",
+      "not_done_score": "未选其余门不另扣分；未确认属进行中",
+      "counting": "四选一最终门一次",
+      "gap": "",
+      "source": "apps/api/app/l4_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.forest",
+      "level": "L4",
+      "event": "确认森林门",
+      "trigger": "confirm door=forest接受",
+      "evidence": "outcome.door,completion=complete",
+      "reference_rows": "66",
+      "executed_score": "参考：A=-1,V=1",
+      "no_score": "预览取消无服务器评分事件",
+      "not_done_score": "未选其余门不另扣分；未确认属进行中",
+      "counting": "四选一最终门一次",
+      "gap": "",
+      "source": "apps/api/app/l4_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    },
+    {
+      "id": "L4.castle",
+      "level": "L4",
+      "event": "确认宫殿门",
+      "trigger": "confirm door=castle接受",
+      "evidence": "outcome.door,completion=complete",
+      "reference_rows": "67",
+      "executed_score": "参考：A=1,V=-1",
+      "no_score": "预览取消无服务器评分事件",
+      "not_done_score": "未选其余门不另扣分；未确认属进行中",
+      "counting": "四选一最终门一次",
+      "gap": "",
+      "source": "apps/api/app/l4_domain.py",
+      "proposed_vectors": {
+        "A": null,
+        "V": null,
+        "T": null,
+        "F": null
+      }
+    }
+  ],
+  "missing_branches": [
+    {
+      "id": "L1.repair",
+      "level": "L1-01",
+      "event": "修好桥",
+      "executed_score": "原表合并参考A=1,F=1；独立修桥分值待确认",
+      "no_score": "API有否但UI自动提交成功；无独立否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "原表将修桥和过河合写；分值归属待确认，不能复制两次。未修桥缺分"
+    },
+    {
+      "id": "L1.boat-ready",
+      "level": "L1-01",
+      "event": "修好船",
+      "executed_score": "原表合并参考A=1,F=0；独立修好船分值待确认",
+      "no_score": "当前UI只有拨草；API否不等于修船失败",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "原表将修船和过河合写；分值归属待确认，不能复制两次。0–4次未完成"
+    },
+    {
+      "id": "L1.cross-bridge",
+      "level": "L1-01",
+      "event": "走桥过河",
+      "executed_score": "参考：A=1,F=1；与修桥/修船共享原表合并描述，归属待确认，不双算",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分"
+    },
+    {
+      "id": "L1.swim",
+      "level": "L1-01",
+      "event": "游泳过河",
+      "executed_score": "参考：A=-1,F=-2",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分"
+    },
+    {
+      "id": "L1.use-ring",
+      "level": "L1-01",
+      "event": "救生圈过河",
+      "executed_score": "参考：A=-1,F=1",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "其余路线未执行：无独立向量，不自动扣分",
+      "gap": "该路线显式否/未选没有单独分值；其余路线不是自动反向加分"
+    },
+    {
+      "id": "L1.boat-cross",
+      "level": "L1-01",
+      "event": "划船过河",
+      "executed_score": "参考：A=1,F=0；与修桥/修船共享原表合并描述，归属待确认，不双算",
+      "no_score": "划桨无否；上船否有回执但无分值",
+      "not_done_score": "未上船/未划完缺独立向量；未结束不结算",
+      "gap": "拒绝上船或未完成划船的分值未明确"
+    },
+    {
+      "id": "L1.greet-woman",
+      "level": "L1-02",
+      "event": "主动与女生交谈",
+      "executed_score": "参考：V=-2；当前交谈即主动交谈",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "女生交谈否/未做缺分；原表仅打招呼V=0/完全不点选V=2不能代替"
+    },
+    {
+      "id": "L1.greet",
+      "level": "L1-02",
+      "event": "主动与男生交谈",
+      "executed_score": "参考：V=-2；当前交谈即主动交谈",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "男生交谈否/未做缺分；原表仅打招呼V=0/完全不点选V=2不能代替"
+    },
+    {
+      "id": "L1.take-lamp",
+      "level": "L1-02",
+      "event": "拿起灯",
+      "executed_score": "只有灯四组合参考，缺该动作的独立向量",
+      "no_score": "否无独立向量；可结合最后lampTaken/lampLit查组合",
+      "not_done_score": "未做无独立向量；灯四组合有参考",
+      "gap": "动作分/否分需拆分确认；保留四组合F=2/0/0/-2的来源，不重复加"
+    },
+    {
+      "id": "L1.light-lamp",
+      "level": "L1-02",
+      "event": "点亮灯",
+      "executed_score": "只有灯四组合参考，缺该动作的独立向量",
+      "no_score": "否无独立向量；可结合最后lampTaken/lampLit查组合",
+      "not_done_score": "未做无独立向量；灯四组合有参考",
+      "gap": "动作分/否分需拆分确认；保留四组合F=2/0/0/-2的来源，不重复加"
+    },
+    {
+      "id": "L2.arrive-table",
+      "level": "L2",
+      "event": "走到桌边",
+      "executed_score": "未坐下直接到桌边参考A=0；坐过再来不套该分",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未走到桌边无独立分值",
+      "gap": "原表有条件参考，不代表所有arrive-table都得A=0"
+    },
+    {
+      "id": "L2.sit.chair",
+      "level": "L2",
+      "event": "坐窗边椅",
+      "executed_score": "参考：A=1",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未坐该椅无独立向量；直接桌边另有条件参考",
+      "gap": "该椅选否/未做缺独立分值；不能只读当前seat丢失此前坐过事实"
+    },
+    {
+      "id": "L2.sit.table-seat",
+      "level": "L2",
+      "event": "坐桌前椅",
+      "executed_score": "参考：A=-1（原表称中心椅）",
+      "no_score": "缺：明确选否有回执，但没有独立向量",
+      "not_done_score": "缺：未坐该椅无独立向量；直接桌边另有条件参考",
+      "gap": "该椅选否/未做缺独立分值；不能只读当前seat丢失此前坐过事实"
+    },
+    {
+      "id": "L2.select-key.key-1",
+      "level": "L2",
+      "event": "选择钥匙 key-1",
+      "executed_score": "缺：原表直接拿第一把F=-1不能明确分到key或选择次序",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "当前两把钥匙的分值待补；不再列反复比较事件"
+    },
+    {
+      "id": "L2.select-key.key-2",
+      "level": "L2",
+      "event": "选择钥匙 key-2",
+      "executed_score": "缺：原表直接拿第一把F=-1不能明确分到key或选择次序",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "当前两把钥匙的分值待补；不再列反复比较事件"
+    },
+    {
+      "id": "L2.try-first",
+      "level": "L2",
+      "event": "第一次用钥匙试门（失败）",
+      "executed_score": "缺：首次试门失败独立向量",
+      "no_score": "无否按钮",
+      "not_done_score": "缺：未执行没有明确向量；只在该场景已结束后判定",
+      "gap": "第一次试门执行/未做向量缺失；不能因失败当拒绝回执"
+    },
+    {
+      "id": "L2.try-second",
+      "level": "L2",
+      "event": "换另一把钥匙开门成功",
+      "executed_score": "参考：再次尝试V=-1",
+      "no_score": "无否按钮",
+      "not_done_score": "尝试一次后最终未再试参考V=1；从未试门无参考",
+      "gap": "从未试门不等于失败后放弃；不将暂时停留当放弃"
+    },
+    {
+      "id": "L2.explore",
+      "level": "L2",
+      "event": "进入已解锁的卧室",
+      "executed_score": "多个冲突参考：A=-1 或 V=-2,T=1；先否后是另有V=0,T=-2",
+      "no_score": "多个参考：A=1 或 V=2,T=1；待选",
+      "not_done_score": "缺：未尝试探索不能直接套显式否",
+      "gap": "事件明确；执行/否的向量来源冲突，未做缺分"
+    },
+    {
+      "id": "L2.search-start",
+      "level": "L2",
+      "event": "答应寻找耳环",
+      "executed_score": "缺：开始寻找独立向量；不能预先给找到/长搜索分",
+      "no_score": "参考：拒绝寻找A=-2",
+      "not_done_score": "缺：未触发寻找无明确分值",
+      "gap": "开始寻找及未触发缺独立分值"
+    },
+    {
+      "id": "L2.search-long",
+      "level": "L2",
+      "event": "长搜索（严格超过15秒）",
+      "executed_score": "参考：A=2",
+      "no_score": "无否按钮",
+      "not_done_score": "<=15000未达标：短搜索后放弃参考A=0；快速找到无独立参考",
+      "gap": "快速找到但未超过15秒的分支缺明确分值；不把它当放弃"
+    },
+    {
+      "id": "L2.earring-found",
+      "level": "L2",
+      "event": "找到另一只耳环",
+      "executed_score": "缺：找到耳环独立向量",
+      "no_score": "无否按钮",
+      "not_done_score": "拒绝/未开始/开始后未找到须分别保留；无统一未找到向量",
+      "gap": "找到/未找到分值缺失；不能强套长搜索或放弃"
+    },
+    {
+      "id": "L2.return-hall",
+      "level": "L2",
+      "event": "返回大厅",
+      "executed_score": "未找到且<=15秒离开参考A=0；>15秒A=2是长搜索参考；找到后返回无独立分",
+      "no_score": "无否按钮",
+      "not_done_score": "仍在卧室为进行中，不强判未做",
+      "gap": "不同搜索结果分别归类；不能每次返回重复给分"
+    },
+    {
+      "id": "L2.furniture-final",
+      "level": "L2",
+      "event": "整理房间最后确认结果",
+      "executed_score": "缺：当前结果分类的向量；不套四分位",
+      "no_score": "取消/退出编辑不是确认，无独立分值",
+      "not_done_score": "尚未确认为未结算，不能当0或整理失败",
+      "gap": "最后结果到向量需补；合理/整齐/空旷/无变化/不合理按实际回执列明；最终截止待算法"
+    },
+    {
+      "id": "L3.open",
+      "level": "L3-01",
+      "event": "打开风暴房间门",
+      "executed_score": "组合参考V=-2,T=1（开后未关）",
+      "no_score": "组合参考V=2,T=1（未开且未关）",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算"
+    },
+    {
+      "id": "L3.close",
+      "level": "L3-01",
+      "event": "关上风暴房间门",
+      "executed_score": "组合参考V=0,T=-2（开后关）",
+      "no_score": "组合参考依open而变",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算"
+    },
+    {
+      "id": "L3.window",
+      "level": "L3-01",
+      "event": "关窗",
+      "executed_score": "缺独立向量；原表窗/电扇组合仅历史参考",
+      "no_score": "缺独立向量；不以原组合强套",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算"
+    },
+    {
+      "id": "L3.television",
+      "level": "L3-01",
+      "event": "关电视",
+      "executed_score": "缺：当前关电视的向量，保留当前事件",
+      "no_score": "缺：当前不关电视的向量",
+      "not_done_score": "不适用：未回答为进行中；六项必须回答才能进入携物",
+      "gap": "缺当前独立动作/否向量；组合参考不与事件分双算"
+    },
+    {
+      "id": "L3.item.backpack",
+      "level": "L3-02",
+      "event": "最终带走背包",
+      "executed_score": "缺独立向量",
+      "no_score": "无逐物品否按钮；不携带统一carry=false全NA",
+      "not_done_score": "未选该物品不另扣分；只评最终选项",
+      "gap": "背包向量缺失"
+    }
+  ],
+  "furniture_results": [
+    [
+      "reasonable=false",
+      "不合理布局",
+      "不把确认成功/出口打开等同整理合理；向量待补"
+    ],
+    [
+      "reasonable=true,tidy=false,openPlacement=false",
+      "合理但本次未发生有效移动",
+      "可能是重复确认；不能覆盖或重复累加早期分数，最终规则待定"
+    ],
+    [
+      "reasonable=true,tidy=true,openPlacement=false",
+      "合理整理，无空旷摆放",
+      "按最后结果一次；向量待补"
+    ],
+    [
+      "reasonable=true,tidy=true,openPlacement=true",
+      "合理整理，并有空旷摆放",
+      "按最后结果一次；向量待补"
     ]
   ]
 }
