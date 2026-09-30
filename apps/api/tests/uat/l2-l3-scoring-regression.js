@@ -35,8 +35,15 @@ async original=>{
     await act('l2',{type:'layout-start'});
     await act('l2',{type:'layout-move',id:'armchair',point:{u:.27791321372763345,v:.9298451630714811}});
     const confirmed=await act('l2',{type:'layout-confirm'});
-    if(!confirmed.score_effect.events.every(e=>e.status==='applied'))throw Error('repaired placement not scored');
+    if(confirmed.score_effect.reason!=='AWAITING_L3_ENTRY')throw Error('furniture scored before entry');
+    await act('l2',{type:'layout-start'});
+    await act('l2',{type:'layout-move',id:'chair',point:{u:.5,v:.5}});
+    const last=await act('l2',{type:'layout-confirm'});
+    if(last.score_effect.events.length)throw Error('reconfirmation generated score');
     s=await post('/levels/l3',{});
+    const scoring=await(await fetch(url+'/scoring',{headers})).json();
+    const furniture=scoring.ledger.filter(e=>e.group_id.startsWith('l2.furniture.'));
+    if(furniture.length!==3||furniture.some(e=>e.evidence.layout.chair.u!==.5))throw Error('not using last confirmed layout');
     await act('l3',{type:'decision',slot:'open',yes:true});
     await act('l3',{type:'decision',slot:'close',yes:false});
     const closed=await act('l3',{type:'decision',slot:'close',yes:true});

@@ -66,7 +66,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
   if(!server.current||syncError)return false;
   requestLock.current=true;setSyncing(true);
   try{const auth=api.credentials();if(auth.id!==server.current.id)throw new Error("旅程已切换，请重新载入。");const pending=api.prepare(server.current,action);applyServer(await api.submit(auth,pending));return true;}
-  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="LAYOUT_OUTSIDE_FLOOR"){const outside=measureLayout(error.session.state.furniture.layout,error.session.state.furniture.adjustmentCount).evidence.outsideFloor;setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回地面后再次确认；本次未结算。`);return false;}if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"未能记录这次移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
+  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="L2_FINALIZED"){setPrompt(null);setMessage("已进入第三幕，第二幕评分已经结算，不能再修改。");return false;}if(error.code==="LAYOUT_OUTSIDE_FLOOR"){const outside=measureLayout(error.session.state.furniture.layout,error.session.state.furniture.adjustmentCount).evidence.outsideFloor;setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回地面后再次确认；本次未结算。`);return false;}if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"未能记录这次移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
   finally{requestLock.current=false;setSyncing(false);}
  }
  async function table(){if(blocked)return;if(await act({type:"arrive-table"})){setPrompt({type:"keys"});setMessage("你来到了桌边。");}}
@@ -83,7 +83,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  async function returnHall(){if(blocked||stateRef.current.view!=="bedroom")return;if(await act({type:"return-hall"})){setPrompt(null);setMessage("你回到了大厅，可以整理椅子和沙发了。");}}
  async function startLayout(){if(await act({type:"layout-start"})){setPrompt(null);setMessage("拖动家具，按你觉得合适的方式摆放。");}}
  async function moveFurniture(id:FurnitureId,point:Point){if(blocked||prompt||!stateRef.current.furniture.editing)return;if(!moveLayout(stateRef.current.furniture.layout,id,point)){setMessage("未能记录这次移动，请重试。");return;}const bounded=moveLayout(stateRef.current.furniture.layout,id,point)![id];if(Math.hypot(bounded.u-stateRef.current.furniture.layout[id].u,bounded.v-stateRef.current.furniture.layout[id].v)<.002){setMessage("已到可摆放边缘，可以沿墙继续调整。");return;}if(await act({type:"layout-move",id,point:bounded}))setMessage(`${furniture[id].name}的位置已保留，可以继续调整。`);}
- async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存，左侧另一扇门打开了。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
+ async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"最新摆放已保存，可继续整理；进入第三幕时结算最后一次确认。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
  const anchor=prompt?.type==="seat"?prompt.seat:prompt?.type==="found"?"armchair":"keys";
  return <main className={styles.game}>
   <section className={styles.stage} aria-label="第二幕游戏舞台">
@@ -106,8 +106,8 @@ export function L2Game({preview=false}:{preview?:boolean}){
    {(!ready||(!storageReady&&!syncError))&&<div className={styles.loading} role="status"><p>{loadError?"房间素材加载失败，请重试。":"正在准备房间…"}</p>{loadError&&<button onClick={()=>setAttempt(v=>v+1)}>重新加载</button>}</div>}
    {prompt?.type==="exit"&&<section className={`${styles.bubble} ${styles.keys}`} aria-label="场景提示" inert={blocked}>
     <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>另一扇门打开了，要进去吗？</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-    <p>{preview?"第二、三幕为本地预览，进度仅保存在此浏览器。":"第二幕已通关，第三幕将沿用原旅程，由服务器保存进度。"}</p>
-    <div className={styles.actions}><button onClick={()=>setPrompt(null)}>先留在这里</button><Link className={styles.primary} href={preview?"/l3?preview=1&from=l2":"/l3?from=l2"}>是，进入第三幕</Link></div>
+    <p>{preview?"第二、三幕为本地预览，进度仅保存在此浏览器。":"进入第三幕时，将按最后一次确认的摆放结算；之后第二幕不能再修改。"}</p>
+    <p>如果确认后又调整了家具，请先重新确认；未确认的改动不会用于评分。</p><div className={styles.actions}><button onClick={()=>setPrompt(null)}>先留在这里</button><Link className={styles.primary} href={preview?"/l3?preview=1&from=l2":"/l3?from=l2"}>是，进入第三幕</Link></div>
    </section>}
    {prompt&&prompt.type!=="exit"&&<section className={`${styles.bubble} ${styles[anchor]}`} aria-label="场景提示" inert={blocked}>
     <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>{prompt.type==="layout-confirm"?"就这样摆放吗？":prompt.type==="layout-reset"?"恢复家具的初始位置吗？":prompt.type==="search"?"床头柜上有一只耳环，要找找另一只吗？":prompt.type==="return"?"先回大厅吗？":prompt.type==="found"?"在窗帘附近找到另一只耳环了。":prompt.type==="seat"?"要在这里坐一会儿吗？":prompt.type==="door"?"用哪把钥匙试着开门？":prompt.type==="result"?(state.doorOpen?"里面很黑，要进去探索吗？":"这把钥匙没有打开门。" ):"桌上有两把钥匙，你想先选哪一把？"}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>

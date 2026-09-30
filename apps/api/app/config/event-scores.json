@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "event_definition_version": "server-composite-v2",
+  "event_definition_version": "server-composite-v3",
   "event_score_version": "event-scores-v2",
   "groups": {
     "l1.crossing": {

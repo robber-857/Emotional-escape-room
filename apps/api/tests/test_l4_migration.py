@@ -18,6 +18,8 @@ def test_migration_preserves_all_previous_levels(tmp_path, monkeypatch):
         # Seed the historical schema without the newly introduced score hooks.
         with monkeypatch.context() as legacy:
             legacy.setattr("app.main.bind_scoring", lambda *a, **k: None)
+            legacy.setattr("app.l2_api.has_l3", lambda *a, **k: False)
+            legacy.setattr("app.l3_api.finalize_furniture", lambda *a, **k: None)
             for module in ("app.main", "app.l2_api", "app.l3_api"):
                 legacy.setattr(module+".record_scoring", lambda *a, **k: {"status":"legacy_unbound"})
             _, h, l4url = completed_l3(client, "lantern")

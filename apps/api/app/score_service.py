@@ -2,7 +2,7 @@
 from bisect import bisect_left
 from copy import deepcopy
 from datetime import datetime, timezone
-from uuid import uuid4
+from uuid import uuid4, uuid5, NAMESPACE_URL
 from sqlalchemy import insert, select
 from .db import score_evaluations, score_ledger, score_actions, sessions, l2_runs, l3_runs, l4_runs
 from .score_policy import bundle, AXES, DEFINITION_VERSION
@@ -68,10 +68,25 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         result['settlement']=dict(cutoff='storm_answers_complete',remaining_slots=[k for k,v in state['choices'].items() if v is None],
                                   door_locked=state['choices']['open'] is True and state['choices']['close'] is True)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
-    complete=state["scene"]=="complete" if level=="l1" else state.get("exitDoorOpen",False) if level=="l2" else state["completion"]=="complete"
+    complete=state["scene"]=="complete" if level=="l1" else action['type']=='furniture-finalize' if level=="l2" else state["completion"]=="complete"
     result["level_score"]=level_summary(level,policy,entries,complete)
     conn.execute(insert(score_actions).values(session_id=sid,level=level,action_id=action_id,receipt=result,created_at=now))
     return result
+
+
+def finalize_furniture(conn,sid):
+    row=conn.execute(select(l2_runs).where(l2_runs.c.session_id==str(sid))).mappings().one()
+    state=deepcopy(row['state'])
+    assessment=state['furniture'].get('assessment')
+    if assessment is None:
+        return None  # Historical journeys without confirmation evidence remain unscored.
+    state['furniture']['layout']=deepcopy(assessment['layout'])
+    state['furniture']['classification']=deepcopy(assessment.get('placement') or assessment['scoring']['facts']['placement'])
+    # Only evidence up to the last confirmed layout belongs to this settlement.
+    state['events']=state['events'][:assessment['version']]
+    return record(conn,sid,'l2',str(uuid5(NAMESPACE_URL,f'{sid}/l2/furniture-finalize')),
+                  dict(type='furniture-finalize',confirmation_action_id=assessment['action_id']),
+                  state,state,True,assessment['version'],'L3_ENTRY_FINALIZED',datetime.now(timezone.utc).isoformat())
 
 
 def summary(conn,sid):
@@ -84,7 +99,7 @@ def summary(conn,sid):
     levels={}
     for level,table,key in (("l1",sessions,sessions.c.id),("l2",l2_runs,l2_runs.c.session_id),("l3",l3_runs,l3_runs.c.session_id),("l4",l4_runs,l4_runs.c.session_id)):
         row=conn.execute(select(table).where(key==sid)).mappings().first()
-        complete=bool(row and (row["state"]["scene"]=="complete" if level=="l1" else row["state"].get("exitDoorOpen",False) if level=="l2" else row["state"]["completion"]=="complete"))
+        complete=bool(row and (row["state"]["scene"]=="complete" if level=="l1" else conn.execute(select(l3_runs.c.session_id).where(l3_runs.c.session_id==sid)).first() is not None if level=="l2" else row["state"]["completion"]=="complete"))
         levels[level]=level_summary(level,evaluation["policy"],[e for e in ledger if e["level"]==level],complete)
     actions=[r["receipt"] for r in conn.execute(select(score_actions).where(score_actions.c.session_id==sid).order_by(score_actions.c.created_at.desc(),score_actions.c.action_id.desc()).limit(100)).mappings()]
     return dict(source="server_database",session_id=sid,status="active",evaluation_id=evaluation["evaluation_id"],policy_hash=evaluation["policy_hash"],

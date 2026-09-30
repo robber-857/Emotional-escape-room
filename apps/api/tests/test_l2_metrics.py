@@ -62,7 +62,7 @@ def test_floor_quality_does_not_redefine_overlap_and_legacy_is_not_zero():
     assert l2_scoring.evaluate(result)["contributions"] is None
 
 
-def test_count_retry_undo_reset_refresh_and_first_confirmation_freeze(client,tmp_path,monkeypatch):
+def test_count_retry_undo_reset_refresh_and_latest_confirmation(client,tmp_path,monkeypatch):
     configured(tmp_path,monkeypatch)
     _,h,url,s=open_l2(client)
     act(client,url,h,s,dict(type="layout-start"))
@@ -77,14 +77,15 @@ def test_count_retry_undo_reset_refresh_and_first_confirmation_freeze(client,tmp
         assert act(client,url,h,s,action)[0].status_code == 200
     assert client.get(url,headers=h).json()["state"]["furniture"]["adjustmentCount"] == 4
     result,request=act(client,url,h,s,dict(type="layout-confirm"))
-    assert result.json()["scoring"]["status"] == "scored"
+    assert result.json()["scoring"]["status"] == "awaiting_l3_entry"
     first=deepcopy(s["state"]["furniture"]["assessment"])
     assert first["layout"] == original
     for action in [dict(type="layout-start"),dict(type="layout-move",id="chair",point=dict(u=.45,v=.35)),dict(type="layout-confirm")]:
         result,_=act(client,url,h,s,action)
-    assert result.json()["scoring"]["status"] == "already_assessed"
+    assert result.json()["scoring"]["status"] == "awaiting_l3_entry"
     assert result.json()["scoring"]["contributions"] is None
-    assert s["state"]["furniture"]["assessment"] == first
+    assert s["state"]["furniture"]["assessment"]["action_id"] != first["action_id"]
+    assert s["state"]["furniture"]["assessment"]["placement"]["metrics"]["adjustmentCount"] == 5
     assert client.post(url+"/actions",headers=h,json=request).json()["scoring"] == first["scoring"]
 
 

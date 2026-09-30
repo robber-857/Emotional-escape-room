@@ -8,11 +8,15 @@ from fastapi import Header, HTTPException
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import select, insert, update
-from .db import l2_runs, l2_events
+from .db import l2_runs, l2_events, l3_runs
 from .l2_domain import initial_state, apply_action, RULES_VERSION, MAX_EVENTS, with_completion, COMPLETION_POLICY_VERSION
 from .scoring import evaluate_l2_event
 from .l2_receipts import AUTHORITY, VALIDATION_VERSION, outcome
 log = logging.getLogger("uvicorn.error")
+
+def has_l3(conn,sid):
+    return conn.execute(select(l3_runs.c.session_id).where(l3_runs.c.session_id==str(sid))).first() is not None
+
 
 class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
@@ -109,6 +113,8 @@ def register_l2(app, authorize):
                 if row["rules_version"] != RULES_VERSION: code = "RULES_VERSION_UNSUPPORTED"
                 elif row["version"] != body.expected_version: code = "VERSION_CONFLICT"
                 elif row["version"] >= MAX_EVENTS: code = "SESSION_EVENT_LIMIT"
+                if not code and has_l3(conn,sid):
+                    code='L2_FINALIZED'
                 if not code:
                     try:
                         state = apply_action(state, payload["action"])
@@ -117,9 +123,9 @@ def register_l2(app, authorize):
                     except ValueError as exc: code = str(exc); state = row["state"]
                 accepted = code is None; version = row["version"]+int(accepted)
                 scoring = evaluate_l2_event(payload["action"], state) if accepted else None
-                if accepted and body.action.type == "layout-confirm" and state["furniture"]["assessment"] is None:
+                if accepted and body.action.type == "layout-confirm":
                     state["furniture"]["assessment"] = dict(action_id=str(body.action_id), version=version,
-                        layout=deepcopy(state["furniture"]["layout"]), scoring=deepcopy(scoring))
+                        layout=deepcopy(state["furniture"]["layout"]), placement=deepcopy(state['furniture']['classification']), scoring=deepcopy(scoring))
                 result = dict(accepted=accepted, code=code or "ACCEPTED", version=version, action=payload["action"], rules_version=RULES_VERSION,
                               previous_version=row["version"], validation_version=VALIDATION_VERSION, authority=AUTHORITY,
                               outcome=outcome(payload["action"], state, row["state"]) if accepted else None,

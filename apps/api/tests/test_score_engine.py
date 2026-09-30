@@ -116,14 +116,31 @@ def test_environment_waits_for_all_answers_and_scores_once(client,window,tv,valu
     assert len([e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l3.environment'])==1
 
 
-def test_furniture_reconfirmation_never_duplicates_and_fixed_thresholds_score(client):
+def test_latest_confirmation_settles_once_at_l3_entry(client):
     parent,h,url,s=open_l2(client)
-    for _ in range(2):
-        act(client,url,h,s,dict(type='layout-start'))
-        r,_=act(client,url,h,s,dict(type='layout-confirm'))
-    assert all(e['reason']=='ALREADY_SCORED' for e in r.json()['score_effect']['events'])
-    rows=[e for e in scores(client,parent,h)['ledger'] if e['level']=='l2']
-    assert len(rows)==3 and all(e['reason']=='APPLIED' and e['vector'] is not None for e in rows)
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-confirm'))
+    first=s['state']['furniture']['assessment']['action_id']
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-move',id='chair',point=dict(u=.5,v=.5)))
+    r,_=act(client,url,h,s,dict(type='layout-confirm'))
+    latest=s['state']['furniture']['assessment']
+    assert latest['action_id']!=first and latest['placement']['metrics']['adjustmentCount']==1
+    assert r.json()['score_effect']['reason']=='AWAITING_L3_ENTRY'
+    assert not [e for e in scores(client,parent,h)['ledger'] if e['level']=='l2']
+    # Unconfirmed changes after the last confirmation must not leak into scoring.
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-move',id='chair',point=dict(u=.7,v=.6)))
+    start=url.replace('/l2','/l3')
+    assert client.post(start,headers=h,json={}).status_code==200
+    settled=scores(client,parent,h)
+    rows=[e for e in settled['ledger'] if e['group_id'].startswith('l2.furniture.')]
+    assert len(rows)==3 and all(e['status']=='applied' for e in rows)
+    assert all(e['evidence']['layout']==latest['layout'] and e['evidence']['placement']['metrics']['adjustmentCount']==1 for e in rows)
+    assert client.post(start,headers=h,json={}).status_code==200
+    assert scores(client,parent,h)['ledger']==settled['ledger']
+    assert act(client,url,h,s,dict(type='layout-confirm'))[0].json()['code']=='L2_FINALIZED'
+
 
 
 @pytest.mark.parametrize('door,a,v',[('village',0,0),('coast',100,100),('forest',0,100),('castle',100,0)])
@@ -215,7 +232,7 @@ def test_user_armchair_edge_is_tolerated_and_extreme_moves_stop_at_wall(client):
     assert s['state']['furniture']['adjustmentCount']==count
     r,_=act(client,url,h,s,dict(type='layout-confirm'))
     assert r.status_code==200 and s['state']['furniture']['classification']['eligible']
-    assert all(e['status']=='applied' for e in r.json()['score_effect']['events'])
+    assert r.json()['score_effect']['reason']=='AWAITING_L3_ENTRY'
 
 
 def test_l3_open_close_true_is_final_before_remaining_answers(client):
@@ -251,3 +268,32 @@ def test_no_seat_first_table_scores_explicit_zero(client):
     assert r.json()['score_effect']['delta']==dict(A=0,V=None,T=None,F=None)
     r,_=act(client,url,h,s,dict(type='sit',seat='table-seat',yes=True))
     assert r.json()['score_effect']['reason']=='ALREADY_SCORED'
+
+
+@pytest.mark.skipif(not os.getenv('TEST_DATABASE_URL'),reason='isolated PostgreSQL required')
+def test_concurrent_l3_start_finalizes_furniture_exactly_once(client):
+    parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-confirm'))
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        responses=list(pool.map(lambda _:client.post(url.replace('/l2','/l3'),headers=h,json={}),range(2)))
+    assert all(r.status_code==200 for r in responses)
+    value=scores(client,parent,h)
+    assert len([e for e in value['ledger'] if e['group_id'].startswith('l2.furniture.')])==3
+    assert len([a for a in value['actions'] if a['action']['type']=='furniture-finalize'])==1
+
+
+def test_l3_entry_and_furniture_settlement_rollback_together(client):
+    from app.db import l3_runs
+    parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-confirm'))
+    def fail(conn,cursor,statement,parameters,context,executemany):
+        if 'INSERT INTO l3_runs' in statement:raise SQLAlchemyError('injected transition failure')
+    event.listen(app.state.engine,'before_cursor_execute',fail)
+    try:assert client.post(url.replace('/l2','/l3'),headers=h,json={}).status_code==503
+    finally:event.remove(app.state.engine,'before_cursor_execute',fail)
+    with app.state.engine.connect() as conn:
+        assert not conn.execute(select(l3_runs).where(l3_runs.c.session_id==parent['id'])).all()
+    assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id'].startswith('l2.furniture.')]
+    assert client.post(url.replace('/l2','/l3'),headers=h,json={}).status_code==200

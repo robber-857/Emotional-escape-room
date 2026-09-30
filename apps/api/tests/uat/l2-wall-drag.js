@@ -46,7 +46,7 @@ async original=>{
     await page.waitForFunction(()=>document.querySelector('[data-furniture="armchair"]')?.getAttribute('aria-disabled')==='false');
    }
    await click('确认摆放');const finish=response();await click('是，保存摆放');const receipt=await(await finish).json();
-   check(receipt.accepted&&receipt.score_effect.events.every(e=>e.status==='applied'),'wall placement did not score');
+   check(receipt.accepted&&receipt.score_effect.reason==='AWAITING_L3_ENTRY','wall placement did not score');
    const state=await read();check(state.state.furniture.classification.eligible,'UI and server floor boundaries disagree');
    check(!errors.length,errors.join(';'));results.push({mobile,status:'PASS',metrics:state.state.furniture.classification.metrics});
   }catch(e){throw Error(e.message+'\n'+await page.locator('body').ariaSnapshot());}

@@ -35,7 +35,7 @@ def candidates(level, before, state, action):
         if action["type"] == "try-door":
             if len(state["attempts"]) == 1: add("l2.first-try","attempt")
             elif len(state["attempts"]) == 2: add("l2.retry","retry")
-        if action["type"] == "layout-confirm":
+        if action["type"] == "furniture-finalize":
             for name in ("wall","tidiness","adjustments"):
                 add("l2.furniture."+name,"quartile")
     elif level == "l3":
@@ -59,6 +59,8 @@ def candidates(level, before, state, action):
 
 
 def no_score_reason(level, action):
+    if level=='l2' and action['type']=='layout-confirm':
+        return 'AWAITING_L3_ENTRY'
     if level == 'l3':
         return 'AWAITING_STORM_CUTOFF' if action['type']=='decision' else 'AWAITING_ITEM_CONFIRMATION'
     if level=='l2' and action['type']=='sit':
