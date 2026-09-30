@@ -2,7 +2,7 @@ import {readSession,type Session as L1Session} from "../l1/api";
 import type {Action,State} from "./model";
 export type Session={id:string;version:number;rules_version:string;state:State;l1:{version:number;scene:string;route:string;lampTaken:boolean;lampLit:boolean};scoring:{status:"pending_configuration";totals:null}};
 export type Pending={sessionId:string;action_id:string;expected_version:number;action:Action};
-export type Receipt={action_id:string;received_at:string;accepted:boolean;code:string;version:number;previous_version?:number;rules_version:string;validation_version?:string;action:Action;authority:{record_source:"server_database";decision_source:"server";input_source:"client_claim"};outcome?:Record<string,unknown>|null;scoring:{status:string;policy_version:string|null;contributions:unknown;facts:Record<string,unknown>}|null};
+export type Receipt={score_effect?:unknown;action_id:string;received_at:string;accepted:boolean;code:string;version:number;previous_version?:number;rules_version:string;validation_version?:string;action:Action;authority:{record_source:"server_database";decision_source:"server";input_source:"client_claim"};outcome?:Record<string,unknown>|null;scoring:{status:string;policy_version:string|null;contributions:unknown;facts:Record<string,unknown>}|null};
 export const pendingKey=(id:string)=>`emotional:l2:pending:${id}`;
 export const changeKey=(id:string)=>`emotional:l2:revision:${id}`;
 export class RejectedAction extends Error{constructor(public session:Session,public code:string){super(code);}}

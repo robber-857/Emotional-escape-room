@@ -1,3 +1,4 @@
+from .score_service import record as record_scoring
 from datetime import datetime, timezone
 from copy import deepcopy
 import logging
@@ -123,6 +124,7 @@ def register_l2(app, authorize):
                               previous_version=row["version"], validation_version=VALIDATION_VERSION, authority=AUTHORITY,
                               outcome=outcome(payload["action"], state, row["state"]) if accepted else None,
                               scoring=scoring)
+                result["score_effect"] = record_scoring(conn,sid,"l2",body.action_id,payload["action"],row["state"],state,accepted,version,result["code"],now.isoformat())
                 if accepted:
                     state["events"].append(dict(id=str(body.action_id), at=now.isoformat(), action=payload["action"]))
                     anchor = now.isoformat() if body.action.type in ("search-choice", "search-time") else row["time_anchor"]

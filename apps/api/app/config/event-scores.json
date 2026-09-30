@@ -1,0 +1,583 @@
+{
+  "schema_version": 1,
+  "event_definition_version": "server-composite-v1",
+  "event_score_version": "event-scores-v1",
+  "groups": {
+    "l1.crossing": {
+      "bridge": {
+        "label": "修好桥并走桥过河",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": null,
+          "T": null,
+          "F": 1.0
+        }
+      },
+      "swim": {
+        "label": "游泳过河",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": null,
+          "T": null,
+          "F": -2.0
+        }
+      },
+      "ring": {
+        "label": "救生圈过河",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": null,
+          "T": null,
+          "F": 1.0
+        }
+      },
+      "boat": {
+        "label": "修好船并划船过河",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": null,
+          "T": null,
+          "F": 0.0
+        }
+      }
+    },
+    "l1.talk.woman": {
+      "yes": {
+        "label": "与女生主动交谈",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": -2.0,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l1.talk.man": {
+      "yes": {
+        "label": "与男生主动交谈",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": -2.0,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l1.lamp": {
+      "lit_taken": {
+        "label": "点亮并带走灯",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 2.0
+        }
+      },
+      "lit_left": {
+        "label": "点亮但未带走灯",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0.0
+        }
+      },
+      "unlit_taken": {
+        "label": "未点亮但带走灯",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0.0
+        }
+      },
+      "unlit_left": {
+        "label": "未点亮且未带走灯",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -2.0
+        }
+      }
+    },
+    "l2.seat": {
+      "window": {
+        "label": "坐窗边椅",
+        "status": "unconfigured",
+        "vector": null
+      },
+      "table": {
+        "label": "坐桌前椅",
+        "status": "unconfigured",
+        "vector": null
+      },
+      "none": {
+        "label": "不坐直接到桌边",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l2.first-try": {
+      "attempt": {
+        "label": "第一次用钥匙试门",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -1.0
+        }
+      }
+    },
+    "l2.retry": {
+      "retry": {
+        "label": "失败后换钥匙再试",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": -1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "abandon": {
+        "label": "失败后不再尝试",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l2.explore": {
+      "pending": {
+        "label": "进入/不进入卧室探索",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l2.search": {
+      "declined": {
+        "label": "不寻找耳环",
+        "status": "unconfigured",
+        "vector": null
+      },
+      "short_quit": {
+        "label": "短搜索后放弃",
+        "status": "unconfigured",
+        "vector": null
+      },
+      "long": {
+        "label": "长搜索",
+        "status": "configured",
+        "vector": {
+          "A": 2.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "found_short": {
+        "label": "短时间找到耳环",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l3.storm-door": {
+      "unopened": {
+        "label": "保持半开",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 2.0,
+          "T": 1.0,
+          "F": null
+        }
+      },
+      "opened": {
+        "label": "打开并保持",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": -2.0,
+          "T": 1.0,
+          "F": null
+        }
+      },
+      "closed": {
+        "label": "打开后又关上",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 0.0,
+          "T": -2.0,
+          "F": null
+        }
+      },
+      "unopened_closed": {
+        "label": "未开但选择关门",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l3.wait": {
+      "yes": {
+        "label": "等待",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "no": {
+        "label": "不等待",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l3.curtain": {
+      "yes": {
+        "label": "拉开窗帘",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": -1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "no": {
+        "label": "保留窗帘",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 1.0,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l3.environment": {
+      "both": {
+        "label": "关窗关电视",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 2.0
+        }
+      },
+      "window": {
+        "label": "关窗开电视",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0.0
+        }
+      },
+      "television": {
+        "label": "开窗关电视",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0.0
+        }
+      },
+      "neither": {
+        "label": "开窗开电视",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -2.0
+        }
+      }
+    },
+    "l3.item": {
+      "none": {
+        "label": "不携带物品",
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "scarf": {
+        "label": "带走围巾",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": -2.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "lantern": {
+        "label": "带走灯笼",
+        "status": "configured",
+        "vector": {
+          "A": 2.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "umbrella": {
+        "label": "带走雨伞",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 2.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "compass": {
+        "label": "带走指南针",
+        "status": "configured",
+        "vector": {
+          "A": -2.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "doll": {
+        "label": "带走玩偶",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": -1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "key": {
+        "label": "带走钥匙",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "journal": {
+        "label": "带走日记",
+        "status": "configured",
+        "vector": {
+          "A": -2.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "rope": {
+        "label": "带走绳子",
+        "status": "configured",
+        "vector": {
+          "A": 2.0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "backpack": {
+        "label": "带走背包",
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l4.door": {
+      "village": {
+        "label": "确认微光门",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": -1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "coast": {
+        "label": "确认静塔门",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": 1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "forest": {
+        "label": "确认森林门",
+        "status": "configured",
+        "vector": {
+          "A": -1.0,
+          "V": 1.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "castle": {
+        "label": "确认宫殿门",
+        "status": "configured",
+        "vector": {
+          "A": 1.0,
+          "V": -1.0,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l2.furniture.wall": {
+      "1": {
+        "label": "靠墙／窗程度 四分位1",
+        "status": "configured",
+        "vector": {
+          "A": -2,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "2": {
+        "label": "靠墙／窗程度 四分位2",
+        "status": "configured",
+        "vector": {
+          "A": -1,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "3": {
+        "label": "靠墙／窗程度 四分位3",
+        "status": "configured",
+        "vector": {
+          "A": 1,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "4": {
+        "label": "靠墙／窗程度 四分位4",
+        "status": "configured",
+        "vector": {
+          "A": 2,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      }
+    },
+    "l2.furniture.tidiness": {
+      "1": {
+        "label": "整齐度 四分位1",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -2
+        }
+      },
+      "2": {
+        "label": "整齐度 四分位2",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -1
+        }
+      },
+      "3": {
+        "label": "整齐度 四分位3",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 1
+        }
+      },
+      "4": {
+        "label": "整齐度 四分位4",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 2
+        }
+      }
+    },
+    "l2.furniture.adjustments": {
+      "1": {
+        "label": "调整次数 四分位1",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": 2,
+          "F": null
+        }
+      },
+      "2": {
+        "label": "调整次数 四分位2",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": 1,
+          "F": null
+        }
+      },
+      "3": {
+        "label": "调整次数 四分位3",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": -1,
+          "F": null
+        }
+      },
+      "4": {
+        "label": "调整次数 四分位4",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": -2,
+          "F": null
+        }
+      }
+    }
+  }
+}

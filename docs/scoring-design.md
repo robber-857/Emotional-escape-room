@@ -13,6 +13,6 @@
 
 灯在L1结束时取lampLit/lampTaken；窗/电视在六项回答完成、storm转carry时取choices.window/television。未答null不是false；否后是以截止时最终状态为准。上述四维未列出的轴为NA，F=0必须保留为明确零值。电视替代原表电扇已获用户确认，数值不变，无需新增风扇事件。
 
-配置设计：固定评分group_id/option_id及组合条件由规则层维护；后续仅调分改目标文件 apps/api/app/config/event-scores.json 并发布新分值版本。**该目标文件加载器、评分引擎、账本仍待开发**；现有[配置草案](examples/event-scores.v1.draft.json)已列路线、灯、窗/电视等例子，不能视为线上生效。当前[关卡权重配置](../apps/api/app/config/scoring-weights.json)读取/校验已实现，默认20/30/30/20，但未参与实际结果计算。
+配置实现：固定评分 group_id/option_id 及组合条件由规则层维护；数值位于 apps/api/app/config/event-scores.json。加载器、版本快照、事务账本及服务端计分面板已实现；未配置结果仍保留空缺。每关先合成总分并按固定理论范围归一化至 0–100，四关齐全后按 20/30/30/20 加权，同时保留四维明细。公式、测试入口和限制见 [计分测试指南](scoring-test-guide.md)。
 
 完整规则与测试要求见 [开发任务](scoring-receipts-development.md)。[用户确认的最终对照表](../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表_电视确认版.xlsx)保留48个评分结果候选、44条操作归属和64条原表来源；这不是48份累计加分。背包、家具最终结果映射、探索节点和部分截止点仍需确认。

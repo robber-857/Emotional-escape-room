@@ -1,3 +1,4 @@
+from .score_service import record as record_scoring
 from datetime import datetime, timezone
 from typing import Annotated, Literal
 from uuid import UUID
@@ -138,6 +139,7 @@ def register_l3(app, authorize):
                               validation_version=VALIDATION_VERSION, authority=AUTHORITY, validation=validation,
                               outcome=outcome(state) if accepted else None,
                               scoring=pending_scoring() if accepted else None)
+                result["score_effect"] = record_scoring(conn,sid,"l3",body.action_id,payload["action"],row["state"],state,accepted,version,result["code"],now)
                 if changed:
                     state["events"].append(dict(id=str(body.action_id), at=now, action=payload["action"]))
                     conn.execute(update(l3_runs).where(l3_runs.c.session_id == str(sid)).values(state=state, version=version))

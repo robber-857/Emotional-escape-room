@@ -23,7 +23,7 @@ export function ServerTrace({sessionId}:{sessionId:string|undefined}){
  return <section className={styles.serverTrace} aria-label="服务器回执列表">
   <h2>服务器选择记录</h2>
   <p>本列表唯一数据源：服务器数据库回执。前端只提交动作请求，接受或拒绝、状态版本与结果均由服务器判定。</p>
-  <p>会话：{sessionId||"尚未连接"}。整理房间指标与计分状态见各次确认回执；其他评分待配置。寻找时长来自客户端活动报告，服务器约束校验不等于独立测量。</p>
+  <p>会话：{sessionId||"尚未连接"}。实际增减分见回执 score_effect 或右下角服务端计分测试台。寻找时长来自客户端活动报告，服务器约束校验不等于独立测量。</p>
   <div className={styles.actions}>
    <label>显示记录 <select aria-label="筛选服务器记录" value={filter} onChange={e=>setFilter(e.target.value)}><option value="all">全部</option><option value="accepted">服务器接受</option><option value="rejected">服务器拒绝</option><option value="timing">计时报告</option></select></label>
    <button disabled={loading} onClick={()=>setAttempt(n=>n+1)}>刷新服务器记录</button>
@@ -41,7 +41,7 @@ export function ServerTrace({sessionId}:{sessionId:string|undefined}){
     {r.action.type==="layout-confirm"&&<PlacementEvidence scoring={r.scoring}/>}
     <details><summary>查看服务器保存的请求与结果</summary><p>动作请求</p><pre>{JSON.stringify(r.action,null,2)}</pre>
      <p>服务器事件结果</p>{r.outcome?<pre>{JSON.stringify(r.outcome,null,2)}</pre>:<p>{r.accepted?"历史回执未保存逐事件结果，不从当前状态反推。":"请求被拒绝，未推进状态。"}</p>}
-     <p>评分与证据</p><pre>{JSON.stringify(r.scoring,null,2)}</pre>
+     <p>评分与证据</p><pre>{JSON.stringify(r.score_effect??r.scoring,null,2)}</pre>
     </details>
    </li>)}</ol>
   </>}

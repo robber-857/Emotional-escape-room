@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import {ScoreInspector} from "../features/scoring/ScoreInspector";
 
 export const metadata: Metadata = {
   title: "分离之河 · 情感密室",
@@ -12,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}</body>
+      <body>{children}<ScoreInspector/></body>
     </html>
   );
 }

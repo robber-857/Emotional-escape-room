@@ -23,7 +23,12 @@ def test_migration_preserves_existing_l1_l2(tmp_path, monkeypatch):
     config = Config("alembic.ini")
     command.upgrade(config, "0002_l2")
     with TestClient(app) as client:
-        _, h, l3_url = completed_l2(client)
+        # Seed the historical schema without the newly introduced score hooks.
+        with monkeypatch.context() as legacy:
+            legacy.setattr("app.main.bind_scoring", lambda *a, **k: None)
+            for module in ("app.main", "app.l2_api", "app.l3_api"):
+                legacy.setattr(module+".record_scoring", lambda *a, **k: {"status":"legacy_unbound"})
+            _, h, l3_url = completed_l2(client)
         def records():
             with engine.connect() as conn:
                 return [[dict(r) for r in conn.execute(select(t)).mappings()]
@@ -33,7 +38,7 @@ def test_migration_preserves_existing_l1_l2(tmp_path, monkeypatch):
         assert client.get("/api/v1/ready").status_code == 503
         command.upgrade(config, "head")
         assert records() == before
-        assert client.get("/api/v1/ready").json()["schema_version"] == "0004_l4"
+        assert client.get("/api/v1/ready").json()["schema_version"] == "0005_scoring"
         assert client.post(l3_url, headers=h, json={}).status_code == 200
         assert records() == before
         command.upgrade(config, "head")

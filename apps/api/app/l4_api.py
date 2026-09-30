@@ -1,3 +1,4 @@
+from .score_service import record as record_scoring
 from datetime import datetime, timezone
 from typing import Literal
 from uuid import UUID
@@ -9,6 +10,7 @@ from sqlalchemy import insert, select, update
 
 from .db import sessions, l2_runs, l3_runs, l4_runs, l4_events
 from .results import build_result
+from .score_service import summary as scoring_summary
 from .l2_domain import with_completion
 from .l4_domain import initial_state, apply_action, RULES_VERSION, COMPLETION_POLICY_VERSION
 from .l4_receipts import AUTHORITY, VALIDATION_VERSION, pending_scoring, outcome
@@ -61,7 +63,7 @@ def register_l4(app, authorize):
                                          ("l2", l2_runs, l2_runs.c.session_id),
                                          ("l3", l3_runs, l3_runs.c.session_id)):
                 snapshots[level] = dict(conn.execute(select(table).where(column == str(sid))).mappings().one())
-            return build_result(sid, snapshots)
+            return dict(build_result(sid, snapshots), score_summary=scoring_summary(conn,sid))
 
     @app.post("/api/v1/sessions/{sid}/levels/l4", tags=["L4"])
     def start(sid: UUID, body: StrictModel, authorization: str = Header(default="")):
@@ -131,6 +133,7 @@ def register_l4(app, authorize):
                               rules_version=row["rules_version"], validation_version=VALIDATION_VERSION,
                               authority=AUTHORITY, validation=validation, outcome=outcome(state) if accepted else None,
                               scoring=pending_scoring() if accepted else None)
+                result["score_effect"] = record_scoring(conn,sid,"l4",body.action_id,payload["action"],row["state"],state,accepted,version,result["code"],now)
                 if changed:
                     state["events"].append(dict(id=str(body.action_id), at=now, action=payload["action"]))
                     conn.execute(update(l4_runs).where(l4_runs.c.session_id == str(sid)).values(state=state, version=version))

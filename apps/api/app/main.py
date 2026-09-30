@@ -15,6 +15,9 @@ from pydantic import BaseModel, ConfigDict, Field, StrictBool
 from sqlalchemy import select, insert, update, text
 from sqlalchemy.exc import SQLAlchemyError
 from .db import make_engine, sessions, events, l2_runs, l2_events, l3_runs, l3_events, l4_runs, l4_events
+from .score_service import bind as bind_scoring, record as record_scoring, summary as scoring_summary
+from .score_policy import published_policy
+from .db import score_evaluations, score_ledger, score_actions
 from .domain import initial_state, normalize_state, apply_action, RULES_VERSION, SUPPORTED_RULES_VERSIONS
 
 log = logging.getLogger("uvicorn.error")
@@ -37,6 +40,7 @@ class ActionRequest(StrictModel):
 
 @asynccontextmanager
 async def lifespan(app):
+    published_policy()
     app.state.engine = make_engine()
     yield
     app.state.engine.dispose()
@@ -84,15 +88,20 @@ def ready():
         conn.execute(select(l3_events.c.action_id).limit(1))
         conn.execute(select(l4_runs.c.session_id).limit(1))
         conn.execute(select(l4_events.c.action_id).limit(1))
-    if revision != "0004_l4": raise HTTPException(503, "MIGRATION_REQUIRED")
-    return dict(status="ok", persistence_ready=True, schema_version=revision, scoring_ready=False)
+        conn.execute(select(score_evaluations.c.session_id).limit(1))
+        conn.execute(select(score_ledger.c.session_id).limit(1))
+        conn.execute(select(score_actions.c.session_id).limit(1))
+    if revision != "0005_scoring": raise HTTPException(503, "MIGRATION_REQUIRED")
+    return dict(status="ok", persistence_ready=True, schema_version=revision, scoring_ready=False, scoring_engine_ready=True)
 
 @app.post("/api/v1/sessions", status_code=201, tags=["L1"])
 def create_session():
     token = secrets.token_urlsafe(32)
     row = dict(id=str(uuid4()), token_hash=hashlib.sha256(token.encode()).hexdigest(),
                rules_version=RULES_VERSION, version=0, state=initial_state(), positions={})
-    with app.state.engine.begin() as conn: conn.execute(insert(sessions).values(**row))
+    with app.state.engine.begin() as conn:
+        conn.execute(insert(sessions).values(**row))
+        bind_scoring(conn,row["id"])
     return dict(**snapshot(row), token=token)
 
 @app.get("/api/v1/sessions/{sid}", tags=["L1"])
@@ -130,6 +139,7 @@ def action(sid: UUID, body: ActionRequest, authorization: str = Header(default="
             version = row["version"] + int(accepted)
             result = dict(accepted=accepted, code=code or "ACCEPTED", version=version,
                           action=payload["action"], rules_version=row["rules_version"])
+            result["score_effect"] = record_scoring(conn,sid,"l1",body.action_id,payload["action"],row["state"],state,accepted,version,result["code"],now)
             if accepted:
                 state["events"].append(dict(id=str(body.action_id), at=now, action=payload["action"]))
                 conn.execute(update(sessions).where(sessions.c.id == str(sid)).values(state=state, positions=payload["positions"], version=version))
@@ -148,3 +158,9 @@ register_l3(app, authorize)
 
 from .l4_api import register_l4
 register_l4(app, authorize)
+
+@app.get("/api/v1/sessions/{sid}/scoring", tags=["Scoring"])
+def scores(sid: UUID, authorization: str = Header(default="")):
+    with app.state.engine.begin() as conn:
+        authorize(conn,sid,authorization,lock=True)
+        return scoring_summary(conn,sid)
