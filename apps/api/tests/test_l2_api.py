@@ -166,7 +166,7 @@ def test_concurrent_l2_actions_and_starts(client):
     assert sorted(r.status_code for r in results) == [200, 409]
     assert len(client.get(url, headers=h).json()["state"]["events"]) == 1
 
-@pytest.mark.parametrize("placement,band", [("edge",3),("stacked",3),("outside",4),("at-limit",3),("over-limit",3),("high",3)])
+@pytest.mark.parametrize("placement,band", [("edge",2),("stacked",1),("outside",1),("at-limit",1),("over-limit",1),("high",1)])
 def test_table_chair_full_overlap_footprint_preserves_floor_limits(client, placement, band):
     _, h, url, s = open_l2(client)
     sofa = s["state"]["furniture"]["layout"]["sofa"]

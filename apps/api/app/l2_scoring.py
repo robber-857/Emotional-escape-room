@@ -11,7 +11,7 @@ DIMENSIONS = {"wallWindowProximity": "A", "tidiness": "F", "adjustmentCount": "T
 
 
 def metric_band(placement, metric, policy):
-    if metric == 'tidiness' and placement.get('ruleVersion') in ('l2-metrics-overlap-groups-v3', METRIC_VERSION):
+    if metric == 'tidiness' and placement.get('ruleVersion') in ('l2-metrics-overlap-groups-v3', 'l2-metrics-full-footprint-v4', METRIC_VERSION):
         return placement['metrics']['tidinessBand']
     # Saved confirmations from older metric versions retain their original rule.
     return 1+bisect_left(policy['thresholds'][metric], placement['metrics'][metric])

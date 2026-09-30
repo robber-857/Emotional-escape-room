@@ -1,0 +1,186 @@
+{
+  "1": {
+    "layout": {
+      "armchair": {
+        "u": 0.15965289871117797,
+        "v": 0.2376911290961084
+      },
+      "chair": {
+        "u": 0.3356640668717491,
+        "v": 0.2817264301820487
+      },
+      "sofa": {
+        "u": 0.06130603671671636,
+        "v": 0.4913523623123136
+      },
+      "table-chair": {
+        "u": 0.8150000000000001,
+        "v": 0.8303844987714373
+      }
+    },
+    "groups": {
+      "pairs": [
+        [
+          "armchair",
+          "chair"
+        ],
+        [
+          "armchair",
+          "sofa"
+        ],
+        [
+          "chair",
+          "sofa"
+        ]
+      ],
+      "triples": [
+        [
+          "armchair",
+          "chair",
+          "sofa"
+        ]
+      ],
+      "quadruples": [],
+      "band": 1,
+      "method": "scene-alpha-strips-v1"
+    }
+  },
+  "3": {
+    "layout": {
+      "armchair": {
+        "u": 0.7416788627559824,
+        "v": 0.33863894933676997
+      },
+      "chair": {
+        "u": 0.4903480089922949,
+        "v": 0.38518024692523267
+      },
+      "sofa": {
+        "u": 0.12826512038218651,
+        "v": 0.2402557985668006
+      },
+      "table-chair": {
+        "u": 0.20082101044423661,
+        "v": 0.9383542867138513
+      }
+    },
+    "groups": {
+      "pairs": [
+        [
+          "sofa",
+          "table-chair"
+        ]
+      ],
+      "triples": [],
+      "quadruples": [],
+      "band": 3,
+      "method": "scene-alpha-strips-v1"
+    }
+  },
+  "2": {
+    "layout": {
+      "armchair": {
+        "u": 0.8118120536562614,
+        "v": 0.835654494696975
+      },
+      "chair": {
+        "u": 0.7804926223972629,
+        "v": 0.314420275316354
+      },
+      "sofa": {
+        "u": 0.24083495302948912,
+        "v": 0.6829292620511606
+      },
+      "table-chair": {
+        "u": 0.7050841797665899,
+        "v": 0.8764511042926452
+      }
+    },
+    "groups": {
+      "pairs": [
+        [
+          "armchair",
+          "chair"
+        ],
+        [
+          "armchair",
+          "table-chair"
+        ],
+        [
+          "chair",
+          "table-chair"
+        ],
+        [
+          "sofa",
+          "table-chair"
+        ]
+      ],
+      "triples": [],
+      "quadruples": [],
+      "band": 2,
+      "method": "scene-alpha-strips-v1"
+    }
+  },
+  "reported": {
+    "layout": {
+      "armchair": {
+        "u": 0.1,
+        "v": 0.85
+      },
+      "table-chair": {
+        "u": 0.2,
+        "v": 0.65
+      },
+      "chair": {
+        "u": 0.8,
+        "v": 0.2
+      },
+      "sofa": {
+        "u": 0.75,
+        "v": 0.55
+      }
+    },
+    "groups": {
+      "pairs": [
+        [
+          "armchair",
+          "table-chair"
+        ],
+        [
+          "chair",
+          "sofa"
+        ]
+      ],
+      "triples": [],
+      "quadruples": [],
+      "band": 2
+    }
+  },
+  "4": {
+    "layout": {
+      "armchair": {
+        "u": 0.25572771044838827,
+        "v": 0.258135956328583
+      },
+      "chair": {
+        "u": 0.5405384232486286,
+        "v": 0.185
+      },
+      "sofa": {
+        "u": 0.865,
+        "v": 0.6344471069128
+      },
+      "table-chair": {
+        "u": 0.20248811166141967,
+        "v": 0.9464039162040295
+      }
+    },
+    "groups": {
+      "pairs": [],
+      "triples": [],
+      "quadruples": [],
+      "band": 4,
+      "method": "scene-alpha-strips-v1"
+    }
+  }
+}

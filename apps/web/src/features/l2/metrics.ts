@@ -1,7 +1,8 @@
 import {describeProximity,proximityMethod} from "./proximity";
+import {visualGroups} from "./visual";
 import {furnitureIds,footprint,overlapFootprint,overlapRatio,insideFloor,type Layout,type Rect} from "./layout";
 
-export const metricVersion="l2-metrics-full-footprint-v4";
+export const metricVersion="l2-metrics-scene-alpha-v5";
 export const countVersion="l2-adjustments-v1";
 export const movementTolerance=.002;
 
@@ -20,7 +21,7 @@ export function overlapGroups(cores:Record<string,Rect>){
 export function measureLayout(layout:Layout,adjustmentCount:number|null){
  const boxes=Object.fromEntries(furnitureIds.map(id=>[id,footprint(id,layout[id])])) as Record<typeof furnitureIds[number],ReturnType<typeof footprint>>;
  const cores=Object.fromEntries(furnitureIds.map(id=>[id,overlapFootprint(id,layout[id])])) as typeof boxes;
- const groups=overlapGroups(cores);
+ const groups=visualGroups(layout);
  const overlapPairs=furnitureIds.flatMap((a,i)=>furnitureIds.slice(i+1).map(b=>({ids:[a,b],ratio:overlapRatio(cores[a],cores[b])})));
  const maxOverlapByObject=Object.fromEntries(furnitureIds.map(id=>[id,Math.max(...overlapPairs.filter(p=>p.ids.includes(id)).map(p=>p.ratio))]));
  const wallProximityByObject=Object.fromEntries(furnitureIds.map(id=>[id,describeProximity(id,boxes[id])]));

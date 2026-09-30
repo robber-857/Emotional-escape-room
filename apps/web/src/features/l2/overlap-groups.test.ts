@@ -3,11 +3,17 @@ import assert from "node:assert/strict";
 import {overlapGroups,measureLayout} from "./metrics";
 import {initialLayout} from "./layout";
 const box=(x:number)=>({left:x,right:x+1,top:0,bottom:1});
-test("table chair outer strip overlaps armchair even outside the former narrow core",()=>{
- const layout={armchair:{u:.25,v:.5},"table-chair":{u:.52,v:.5},chair:{u:.8,v:.25},sofa:{u:.75,v:.85}};
- const result=measureLayout(layout,1);
- assert.equal(result.metrics.tidinessBand,3);
- assert.deepEqual(result.evidence.overlapGroups.pairs,[["armchair","table-chair"]]);
+import cases from "../../../../../content/l2-overlap-regression.json";
+import {footprint,type Layout} from "./layout";
+test("reported scene has two visible pairs although all floor patches are separate",()=>{
+ const layout=cases.reported.layout as Layout;
+ assert.equal(overlapGroups(Object.fromEntries(Object.entries(layout).map(([id,p])=>[id,footprint(id as keyof Layout,p)]))).pairs.length,0);
+ assert.deepEqual(measureLayout(layout,1).evidence.overlapGroups.pairs,cases.reported.groups.pairs);
+});
+for(const [name,c] of Object.entries(cases))test(`scene regression ${name}`,()=>{
+ const g=measureLayout(c.layout as Layout,1).evidence.overlapGroups;
+ assert.equal(g.band,c.groups.band);
+ for(const key of ["pairs","triples","quadruples"] as const)assert.deepEqual(g[key].map(ids=>ids.join(",")).sort(),c.groups[key].map(ids=>ids.join(",")).sort());
 });
 test("all six pairs, four triples and the quadruple",()=>{
  const ids=["A","B","C","D"];
@@ -32,9 +38,9 @@ test("chains, separate pairs, edge contact and tiny positive overlap",()=>{
  assert.equal(overlapGroups(vertical).band,4);
 });
 test("preview metrics include authoritative rule version and band",()=>{
- const layout=initialLayout();assert.equal(measureLayout(layout,0).metrics.tidinessBand,4);
+ const layout=initialLayout();assert.equal(measureLayout(layout,0).metrics.tidinessBand,1);
  const stacked=Object.fromEntries(Object.keys(layout).map(k=>[k,{u:.5,v:.5}])) as typeof layout;
  const result=measureLayout(stacked,4);
  assert.equal(result.metrics.tidinessBand,1);assert.equal(result.evidence.overlapGroups.triples.length,4);
- assert.equal(result.ruleVersion,"l2-metrics-full-footprint-v4");
+ assert.equal(result.ruleVersion,"l2-metrics-scene-alpha-v5");
 });

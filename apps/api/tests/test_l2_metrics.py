@@ -145,7 +145,7 @@ def test_proximity_reachable_range_and_dense_grid_bound():
     assert buckets=={1,2,3,4}
 
 
-def test_low_proximity_is_reachable_without_overlap():
+def test_low_proximity_is_independent_of_visual_overlap():
     layout={
         'armchair':dict(u=.48367458333431806,v=.5642826639987756),
         'chair':dict(u=.3174398374902257,v=.5305600694496282),
@@ -154,4 +154,4 @@ def test_low_proximity_is_reachable_without_overlap():
     result=measure(layout,0)
     assert result['eligible'] and result['metrics']['tidiness']==1
     assert result['metrics']['wallWindowProximity']==pytest.approx(.2365251214454691)
-    assert l2_scoring.evaluate(result)['contributions']==dict(A=-2,V=None,T=2,F=2)
+    assert l2_scoring.evaluate(result)['contributions']==dict(A=-2,V=None,T=2,F=-2)

@@ -2,8 +2,9 @@
 from itertools import combinations
 from .l2_layout import FURNITURE, footprint, overlap_footprint, area, intersection, inside
 from .l2_proximity import describe, METHOD
+from .l2_visual import visual_groups
 
-METRIC_VERSION = "l2-metrics-full-footprint-v4"
+METRIC_VERSION = "l2-metrics-scene-alpha-v5"
 MOVEMENT_TOLERANCE = .002
 COUNT_VERSION = "l2-adjustments-v1"
 
@@ -25,7 +26,7 @@ def measure(layout, adjustment_count):
     pairs = [dict(ids=[a, b], ratio=intersection(cores[a], cores[b])/min(area(cores[a]), area(cores[b])))
              for i, a in enumerate(FURNITURE) for b in list(FURNITURE)[i+1:]]
     per_object = {k: max(p["ratio"] for p in pairs if k in p["ids"]) for k in FURNITURE}
-    groups = overlap_groups(cores)
+    groups = visual_groups(layout)
     # Existing floor coordinates: back/left/right wall boundaries. Windows sit on
     # those walls; no extra window bonus or uncalibrated image-space distances.
     proximity = {k:describe(k,b) for k,b in boxes.items()}

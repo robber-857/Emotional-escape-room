@@ -43,32 +43,56 @@ def test_new_band_overrides_average_but_old_confirmation_keeps_old_rule():
     old['metrics'].pop('tidinessBand')
     assert metric_band(old,'tidiness',load_policy())==4
     assert evaluate(old)['contributions']['F']==2
+    v4=deepcopy(placement);v4['ruleVersion']='l2-metrics-full-footprint-v4'
+    assert metric_band(v4,'tidiness',load_policy())==1
     v3=deepcopy(placement);v3['ruleVersion']='l2-metrics-overlap-groups-v3'
     assert metric_band(v3,'tidiness',load_policy())==1
 
 
-def test_table_chair_outer_strip_counts_as_one_pair():
-    layout={'armchair':dict(u=.25,v=.5),'table-chair':dict(u=.52,v=.5),
-            'chair':dict(u=.8,v=.25),'sofa':dict(u=.75,v=.85)}
+import json
+from pathlib import Path
+from app.l2_layout import footprint
+from app.l2_visual import intersect_rows
+CASES=json.loads((Path(__file__).parents[3]/'content/l2-overlap-regression.json').read_text())
+
+
+def test_alpha_masks_match_current_assets():
+    from hashlib import sha256
+    from app.l2_visual import MASKS
+    root=Path(__file__).parents[3]
+    for key,mask in MASKS['pieces'].items():
+        assert sha256((root/f'apps/web/public/game/l2/{key}.png').read_bytes()).hexdigest()==mask['sha256']
+
+
+def test_reported_two_visual_pairs_have_zero_floor_pairs():
+    layout=CASES['reported']['layout']
+    assert overlap_groups({k:footprint(k,p) for k,p in layout.items()})['pairs']==[]
     result=measure(layout,1)
-    assert result['metrics']['tidinessBand']==3
-    assert result['evidence']['overlapGroups']['pairs']==[['armchair','table-chair']]
-    assert evaluate(result)['contributions']['F']==1
+    assert result['evidence']['overlapGroups']['pairs']==CASES['reported']['groups']['pairs']
+    assert result['metrics']['tidinessBand']==2
+    assert evaluate(result)['contributions']['F']==-1
 
 
-@pytest.mark.parametrize('layout,band', [
-    ({'armchair':(.25,.5),'table-chair':(.52,.5),'chair':(.8,.25),'sofa':(.75,.85)},3),
-    ({'armchair':(.2,.4),'chair':(.7,.4),'sofa':(.25,.8),'table-chair':(.7,.8)},4),
-    ({'armchair':(.3,.4),'chair':(.3,.4),'sofa':(.25,.8),'table-chair':(.7,.8)},3),
-    ({'armchair':(.3,.4),'chair':(.3,.4),'sofa':(.6,.8),'table-chair':(.6,.8)},2),
-    ({'armchair':(.5,.5),'chair':(.5,.5),'sofa':(.5,.5),'table-chair':(.7,.8)},1),
-    ({k:(.5,.5) for k in ('armchair','chair','sofa','table-chair')},1),
-])
+def test_alpha_rows_ignore_transparent_holes_and_edge_contact():
+    a=[(0,10,[(0,2),(8,10)])]
+    assert intersect_rows(a,[(0,10,[(3,7)])])==[]
+    assert intersect_rows(a,[(10,20,[(0,10)])])==[]
+    assert intersect_rows(a,[(0,10,[(2,8)])])==[]
+    assert intersect_rows(a,[(0,10,[(1.999,8.001)])])
+
+
+@pytest.mark.parametrize('case', CASES.values())
+def test_saved_scene_groups(case):
+    actual=measure(case['layout'],1)['evidence']['overlapGroups']
+    for k in ('pairs','triples','quadruples','band'):assert actual[k]==case['groups'][k]
+
+
+@pytest.mark.parametrize('layout,band', [(c['layout'],c['groups']['band']) for c in CASES.values()])
 def test_real_api_confirmation_settlement_and_retry(client,layout,band):
     parent,headers,url,state=open_l2(client)
     act(client,url,headers,state,dict(type='layout-start'))
-    for key,(u,v) in layout.items():
-        response,_=act(client,url,headers,state,dict(type='layout-move',id=key,point=dict(u=u,v=v)))
+    for key,point in layout.items():
+        response,_=act(client,url,headers,state,dict(type='layout-move',id=key,point=point))
         assert response.status_code==200
     response,request=act(client,url,headers,state,dict(type='layout-confirm'))
     assert response.status_code==200
