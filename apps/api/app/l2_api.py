@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from copy import deepcopy
 import logging
 from typing import Annotated, Literal
 from uuid import UUID
@@ -114,10 +115,14 @@ def register_l2(app, authorize):
                             validate_active_time(row["state"], state["search"]["activeMs"], row["time_anchor"], now)
                     except ValueError as exc: code = str(exc); state = row["state"]
                 accepted = code is None; version = row["version"]+int(accepted)
+                scoring = evaluate_l2_event(payload["action"], state) if accepted else None
+                if accepted and body.action.type == "layout-confirm" and state["furniture"]["assessment"] is None:
+                    state["furniture"]["assessment"] = dict(action_id=str(body.action_id), version=version,
+                        layout=deepcopy(state["furniture"]["layout"]), scoring=deepcopy(scoring))
                 result = dict(accepted=accepted, code=code or "ACCEPTED", version=version, action=payload["action"], rules_version=RULES_VERSION,
                               previous_version=row["version"], validation_version=VALIDATION_VERSION, authority=AUTHORITY,
-                              outcome=outcome(payload["action"], state) if accepted else None,
-                              scoring=evaluate_l2_event(payload["action"], state) if accepted else None)
+                              outcome=outcome(payload["action"], state, row["state"]) if accepted else None,
+                              scoring=scoring)
                 if accepted:
                     state["events"].append(dict(id=str(body.action_id), at=now.isoformat(), action=payload["action"]))
                     anchor = now.isoformat() if body.action.type in ("search-choice", "search-time") else row["time_anchor"]

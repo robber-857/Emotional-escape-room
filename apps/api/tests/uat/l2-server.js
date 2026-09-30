@@ -30,7 +30,7 @@ async original=>{
    await action('返回大厅','return-hall');await action('整理家具','layout-start');
    await page.getByRole('button',{name:'移动窗边椅',exact:true}).focus();const move=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().postDataJSON().action.type==='layout-move');await page.keyboard.press('ArrowLeft');check((await(await move).json()).accepted,'server furniture move rejected');
    await page.getByRole('button',{name:'确认摆放',exact:true}).click();const saved=await action('是，保存摆放','layout-confirm');
-   check(saved.scoring.status==='pending_configuration'&&saved.scoring.contributions===null,'unexpected score');check(saved.scoring.facts.placement.ruleVersion==='l2-placement-v5','missing placement evidence');
+   check(saved.scoring.status==='pending_configuration'&&saved.scoring.contributions===null,'unexpected score');check(saved.scoring.facts.placement.ruleVersion==='l2-metrics-overlap-v1','missing placement evidence');
    // Offline requests remain pending until the user explicitly retries.
    await context.setOffline(true);await click('整理家具');await page.getByRole('button',{name:'重试同步',exact:true}).waitFor();await context.setOffline(false);
    const offlineRetry=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().postDataJSON().action.type==='layout-start');await click('重试同步');check((await(await offlineRetry).json()).accepted,'offline retry failed');

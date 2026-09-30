@@ -22,7 +22,7 @@ async original=>{
    check(rejected.status===409&&!rejected.data.accepted&&rejected.data.session.version===0,'illegal claim advanced state');
    await action('走到桌边','arrive-table');await action('选择钥匙1','select-key');await click('去开门试试');await action('用钥匙1开门','try-door');
    await action('回到桌边拿钥匙','view');await action('拿起钥匙2','select-key');await click('去开门试试');await action('用钥匙2开门','try-door');
-   await action('是，进去探索','explore');await page.getByRole('navigation',{name:'房间探索操作'}).getByRole('button',{name:'查看梳妆台',exact:true}).click();await action('是，开始寻找','search-choice');
+   await action('是，进去探索','explore');await page.getByRole('navigation',{name:'房间探索操作'}).getByRole('button',{name:'查看床头柜上的耳环',exact:true}).click();await action('是，开始寻找','search-choice');
    if(!mobile){
     await page.waitForFunction(async()=>{const s=JSON.parse(localStorage.getItem('emotional:l1:server:v1'));return (await(await fetch(`/api/v1/sessions/${s.id}/levels/l2`,{headers:{Authorization:`Bearer ${s.token}`}})).json()).state.search.long;},null,{polling:1000,timeout:25000});
     await click('打开第二幕菜单');await page.waitForTimeout(500);const paused=(await snapshot()).l2.state.search.activeMs;await page.waitForTimeout(1500);check((await snapshot()).l2.state.search.activeMs===paused,'menu search timer advanced');await click('关闭菜单');
@@ -36,7 +36,7 @@ async original=>{
 
    await page.getByRole('button',{name:'移动窗边椅',exact:true}).focus();const move=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().postDataJSON().action.type==='layout-move');await page.keyboard.press('ArrowLeft');check((await(await move).json()).accepted,'server furniture move rejected');
    await page.getByRole('button',{name:'确认摆放',exact:true}).click();const saved=await action('是，保存摆放','layout-confirm');
-   check(saved.scoring.status==='pending_configuration'&&saved.scoring.contributions===null,'unexpected score');check(saved.scoring.facts.placement.ruleVersion==='l2-placement-v5','missing placement evidence');
+   check(saved.scoring.status==='pending_configuration'&&saved.scoring.contributions===null,'unexpected score');check(saved.scoring.facts.placement.ruleVersion==='l2-metrics-overlap-v1','missing placement evidence');
    // Offline requests remain pending until the user explicitly retries.
    await context.setOffline(true);await click('整理家具');await page.getByRole('button',{name:'重试同步',exact:true}).waitFor();await context.setOffline(false);
    const offlineRetry=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().postDataJSON().action.type==='layout-start');await click('重试同步');check((await(await offlineRetry).json()).accepted,'offline retry failed');
@@ -58,6 +58,11 @@ async original=>{
    await click('查看服务器记录');const receipts=await(await receiptsWait).json();
    await page.getByRole('heading',{name:'服务器选择记录'}).waitFor();
    await page.waitForFunction(count=>document.querySelectorAll('[data-action-id]').length===count,receipts.length);
+   const placementEvidence=page.getByLabel('整理房间指标');await placementEvidence.waitFor();
+   check((await placementEvidence.textContent()).includes('有效调整：1 次'),'furniture counter missing from server trace');
+   check((await placementEvidence.textContent()).includes('四分位阈值待配置'),'pending pool status missing');
+   await placementEvidence.scrollIntoViewIfNeeded();
+   await page.screenshot({path:`output/playwright/l204-metrics-${mobile?'mobile':'desktop'}.png`});
    const shown=await page.locator('[data-action-id]').evaluateAll(nodes=>nodes.map(n=>({id:n.getAttribute('data-action-id'),source:n.getAttribute('data-source'),accepted:n.getAttribute('data-accepted')})));
    check(shown.length===receipts.length&&shown.every((row,i)=>row.id===receipts[i].action_id&&row.source==='server_database'&&row.accepted===String(receipts[i].accepted)),'trace does not match server receipts');
    const firstAttempt=receipts.find(r=>r.action.type==='try-door');

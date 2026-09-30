@@ -1,6 +1,6 @@
 """Server copy of the versioned L2 prototype geometry; never a scoring policy."""
 from copy import deepcopy
-from math import hypot, isfinite
+from math import isfinite
 
 VERSION = "l2-placement-v5"
 FURNITURE = {"armchair": (285, 990, .19, .20), "chair": (1145, 810, .085, .13),
@@ -44,22 +44,3 @@ def move_layout(layout, key, point):
     result = deepcopy(layout)
     result[key] = dict(point)
     return result
-
-
-def classify(layout, baseline, triggered):
-    reasonable = valid_layout(layout)
-    moved = [k for k in FURNITURE if hypot(layout[k]["u"]-baseline[k]["u"], layout[k]["v"]-baseline[k]["v"]) >= .02]
-    placements = []
-    for k in moved:
-        b = footprint(k, layout[k]); others = [footprint(j, layout[j]) for j in FURNITURE if j != k]
-        clearance = max(.025, min(FURNITURE[k][2:])*.30)
-        gap = min(hypot(max(o["left"]-b["right"], b["left"]-o["right"], 0), max(o["top"]-b["bottom"], b["top"]-o["bottom"], 0)) for o in others)
-        g = 2*clearance
-        sides = [dict(b, left=b["left"]-g, right=b["left"]), dict(b, left=b["right"], right=b["right"]+g),
-                 dict(b, top=b["top"]-g, bottom=b["top"]), dict(b, top=b["bottom"], bottom=b["bottom"]+g)]
-        count = sum(inside(r) and not any(intersection(r, o) > 1e-9 for o in others) for r in sides)
-        placements.append(dict(id=k, **{"from": baseline[k]}, to=layout[k], nearestGap=gap, requiredClearance=clearance, openSides=count,
-                               open=reasonable and gap >= clearance and count >= 3))
-    tidy = reasonable and bool(moved); open_placement = reasonable and any(p["open"] for p in placements)
-    events = (["tidy"] if tidy and not triggered["tidy"] else []) + (["open-placement"] if open_placement and not triggered["openPlacement"] else [])
-    return dict(reasonable=reasonable, tidy=tidy, openPlacement=open_placement, movedIds=moved, placements=placements, events=events, suspensionToleranceCm=SUSPENSION_TOLERANCE_CM, suspensionTolerancePx=SUSPENSION_TOLERANCE_PX, suspensionGapsPx={k: suspension_gap_px(footprint(k, layout[k])) for k in FURNITURE}, ruleVersion=VERSION)

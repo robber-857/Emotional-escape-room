@@ -1,53 +1,55 @@
-import test from "node:test";import assert from "node:assert/strict";
-import {initialLayout,validLayout,moveLayout,project,unproject,classifyLayout} from "./layout";
+import test from "node:test";
+import assert from "node:assert/strict";
+import {initialLayout,validLayout,moveLayout,project,unproject,footprint,overlapFootprint} from "./layout";
+import {measureLayout} from "./metrics";
 import {initialState,transition,restore,type Action,type State} from "./model";
-test("table-chair edge proximity is tidy but deep overlap and off-floor placement are not",()=>{
- const baseline=initialLayout();
- for(const [point,tidy] of [[{u:baseline.sofa.u-.29,v:baseline.sofa.v},true],[baseline.sofa,false],[{u:.82,v:.4},false]] as const){
-  let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-move",id:"table-chair",point});s=act(s,{type:"layout-confirm"});
-  assert.equal(s.furniture.classification?.tidy,tidy);assert.equal(s.exitDoorOpen,true);
-  if(tidy)assert.equal(s.furniture.classification?.openPlacement,false);
- }
+let n=0;
+const act=(s:State,action:Action)=>transition(s,{id:`layout-${++n}`,at:"2026-09-30T00:00:00Z",action});
+test("overlap is continuous, with no rotation or spacing classifier",()=>{
+ const l=initialLayout();assert.equal(measureLayout(l,0).metrics.tidiness,1);
+ const values=[.19,.15,.10,0].map(offset=>measureLayout({...l,chair:{u:l.sofa.u-offset,v:l.sofa.v}},1).metrics.tidiness);
+ assert.deepEqual(values,[...values].sort((a,b)=>b-a));assert.ok(values[0]>values[3]);
+ const stacked=Object.fromEntries(Object.keys(l).map(k=>[k,{u:.5,v:.5}])) as typeof l;
+ assert.equal(measureLayout(stacked,4).metrics.tidiness,0);
 });
-test("table-chair keeps the original suspension boundary despite its smaller overlap core",()=>{
- const baseline=initialLayout(),px=1.4*96/2.54;
- for(const [gap,tidy] of [[px-.1,true],[px,true],[px+.1,false],[180,false]] as const){
-  const layout=moveLayout(baseline,"table-chair",{u:.45,v:.10/2-gap/270})!;
-  const result=classifyLayout(layout,baseline);assert.equal(result.tidy,tidy);
-  assert.ok(Math.abs(result.suspensionGapsPx["table-chair"]-gap)<1e-8);
- }
+test("table chair has a narrower overlap core and unchanged floor extent",()=>{
+ const l=initialLayout(),full=footprint("table-chair",l["table-chair"]),core=overlapFootprint("table-chair",l["table-chair"]);
+ assert.ok(core.right-core.left<full.right-full.left);assert.equal(core.top,full.top);assert.equal(core.bottom,full.bottom);
+ const edge=measureLayout({...l,"table-chair":{u:l.sofa.u-.29,v:l.sofa.v}},1);
+ assert.ok(Math.abs(edge.metrics.tidiness-(1-.01/.29/2))<1e-9);
 });
-test("draft changes and returning to exploration do not unlock the exit",()=>{
- let s=act(initialState(),{type:"layout-start"});assert.equal(s.exitDoorOpen,false);
- s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:-.5}});assert.equal(s.exitDoorOpen,false);
- s=act(s,{type:"layout-exit"});assert.equal(s.exitDoorOpen,false);
-});
-test("confirmation unlocks exit independently of movement, tidiness and exploration",()=>{
- let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);
- s=act(s,{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});s=act(s,{type:"layout-undo"});s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);
- s=act(s,{type:"layout-start"});const sofa=s.furniture.layout.sofa;s=act(s,{type:"layout-move",id:"chair",point:{u:sofa.u-(.31+.085)/2+.01,v:sofa.v}});assert.equal(s.exitDoorOpen,true);
- s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);assert.equal(s.furniture.classification?.openPlacement,false);assert.equal(s.search.status,"idle");
- s=act(s,{type:"layout-start"});s=act(s,{type:"layout-reset"});s=act(s,{type:"layout-exit"});assert.equal(s.exitDoorOpen,true);assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);
-});
-let n=0;const act=(s:State,action:Action)=>transition(s,{id:`layout-${++n}`,at:"2026-09-28T00:00:00Z",action});
-test("default ground footprints are valid and projection round trips",()=>{const l=initialLayout();assert.equal(validLayout(l),true);for(const p of Object.values(l)){const q=project(p),r=unproject(q.x,q.y);assert.ok(Math.abs(p.u-r.u)<1e-9&&Math.abs(p.v-r.v)<1e-9);}});
-test("confirmation snapshots layout; next movement invalidates old confirmation",()=>{let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-confirm"});assert.equal(s.furniture.editing,false);assert.deepEqual(s.furniture.confirmed,s.furniture.layout);assert.equal(s.furniture.classification?.reasonable,true);assert.equal(act(s,{type:"layout-confirm"}),s);s=act(s,{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});assert.equal(s.furniture.confirmed,null);s=act(s,{type:"layout-exit"});assert.equal(s.furniture.editing,false);assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);});
-test("open placement classifier rejects invalid layouts and returns versioned prototype evidence",()=>{const l=initialLayout();assert.equal(classifyLayout({...l,chair:l.sofa}).reasonable,false);assert.equal(classifyLayout(l).ruleVersion,"l2-placement-v5");});
-
-test("one moved piece in open destination triggers both events; unchanged layout triggers neither",()=>{const l=initialLayout();assert.deepEqual(classifyLayout(l,l).events,[]);const moved=moveLayout(l,"chair",{u:.45,v:.35})!;const c=classifyLayout(moved,l);assert.equal(c.tidy,true);assert.equal(c.openPlacement,true);assert.deepEqual(c.movedIds,["chair"]);assert.deepEqual(c.events,["tidy","open-placement"]);assert.deepEqual(classifyLayout(moved,l,{tidy:true,openPlacement:true}).events,[]);});
-test("crowded but reasonable placement is tidy without open-placement",()=>{const l=initialLayout();const p={u:l.sofa.u-(.31+.085)/2+.01,v:l.sofa.v};const moved=moveLayout(l,"chair",p)!;assert.ok(moved);const c=classifyLayout(moved,l);assert.equal(c.tidy,true);assert.equal(c.openPlacement,false);});
-test("confirmation deduplicates derived events and undo restores no-change semantics",()=>{let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});s=act(s,{type:"layout-undo"});s=act(s,{type:"layout-confirm"});assert.deepEqual(s.furniture.classification?.events,[]);s=act(s,{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});s=act(s,{type:"layout-confirm"});assert.equal(s.furniture.triggered.openPlacement,true);s=act(s,{type:"layout-start"});s=act(s,{type:"layout-confirm"});assert.deepEqual(s.furniture.classification?.events,[]);assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);});
-
-test("free drops are retained, excessive suspension and overlap only fail classification",()=>{
- const l=initialLayout();for(const point of [{u:.45,v:-.5},l.sofa,{u:.1,v:.5},{u:.5,v:-2.5}]){const next=moveLayout(l,"chair",point)!;assert.deepEqual(next.chair,point);}
- assert.equal(moveLayout(l,"chair",{u:NaN,v:0}),null);
- for(const point of [{u:.45,v:-.5},l.sofa]){let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point});s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);assert.equal(s.furniture.classification?.tidy,false);assert.deepEqual(s.furniture.confirmed?.chair,point);assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);}
-});
-test("1.4 cm suspension threshold includes the boundary and excludes larger gaps",()=>{
+test("floor eligibility remains separate from tidiness and never prevents exit",()=>{
  const l=initialLayout(),px=1.4*96/2.54;
- for(const [gap,tidy] of [[px-.1,true],[px,true],[px+.1,false]] as const){const next=moveLayout(l,"chair",{u:.45,v:.13/2-gap/270})!;const c=classifyLayout(next,l);assert.equal(c.tidy,tidy);assert.ok(Math.abs(c.suspensionGapsPx.chair-gap)<1e-8);}
+ for(const [gap,inside] of [[px-.1,true],[px,true],[px+.1,false],[180,false]] as const){
+  let s=act(initialState(),{type:"layout-start"});const point={u:.45,v:.13/2-gap/270};
+  s=act(s,{type:"layout-move",id:"chair",point});s=act(s,{type:"layout-confirm"});
+  assert.equal(s.furniture.classification?.eligible,inside);assert.equal(s.furniture.classification?.metrics.tidiness,1);
+  assert.equal(s.exitDoorOpen,true);assert.deepEqual(s.furniture.confirmed?.chair,point);
+ }
 });
-test("free placement projection has no singularity above floor; undo retains exact coordinates",()=>{
+test("moves undo reset retry and reload preserve cumulative count",()=>{
+ let s=act(initialState(),{type:"layout-start"});
+ assert.equal(act(s,{type:"layout-reset"}),s);
+ const tiny={...s.furniture.layout.chair,u:s.furniture.layout.chair.u+.0001};assert.equal(act(s,{type:"layout-move",id:"chair",point:tiny}),s);
+ const e={id:"dedup",at:"2026-09-30T00:00:00Z",action:{type:"layout-move",id:"chair",point:{u:.45,v:.35}} as Action};
+ s=transition(s,e);assert.equal(transition(s,e),s);assert.equal(s.furniture.adjustmentCount,1);
+ s=act(s,{type:"layout-undo"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});s=act(s,{type:"layout-reset"});
+ assert.equal(s.furniture.adjustmentCount,4);s=act(s,{type:"layout-confirm"});
+ assert.equal(s.furniture.classification?.metrics.adjustmentCount,4);
+ assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);
+});
+test("draft does not unlock exit; confirmation does even without any movement",()=>{
+ let s=act(initialState(),{type:"layout-start"});assert.equal(s.exitDoorOpen,false);
+ s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);assert.equal(s.furniture.classification?.metrics.adjustmentCount,0);
+ assert.equal(act(s,{type:"layout-confirm"}),s);
+ s=act(s,{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});
+ assert.equal(s.furniture.confirmed,null);s=act(s,{type:"layout-exit"});assert.equal(s.exitDoorOpen,true);
+});
+test("default geometry and free projection retain exact coordinates",()=>{
+ assert.equal(validLayout(initialLayout()),true);
  for(const y of [0,200,397.8,500,760,1049]){const p=unproject(100,y);assert.ok(Number.isFinite(p.u));assert.ok(Math.abs(project(p).x-100)<1e-8);assert.ok(Math.abs(project(p).y-y)<1e-8);}
- let s=act(initialState(),{type:"layout-start"});const l=s.furniture.layout;s=act(s,{type:"layout-move",id:"chair",point:{u:.4,v:-2.5}});s=act(s,{type:"layout-undo"});assert.deepEqual(s.furniture.layout,l);
+ assert.equal(moveLayout(initialLayout(),"chair",{u:NaN,v:0}),null);
+ let s=act(initialState(),{type:"layout-start"});const l=s.furniture.layout;
+ s=act(s,{type:"layout-move",id:"chair",point:{u:.4,v:-2.5}});s=act(s,{type:"layout-undo"});assert.deepEqual(s.furniture.layout,l);
 });
+test("missing legacy count never becomes zero",()=>{const result=measureLayout(initialLayout(),null);assert.equal(result.eligible,false);assert.equal(result.metrics.adjustmentCount,null);});

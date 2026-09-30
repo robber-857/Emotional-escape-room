@@ -1,13 +1,16 @@
 """L2 authoritative facts. Furniture confirmation unlocks the exit; scoring remains unconfigured."""
 from copy import deepcopy
-from .l2_layout import initial_layout, move_layout, classify
+from .l2_layout import initial_layout, move_layout
+from .l2_metrics import measure, MOVEMENT_TOLERANCE, COUNT_VERSION
+from math import hypot
 
 RULES_VERSION = "l2-rules-v1"
 MAX_EVENTS = 1000
 
 def initial_state():
     return dict(exitDoorOpen=False, furniture=dict(baseline=initial_layout(), triggered=dict(tidy=False, openPlacement=False), editing=False,
-                              layout=initial_layout(), history=[], confirmed=None, classification=None),
+                              layout=initial_layout(), history=[], confirmed=None, classification=None,
+                              adjustmentCount=0, countVersion=COUNT_VERSION, assessment=None),
                 search=dict(curtainClicks=0, status="idle", activeMs=0, long=False), view="room", attempts=[], doorOpen=False,
                 atTable=False, seat=None, keys=[], selectedKey=None, events=[])
 
@@ -17,6 +20,10 @@ def with_completion(state):
     s = deepcopy(state)
     # Existing persisted tidy evidence came from a successful confirmation.
     s.setdefault("exitDoorOpen", bool(s["furniture"]["triggered"]["tidy"]))
+    # Old saves lack versioned counting evidence. Never manufacture zero moves.
+    s["furniture"].setdefault("adjustmentCount", None)
+    s["furniture"].setdefault("countVersion", COUNT_VERSION)
+    s["furniture"].setdefault("assessment", None)
     return s
 
 def apply_action(state, a):
@@ -29,16 +36,20 @@ def apply_action(state, a):
         if t == "layout-start": f["editing"] = True
         elif t == "layout-exit": f["editing"] = False
         elif t == "layout-confirm":
-            result = classify(f["layout"], f["baseline"], f["triggered"])
+            result = measure(f["layout"], f["adjustmentCount"])
             s["exitDoorOpen"] = True
             f.update(editing=False, confirmed=deepcopy(f["layout"]), baseline=deepcopy(f["layout"]), classification=result)
-            f["triggered"] = dict(tidy=f["triggered"]["tidy"] or result["tidy"], openPlacement=f["triggered"]["openPlacement"] or result["openPlacement"])
         elif t == "layout-undo":
             require(bool(f["history"])); f.update(layout=f["history"].pop(), confirmed=None, classification=None)
         else:
             layout = initial_layout() if t == "layout-reset" else move_layout(f["layout"], a["id"], a["point"])
             require(layout != f["layout"], "NO_CHANGE")
+            if t == "layout-move":
+                previous = f["layout"][a["id"]]
+                require(hypot(a["point"]["u"]-previous["u"], a["point"]["v"]-previous["v"]) >= MOVEMENT_TOLERANCE, "NO_CHANGE")
             f.update(history=(f["history"]+[deepcopy(f["layout"])])[-50:], layout=layout, confirmed=None, classification=None)
+        if t in ("layout-move", "layout-undo", "layout-reset") and f["adjustmentCount"] is not None:
+            f["adjustmentCount"] += 1
         return s
     require(not f["editing"])
     if t in ("search-choice", "search-time", "curtain-click", "return-hall"):

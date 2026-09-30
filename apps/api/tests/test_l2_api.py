@@ -10,7 +10,8 @@ from app.main import app
 from app.l2_api import validate_active_time
 from app.db import l2_runs, l2_events
 from app.l2_domain import initial_state, apply_action
-from app.l2_layout import initial_layout, valid_layout, classify, move_layout
+from app.l2_metrics import measure
+from app.l2_layout import initial_layout, valid_layout, move_layout
 
 def open_l2(client):
     parent, headers = session(client)
@@ -144,10 +145,10 @@ def test_furniture_draft_undo_confirm_and_immutable_evidence(client):
     assert act(client, url, h, s, dict(type="layout-move", id="chair", point=dict(u=.45, v=-.5)))[0].status_code == 200
     assert act(client, url, h, s, dict(type="layout-move", id="chair", point=dict(u=.45, v=.35)))[0].status_code == 200
     assert client.get(url, headers=h).json()["state"]["furniture"]["editing"]
-    assert act(client, url, h, s, dict(type="layout-confirm"))[0].json()["scoring"]["facts"]["placement"]["events"] == ["tidy", "open-placement"]
+    assert act(client, url, h, s, dict(type="layout-confirm"))[0].json()["scoring"]["facts"]["placement"]["metrics"]["adjustmentCount"] == 2
     first = client.get(url+"/events", headers=h).json()[-1]
     for a in [dict(type="layout-start"), dict(type="layout-confirm")]: assert act(client, url, h, s, a)[0].status_code == 200
-    assert s["state"]["furniture"]["classification"]["events"] == []
+    assert s["state"]["furniture"]["classification"]["metrics"]["adjustmentCount"] == 2
     assert first in client.get(url+"/events", headers=h).json()
     for a in [dict(type="layout-start"), dict(type="layout-reset"), dict(type="layout-undo"), dict(type="layout-exit")]:
         assert act(client, url, h, s, a)[0].status_code == 200
@@ -176,15 +177,15 @@ def test_table_chair_smaller_overlap_core_preserves_floor_limits(client, placeme
     for action in [dict(type="layout-start"), dict(type="layout-move", id="table-chair", point=point), dict(type="layout-confirm")]:
         assert act(client, url, h, s, action)[0].status_code == 200
     state = client.get(url, headers=h).json()["state"]
-    assert state["furniture"]["classification"]["tidy"] is tidy
+    assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is tidy
     assert state["exitDoorOpen"] is True
     assert state["furniture"]["confirmed"]["table-chair"] == point
-    if placement == "edge": assert not state["furniture"]["classification"]["openPlacement"]
+    if placement == "edge": assert state["furniture"]["classification"]["metrics"]["tidiness"] == pytest.approx(1-.01/.29/2)
 
 def test_geometry_initial_and_light_overlap():
     layout = initial_layout();assert valid_layout(layout)
     moved = move_layout(layout, "chair", dict(u=.45, v=.35))
-    assert classify(moved, layout, dict(tidy=False, openPlacement=False))["events"] == ["tidy", "open-placement"]
+    assert measure(moved,1)["metrics"]["tidiness"] == 1
     assert not valid_layout(move_layout(layout, "chair", layout["sofa"]))
 
 def test_event_limit_keeps_existing_receipts_retryable(client):
@@ -228,7 +229,7 @@ def test_server_receipts_have_immutable_outcomes_and_rejections(client):
     assert rejected["outcome"] is None and not rejected["accepted"]
     for r in rows:
         assert r["authority"] == dict(record_source="server_database", decision_source="server", input_source="client_claim")
-        assert r["validation_version"] == "l2-validation-v6"
+        assert r["validation_version"] == "l2-validation-v7"
         assert r["previous_version"] + int(r["accepted"]) == r["version"]
     first, second = sorted([r for r in rows if r["action"]["type"] == "try-door"], key=lambda r: r["version"])
     assert first["outcome"]["attempt"] == 1 and not first["outcome"]["door_open"]
@@ -260,6 +261,6 @@ def test_free_placement_suspension_tolerance_persists(client, gap, tidy):
         assert act(client, url, h, s, a)[0].status_code == 200
     state = client.get(url, headers=h).json()["state"]
     assert state["furniture"]["confirmed"]["chair"] == point
-    assert state["furniture"]["classification"]["tidy"] is tidy
+    assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is tidy
     assert state["exitDoorOpen"] is True
-    assert abs(state["furniture"]["classification"]["suspensionGapsPx"]["chair"]-gap) < 1e-8
+    assert ("chair" in state["furniture"]["classification"]["evidence"]["outsideFloor"]) is (not tidy)

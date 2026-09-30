@@ -1,0 +1,39 @@
+# L2-04 整理房间升级 · 2026-09-30
+
+用户评分截图 + 本次确认优先：整齐度只看重叠，不看朝向或间距；没有旋转功能。当前场景有四个可移动图层，桌椅组合整体移动，未虚构第五个独立对象。
+
+## 两个里程碑
+
+1. **事件与指标已实现**：服务端计算三项连续指标，保存调整前后布局、累计次数、首次确认快照；前端服务器记录展示真实回执。旧“tidy/open-placement”分类不再产生。
+2. **四分位引擎与校准工具已实现，正式阈值待提供**：A/F 从低到高 -2/-1/+1/+2，T 次数从少到多 +2/+1/-1/-2，V 为 null。当前 active_version=null，不输出虚构分值。其他关卡及 L2 总分未启用。
+
+## 当前实现口径
+
+- 整齐度 = `1 - 每个图层最大成对重叠率的平均值`。成对重叠率 = 交集面积 / 两判定区域中较小的面积。无重叠为 1，完全堆叠为 0；不因间距或朝向扣分。
+- 桌椅组合沿用缩窄核心：宽 0.29，原地面占地宽 0.41，深度 0.10。仅重叠核心缩窄，落地范围不缩窄。所有数值使用统一地面坐标，与屏幕尺寸无关。
+- 靠墙／窗程度：各图层完整占地到后墙、左墙、右墙的最短距离 d，取 `mean(1-min(1,d/0.5))`。前缘不是墙。当前窗与墙共用边界，不设置额外窗户加权；此空间公式为实现参数，后续校准必须保持同一指标版本。
+- 每次有效移动（地面距离至少 0.002）、撤销、有效重置各 +1。首次移动计数；点击、原地释放、无变化重置、拒绝请求及同 ID 重试不计数。拖动途中不逐帧上报。移回原处、刷新、退出整理均不清零。
+- 保留自由摆放及“确认即开门”的已有流程。超出地面范围仍存原始值，但标记 insufficient_evidence，防止移出画面获得高整齐度分数；重叠本身不是评分资格拒绝条件。
+- **首次确认锁定本幕评分依据**；再次整理可继续保存布局、指标和累计次数，但返回 already_assessed，无重复贡献。首次确认时未配置的结果也保持原样，未来回算需独立版本化任务，不能重写历史回执。
+- 旧存档没有新版计次证据时显示 null/历史缺失，允许继续游戏，不补造次数。旧回执与旧触发字段仅作历史兼容，新流程不更新旧分类。
+
+## 样本池与启用
+
+配置：[l2-04-quartiles.json](../apps/api/app/config/l2-04-quartiles.json)。每个 versions 条目要求 metric_version、pool（id/version/sample_size/minimum_sample_size）、tie_policy、thresholds。
+
+thresholds 必须包含 wallWindowProximity、tidiness、adjustmentCount 各自的 `[Q25,Q50,Q75]`。边界相等归入较低原始值档；同值永远同档，允许某档为空，不强行分成等人数。T 的分值方向反转。阈值、参考池和完整策略随首次确认结果一起保存。
+
+从真实服务器首次确认快照导出数组，每条为 `{session_id, placement}`，placement 取 `furniture.assessment.scoring.facts.placement`。只收同一指标版本、eligible=true、会话不重复的数据；不得混入合成测试会话。
+
+在 apps/api 下运行 `.venv/Scripts/python.exe -m app.l2_calibrate samples.json --pool-id <池名> --pool-version <版本> --minimum-sample-size <约定最小样本数>`，输出候选策略。工具使用 inclusive 线性插值四分位，不修改线上配置或回执。正式启用需提供真实样本池及最小样本量，检查分布与同值情况，再将输出保存为新版本并设置 active_version；Docker API 需重建。
+
+## 验证与运行
+
+- 前端单元测试 67 项、类型检查通过。
+- 后端完整 SQLite 回归 190 项通过、6 项 PostgreSQL 专属检查跳过；独立 PostgreSQL 数据库全量回归 **196 项通过，无跳过**，含并发校验。
+- 3000 桌面／触屏 UAT2 通过：L1 连续会话、刷新、离线重试、响应丢失、多标签冲突、服务器回执对账、三项指标展示。
+- 桌面／触屏桌椅组合 6 个真实浏览器拖拽场景通过：边缘轻微重叠（整齐度约 0.983）、堆叠（0.5）、悬空（原始整齐度 1，但无评分资格）；刷新及进入 L3 通过。本机预览拖拽／撤销／重置／键盘／刷新两端通过。
+- 证据：[触屏指标展示](../output/playwright/l204-metrics-mobile.png)、[桌面指标展示](../output/playwright/l204-metrics-desktop.png)、[本轮验证汇总](../output/playwright/l204-upgrade-summary.json)。
+- 本地后端 8000（Docker API），前端 3000（Next 开发服务）。不代表生产发布或真人 UAT。
+
+主要实现：[指标](../apps/api/app/l2_metrics.py)、[评分](../apps/api/app/l2_scoring.py)、[校准](../apps/api/app/l2_calibrate.py)、[专项测试](../apps/api/tests/test_l2_metrics.py)。

@@ -1,13 +1,14 @@
-import {initialLayout,moveLayout,classifyLayout,furnitureIds,type Layout,type FurnitureId,type Point} from "./layout";
+import {initialLayout,moveLayout,furnitureIds,type Layout,type FurnitureId,type Point} from "./layout";
+import {measureLayout,movementTolerance,countVersion} from "./metrics";
 export const seats = ["chair", "table-seat"] as const;
 export type Seat = typeof seats[number];
 export type KeyId = "key-1" | "key-2";
 export type Action = {type:"layout-start"}|{type:"layout-move";id:FurnitureId;point:Point}|{type:"layout-undo"}|{type:"layout-reset"}|{type:"layout-exit"}|{type:"layout-confirm"}| {type:"search-choice";yes:boolean} | {type:"search-time";activeMs:number} | {type:"curtain-click"} | {type:"find-earring"} | { type: "explore"; yes: boolean } | { type: "return-hall" } | { type: "view"; view: "room" | "table" } | { type: "try-door"; key: KeyId } | { type: "arrive-table" } | { type: "sit"; seat: Seat; yes: boolean } | { type: "select-key"; key: KeyId };
 export type Event = { id: string; at: string; action: Action };
-export type State = { exitDoorOpen:boolean; furniture:{baseline:Layout;triggered:{tidy:boolean;openPlacement:boolean};editing:boolean;layout:Layout;history:Layout[];confirmed:Layout|null;classification:ReturnType<typeof classifyLayout>|null}; search: {curtainClicks:number;status:"idle"|"declined"|"searching"|"returned"|"found";activeMs:number;long:boolean}; view: "room" | "table" | "bedroom"; attempts: KeyId[]; doorOpen: boolean; atTable: boolean; seat: Seat | null; keys: KeyId[]; selectedKey: KeyId | null; events: Event[] };
+export type State = { exitDoorOpen:boolean; furniture:{baseline:Layout;triggered:{tidy:boolean;openPlacement:boolean};editing:boolean;layout:Layout;history:Layout[];confirmed:Layout|null;classification:ReturnType<typeof measureLayout>|null;adjustmentCount:number|null;countVersion:string}; search: {curtainClicks:number;status:"idle"|"declined"|"searching"|"returned"|"found";activeMs:number;long:boolean}; view: "room" | "table" | "bedroom"; attempts: KeyId[]; doorOpen: boolean; atTable: boolean; seat: Seat | null; keys: KeyId[]; selectedKey: KeyId | null; events: Event[] };
 export const SAVE_KEY = "emotional:l2:preview:v2";
 export const MAX_EVENTS = 1000;
-export const initialState = (): State => ({ exitDoorOpen:false, furniture:{baseline:initialLayout(),triggered:{tidy:false,openPlacement:false},editing:false,layout:initialLayout(),history:[],confirmed:null,classification:null},search:{curtainClicks:0,status:"idle",activeMs:0,long:false}, view: "room", attempts: [], doorOpen: false, atTable: false, seat: null, keys: [], selectedKey: null, events: [] });
+export const initialState = (): State => ({ exitDoorOpen:false, furniture:{baseline:initialLayout(),triggered:{tidy:false,openPlacement:false},editing:false,layout:initialLayout(),history:[],confirmed:null,classification:null,adjustmentCount:0,countVersion},search:{curtainClicks:0,status:"idle",activeMs:0,long:false}, view: "room", attempts: [], doorOpen: false, atTable: false, seat: null, keys: [], selectedKey: null, events: [] });
 export const keysAvailable = (s: State) => s.atTable || s.seat === "table-seat";
 export const seatNames: Record<Seat, string> = {chair:"窗边椅","table-seat":"桌前椅"};
 export const keyNames: Record<KeyId, string> = {"key-1":"钥匙1","key-2":"钥匙2"};
@@ -19,7 +20,8 @@ export function transition(s: State, event: Event): State {
  if(a.type.startsWith("layout-")&&a.type!=="layout-start"&&!s.furniture.editing)return s;
  if(a.type==="layout-start"&&s.furniture.editing)return s;
  if(a.type==="layout-undo"&&!s.furniture.history.length)return s;
- if(a.type==="layout-move"&&(!furnitureIds.includes(a.id)||!moveLayout(s.furniture.layout,a.id,a.point)||JSON.stringify(s.furniture.layout[a.id])===JSON.stringify(a.point)))return s;
+ if(a.type==="layout-reset"&&JSON.stringify(s.furniture.layout)===JSON.stringify(initialLayout()))return s;
+ if(a.type==="layout-move"&&(!furnitureIds.includes(a.id)||!moveLayout(s.furniture.layout,a.id,a.point)||Math.hypot(s.furniture.layout[a.id].u-a.point.u,s.furniture.layout[a.id].v-a.point.v)<movementTolerance))return s;
  if(a.type==="explore" && (!s.doorOpen || s.view!=="room")) return s;
  if(a.type==="return-hall" && s.view!=="bedroom") return s;
  if(s.view==="bedroom" && !["return-hall","search-choice","search-time","find-earring","curtain-click"].includes(a.type)) return s;
@@ -37,11 +39,12 @@ export function transition(s: State, event: Event): State {
  if(a.type==="layout-start")return {...next,furniture:{...s.furniture,editing:true}};
  if(a.type==="layout-exit")return {...next,furniture:{...s.furniture,editing:false}};
  if(a.type==="layout-confirm"){
-  const classification=classifyLayout(s.furniture.layout,s.furniture.baseline,s.furniture.triggered);
-  return {...next,exitDoorOpen:true,furniture:{...s.furniture,editing:false,confirmed:s.furniture.layout,baseline:s.furniture.layout,classification,triggered:{tidy:s.furniture.triggered.tidy||classification.tidy,openPlacement:s.furniture.triggered.openPlacement||classification.openPlacement}}};
+  const classification=measureLayout(s.furniture.layout,s.furniture.adjustmentCount);
+  return {...next,exitDoorOpen:true,furniture:{...s.furniture,editing:false,confirmed:s.furniture.layout,baseline:s.furniture.layout,classification}};
  }
- if(a.type==="layout-undo")return {...next,furniture:{...s.furniture,layout:s.furniture.history.at(-1)!,history:s.furniture.history.slice(0,-1),confirmed:null,classification:null}};
- if(a.type==="layout-reset"||a.type==="layout-move")return {...next,furniture:{...s.furniture,layout:a.type==="layout-reset"?initialLayout():moveLayout(s.furniture.layout,a.id,a.point)!,history:[...s.furniture.history.slice(-49),s.furniture.layout],confirmed:null,classification:null}};
+ const adjustmentCount=s.furniture.adjustmentCount===null?null:s.furniture.adjustmentCount+1;
+ if(a.type==="layout-undo")return {...next,furniture:{...s.furniture,adjustmentCount,layout:s.furniture.history.at(-1)!,history:s.furniture.history.slice(0,-1),confirmed:null,classification:null}};
+ if(a.type==="layout-reset"||a.type==="layout-move")return {...next,furniture:{...s.furniture,adjustmentCount,layout:a.type==="layout-reset"?initialLayout():moveLayout(s.furniture.layout,a.id,a.point)!,history:[...s.furniture.history.slice(-49),s.furniture.layout],confirmed:null,classification:null}};
  if(a.type==="search-choice")return {...next,search:{curtainClicks:s.search.curtainClicks,status:a.yes?"searching":"declined",activeMs:0,long:false}};
  if(a.type==="search-time")return {...next,search:{...s.search,activeMs:a.activeMs,long:a.activeMs>15000}};
  if(a.type==="curtain-click")return {...next,search:{...s.search,curtainClicks:s.search.curtainClicks+1,status:s.search.curtainClicks===2?"found":"searching"}};

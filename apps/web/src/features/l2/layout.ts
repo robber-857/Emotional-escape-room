@@ -43,21 +43,3 @@ export function moveLayout(layout:Layout,id:FurnitureId,p:Point):Layout|null{
  return {...layout,[id]:{...p}};
 }
 export function transformFurniture(id:FurnitureId,p:Point){const at=project(p),base=furniture[id].anchor;const scale=(.78+.25*Math.max(0,p.v))/(.78+.25*unproject(base.x,base.y).v);return `translate(${at.x} ${at.y}) scale(${scale}) translate(${-base.x} ${-base.y})`;}
-// "Open placement" evaluates the moved object's destination, never remaining room area.
-export function classifyLayout(layout:Layout,baseline:Layout=initialLayout(),already={tidy:false,openPlacement:false}){
- const reasonable=validLayout(layout);
- const movedIds=furnitureIds.filter(id=>Math.hypot(layout[id].u-baseline[id].u,layout[id].v-baseline[id].v)>=placementRules.movementDistance);
- const placements=movedIds.map(id=>{
-  const b=footprint(id,layout[id]),others=furnitureIds.filter(other=>other!==id).map(other=>footprint(other,layout[other]));
-  const requiredClearance=Math.max(placementRules.minClearance,Math.min(furniture[id].w,furniture[id].d)*placementRules.clearanceFactor);
-  const nearestGap=Math.min(...others.map(o=>Math.hypot(Math.max(o.left-b.right,b.left-o.right,0),Math.max(o.top-b.bottom,b.top-o.bottom,0))));
-  const g=requiredClearance*2;
-  const sides:Rect[]=[{...b,left:b.left-g,right:b.left},{...b,left:b.right,right:b.right+g},{...b,top:b.top-g,bottom:b.top},{...b,top:b.bottom,bottom:b.bottom+g}];
-  const openSides=sides.filter(r=>insideFloor(r)&&!others.some(o=>intersection(r,o)>1e-9)).length;
-  return {id,from:baseline[id],to:layout[id],nearestGap,requiredClearance,openSides,open:reasonable&&nearestGap>=requiredClearance&&openSides>=placementRules.minOpenSides};
- });
- const tidy=reasonable&&movedIds.length>0,openPlacement=reasonable&&placements.some(p=>p.open);
- const events: ("tidy"|"open-placement")[]=[];
- if(tidy&&!already.tidy)events.push("tidy");if(openPlacement&&!already.openPlacement)events.push("open-placement");
- return {reasonable,tidy,openPlacement,movedIds,placements,events,suspensionToleranceCm,suspensionTolerancePx,suspensionGapsPx:Object.fromEntries(furnitureIds.map(id=>[id,suspensionGapPx(footprint(id,layout[id]))])),ruleVersion:layoutRuleVersion};
-}
