@@ -1,3 +1,4 @@
+import {proximityCalibration,describeProximity} from "./proximity";
 import test from "node:test";
 import assert from "node:assert/strict";
 import {initialLayout,validLayout,moveLayout,project,unproject,footprint,overlapFootprint,constrainPoint} from "./layout";
@@ -60,4 +61,11 @@ test("soft edge accepts reported armchair and pushing wall does not count again"
  const count=s.furniture.adjustmentCount;const same=act(s,{type:"layout-move",id:"armchair",point:{u:4,v:4}});
  assert.equal(same,s);assert.equal(same.furniture.adjustmentCount,count);
  assert.equal(measureLayout(s.furniture.layout,count).eligible,true);
+});
+
+test("per-object proximity calibration agrees with server reference values",()=>{
+ const expected={armchair:.42528822226408913,chair:.4798082619359234,sofa:.3687675528371376,"table-chair":.3414071269750786};
+ for(const id of Object.keys(expected) as (keyof typeof expected)[]){const c=proximityCalibration(id);assert.ok(Math.abs(c.maxDistance-expected[id])<1e-10);assert.ok(describeProximity(id,footprint(id,c.point)).proximity<1e-10);for(const u of [-4,4])assert.equal(describeProximity(id,footprint(id,constrainPoint(id,{u,v:c.point.v}))).proximity,1);}
+ const layout={armchair:{u:.48367458333431806,v:.5642826639987756},chair:{u:.3174398374902257,v:.5305600694496282},sofa:{u:.48945212433202495,v:.8808201911641543},"table-chair":{u:.5071925065937517,v:.41303218886014825}};
+ const m=measureLayout(layout,0);assert.equal(m.metrics.tidiness,1);assert.ok(Math.abs(m.metrics.wallWindowProximity-.2365251214454691)<1e-10);
 });

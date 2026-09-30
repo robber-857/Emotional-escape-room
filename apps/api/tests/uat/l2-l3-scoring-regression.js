@@ -53,7 +53,13 @@ async original=>{
    });
    await page.goto(base+'/l3');await toggle();
    await panel.getByText(/关窗开电视 \/ window/).waitFor();
-   check((await panel.textContent()).includes('F 0'),'neutral zero hidden');await toggle();
+   check((await panel.textContent()).includes('F 0'),'neutral zero hidden');
+   check((await panel.textContent()).includes('/4 档'),'missing four-band label');
+   check(!(await panel.textContent()).includes('四分位'),'ambiguous quartile display remains');
+   await panel.getByText('靠墙程度计算明细',{exact:true}).click();
+   await panel.getByText('最大距离 Dmax',{exact:true}).scrollIntoViewIfNeeded();
+   await page.screenshot({path:`output/playwright/proximity-details-${mobile?'touch':'desktop'}.png`});
+   await toggle();
    await click('走出密室 →');await page.waitForURL('**/l4');
    await page.getByRole('button',{name:'静塔门，海岸灯塔',exact:true}).waitFor();
    await click('静塔门，海岸灯塔');const doorWait=response();await click('走进这扇门');const door=await(await doorWait).json();

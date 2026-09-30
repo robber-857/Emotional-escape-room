@@ -117,3 +117,41 @@ def test_wall_proximity_has_correct_direction_and_pending_pool(tmp_path,monkeypa
     monkeypatch.setattr(l2_scoring,"CONFIG_PATH",path)
     assert l2_scoring.evaluate(measure(layout,0))["status"] == "pending_configuration"
     assert l2_scoring.evaluate(measure(layout,0))["contributions"] is None
+
+
+def test_proximity_reachable_range_and_dense_grid_bound():
+    from app.l2_proximity import calibration,describe,nearest_wall_distance
+    from app.l2_layout import FURNITURE,footprint,constrain_point
+    from bisect import bisect_left
+    buckets=set()
+    for key in FURNITURE:
+        maximum,center=calibration(key)
+        assert describe(key,footprint(key,center))['proximity']==pytest.approx(0,abs=1e-10)
+        for side in (-4,4):
+            edge=constrain_point(key,dict(u=side,v=center['v']))
+            assert describe(key,footprint(key,edge))['proximity']==pytest.approx(1)
+        # Independent coarse 2-D search cannot exceed the optimized maximum.
+        for i in range(41):
+            for j in range(41):
+                p=constrain_point(key,dict(u=i/40,v=j/40))
+                assert nearest_wall_distance(footprint(key,p))<=maximum+1e-9
+    for i in range(101):
+        layout={}
+        for key in FURNITURE:
+            _,center=calibration(key);edge=constrain_point(key,dict(u=-4,v=center['v']))
+            layout[key]=dict(u=center['u']+(edge['u']-center['u'])*i/100,v=center['v'])
+        value=measure(layout,0)['metrics']['wallWindowProximity']
+        buckets.add(1+bisect_left([.25,.5,.75],value))
+    assert buckets=={1,2,3,4}
+
+
+def test_low_proximity_is_reachable_without_overlap():
+    layout={
+        'armchair':dict(u=.48367458333431806,v=.5642826639987756),
+        'chair':dict(u=.3174398374902257,v=.5305600694496282),
+        'sofa':dict(u=.48945212433202495,v=.8808201911641543),
+        'table-chair':dict(u=.5071925065937517,v=.41303218886014825)}
+    result=measure(layout,0)
+    assert result['eligible'] and result['metrics']['tidiness']==1
+    assert result['metrics']['wallWindowProximity']==pytest.approx(.2365251214454691)
+    assert l2_scoring.evaluate(result)['contributions']==dict(A=-2,V=None,T=2,F=2)

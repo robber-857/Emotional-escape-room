@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "event_definition_version": "server-composite-v3",
-  "event_score_version": "event-scores-v2",
+  "event_definition_version": "server-composite-v4",
+  "event_score_version": "event-scores-v3",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -470,7 +470,7 @@
     },
     "l2.furniture.wall": {
       "1": {
-        "label": "靠墙／窗程度 四分位1",
+        "label": "靠墙／窗程度 第 1/4 档",
         "status": "configured",
         "vector": {
           "A": -2,
@@ -480,7 +480,7 @@
         }
       },
       "2": {
-        "label": "靠墙／窗程度 四分位2",
+        "label": "靠墙／窗程度 第 2/4 档",
         "status": "configured",
         "vector": {
           "A": -1,
@@ -490,7 +490,7 @@
         }
       },
       "3": {
-        "label": "靠墙／窗程度 四分位3",
+        "label": "靠墙／窗程度 第 3/4 档",
         "status": "configured",
         "vector": {
           "A": 1,
@@ -500,7 +500,7 @@
         }
       },
       "4": {
-        "label": "靠墙／窗程度 四分位4",
+        "label": "靠墙／窗程度 第 4/4 档",
         "status": "configured",
         "vector": {
           "A": 2,
@@ -512,7 +512,7 @@
     },
     "l2.furniture.tidiness": {
       "1": {
-        "label": "整齐度 四分位1",
+        "label": "整齐度 第 1/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -522,7 +522,7 @@
         }
       },
       "2": {
-        "label": "整齐度 四分位2",
+        "label": "整齐度 第 2/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -532,7 +532,7 @@
         }
       },
       "3": {
-        "label": "整齐度 四分位3",
+        "label": "整齐度 第 3/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -542,7 +542,7 @@
         }
       },
       "4": {
-        "label": "整齐度 四分位4",
+        "label": "整齐度 第 4/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -554,7 +554,7 @@
     },
     "l2.furniture.adjustments": {
       "1": {
-        "label": "调整次数 四分位1",
+        "label": "调整次数 第 1/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -564,7 +564,7 @@
         }
       },
       "2": {
-        "label": "调整次数 四分位2",
+        "label": "调整次数 第 2/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -574,7 +574,7 @@
         }
       },
       "3": {
-        "label": "调整次数 四分位3",
+        "label": "调整次数 第 3/4 档",
         "status": "configured",
         "vector": {
           "A": null,
@@ -584,7 +584,7 @@
         }
       },
       "4": {
-        "label": "调整次数 四分位4",
+        "label": "调整次数 第 4/4 档",
         "status": "configured",
         "vector": {
           "A": null,

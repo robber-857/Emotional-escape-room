@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "active_version": "l2-fixed-quarters-v1",
+  "active_version": "l2-fixed-quarters-v2",
   "versions": {
     "l2-fixed-quarters-v1": {
       "metric_version": "l2-metrics-overlap-v1",
@@ -8,9 +8,44 @@
       "adjustment_count_cap": 20,
       "tie_policy": "equal_to_lower_raw_bucket",
       "thresholds": {
-        "wallWindowProximity": [0.25, 0.5, 0.75],
-        "tidiness": [0.25, 0.5, 0.75],
-        "adjustmentCount": [5, 10, 15]
+        "wallWindowProximity": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "tidiness": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "adjustmentCount": [
+          5,
+          10,
+          15
+        ]
+      }
+    },
+    "l2-fixed-quarters-v2": {
+      "metric_version": "l2-metrics-proximity-v2",
+      "boundary_source": "user_fixed",
+      "adjustment_count_cap": 20,
+      "tie_policy": "equal_to_lower_raw_bucket",
+      "thresholds": {
+        "wallWindowProximity": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "tidiness": [
+          0.25,
+          0.5,
+          0.75
+        ],
+        "adjustmentCount": [
+          5,
+          10,
+          15
+        ]
       }
     }
   }
