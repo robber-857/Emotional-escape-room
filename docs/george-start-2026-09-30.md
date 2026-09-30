@@ -95,4 +95,8 @@ docker compose cp db:/tmp/emotional.backup ./emotional.backup
 
 工程检查：根目录 npm run typecheck / npm test / npm run build；apps/api 下 `.venv/Scripts/python.exe -m pytest -q`。默认 SQLite 跳过 PostgreSQL 并发项；数据库测试使用独立测试库，见 [UAT 总表](uat-test-matrix.md)。不能代替 George 自己电脑的四关、续玩、断网重试验收。
 
-本次审计远端基线为 `21b0dc0`，已有五次拿绳、绳子位置/尺寸与人物分开调整。本地另有未提交 L2 和结果页修改：远端 L2 家具判定通过才开出口，本地点击确认即开；本地布局 v5/回执校验 v6，当时远端为 v4/v4。以实际拉取提交为准，不要把差异当配置失败。首次数据库为空正常，仓库不附作者会话。
+2026-09-30 本次同步包含：L2 确认摆放即开出口（不依赖tidy）、布局 v5/回执校验 v6、桌椅较小重叠检测核心且保留地面/悬空边界、卧室床头柜单一耳环入口和背景图，以及结果页原画预览与真实评分覆盖区域。拉取后必须重新构建，避免仍运行旧镜像。首次数据库为空正常，仓库不附作者会话。
+
+评分组合与回执的下一阶段开发见 [开发任务](scoring-receipts-development.md)。家具最终分类稳定性、跨关冻结和评分账本均是待开发项，不属于本次已有L2改动。当前评分仍为pending_configuration。
+
+本次发布前检查：前端typecheck、73项测试、production build通过；后端179通过、6跳过（默认SQLite）。未在本轮重跑真实PostgreSQL并发或桌面/触屏浏览器UAT，George另一台电脑验收仍需执行。Excel的组合分组、来源向量与文件完整性已核查。

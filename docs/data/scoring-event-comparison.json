@@ -1,0 +1,2083 @@
+{
+  "revision": "composite-scoring-v3",
+  "source": "D:\\wechat\\messagerecord\\xwechat_files\\wxid_gxfhj6ejns1922_33af\\msg\\file\\2026-09\\情感密室_V6.2_评分表修改后26Aug(2).xlsx",
+  "sha256": "7f8aade7935530918617c64ba3ece8b527cd5b32a1d3037a6ab463978506ccb9",
+  "rows": [
+    [
+      "L1-01",
+      "修好桥",
+      "R4 找木板修桥后过河",
+      "不独立计分；见组合评分项",
+      "组合前置，不独立计分",
+      "归属l1.crossing/bridge；修好桥且走桥过河全部满足才一次A+1,F+1",
+      "L1.repair",
+      "修订评分表!C4:G4"
+    ],
+    [
+      "L1-01",
+      "修好船",
+      "R7 修船后过河（船桨跳跃次数不计分）",
+      "不独立计分；见组合评分项",
+      "组合前置，不独立计分",
+      "归属l1.crossing/boat；修好船且五桨到对岸全部满足才一次A+1,F=0",
+      "L1.boat-ready",
+      "修订评分表!C7:G7"
+    ],
+    [
+      "L1-01",
+      "走桥过河",
+      "R4 找木板修桥后过河",
+      "不独立计分；见组合评分项",
+      "组合完成，不独立追加",
+      "与修桥共同产生l1.crossing/bridge一次评分",
+      "L1.cross-bridge",
+      "修订评分表!C4:G4"
+    ],
+    [
+      "L1-01",
+      "游泳过河",
+      "R5 无游泳圈直接游泳",
+      "R5 A-1；F-2",
+      "可对应",
+      "按实际过河结果一次",
+      "L1.swim",
+      "修订评分表!C5:G5"
+    ],
+    [
+      "L1-01",
+      "救生圈过河",
+      "R6 找到游泳圈过河",
+      "R6 A-1；F+1",
+      "可对应",
+      "按实际过河结果一次",
+      "L1.use-ring",
+      "修订评分表!C6:G6"
+    ],
+    [
+      "L1-01",
+      "划船过河",
+      "R7 修船后过河（船桨跳跃次数不计分）",
+      "不独立计分；见组合评分项",
+      "组合完成，不独立追加",
+      "与修船共同产生l1.crossing/boat一次评分",
+      "L1.boat-cross",
+      "修订评分表!C7:G7"
+    ],
+    [
+      "L1-02",
+      "主动与女生交谈",
+      "R10 点选人物并主动交谈",
+      "R10 V-2",
+      "可对应",
+      "用户已确认greet-woman即主动交谈；同一女生最多一次",
+      "L1.greet-woman",
+      "修订评分表!C10:G10"
+    ],
+    [
+      "L1-02",
+      "主动与男生交谈",
+      "R10 点选人物并主动交谈",
+      "R10 V-2",
+      "可对应",
+      "用户已确认greet即主动交谈；同一男生最多一次",
+      "L1.greet",
+      "修订评分表!C10:G10"
+    ],
+    [
+      "L1-02",
+      "拿起灯",
+      "R13 点亮并带走\nR14 点亮，不带走\nR15 不点亮，但带走\nR16 不点亮，不带走",
+      "不独立计分；见组合评分项",
+      "组合输入，不独立计分",
+      "拿/不拿作为l1.lamp输入；L1结束时四种组合只取一个，未缺单独动作分",
+      "L1.take-lamp",
+      "修订评分表!C13:G13；修订评分表!C14:G14；修订评分表!C15:G15；修订评分表!C16:G16"
+    ],
+    [
+      "L1-02",
+      "点亮灯",
+      "R13 点亮并带走\nR14 点亮，不带走\nR15 不点亮，但带走\nR16 不点亮，不带走",
+      "不独立计分；见组合评分项",
+      "组合输入，不独立计分",
+      "点亮/不点亮作为l1.lamp输入；与拿灯组合只取一个，不拆分向量",
+      "L1.light-lamp",
+      "修订评分表!C13:G13；修订评分表!C14:G14；修订评分表!C15:G15；修订评分表!C16:G16"
+    ],
+    [
+      "L1-02",
+      "进入下一关",
+      "原表无独立条目",
+      "不单独计分",
+      "流程不单独计分",
+      "用于L1结束，不新增分值",
+      "L1.enter",
+      ""
+    ],
+    [
+      "L2",
+      "走到桌边",
+      "R19 不坐，直接去桌边",
+      "R19 A=0",
+      "有条件对应",
+      "仅从未坐下直接去桌边；坐过再到桌边不套用",
+      "L2.arrive-table",
+      "修订评分表!C19:G19"
+    ],
+    [
+      "L2",
+      "坐窗边椅",
+      "R17 坐靠窗椅子",
+      "R17 A+1",
+      "可对应",
+      "当前窗边椅",
+      "L2.sit.chair",
+      "修订评分表!C17:G17"
+    ],
+    [
+      "L2",
+      "坐桌前椅",
+      "R18 坐靠中心椅子",
+      "R18 A-1",
+      "名称对应待确认",
+      "本地桌前椅，原表中心椅；保留当前事件和原分值",
+      "L2.sit.table-seat",
+      "修订评分表!C18:G18"
+    ],
+    [
+      "L2",
+      "选择钥匙 key-1",
+      "R20 直接尝试一把",
+      "不独立计分；见组合评分项",
+      "组合前置，不独立计分",
+      "选中/持有钥匙是试门前置，完成首次试门才产生F-1",
+      "L2.select-key.key-1",
+      "修订评分表!C20:G20"
+    ],
+    [
+      "L2",
+      "选择钥匙 key-2",
+      "R20 直接尝试一把\nR22 尝试第二把",
+      "不独立计分；见组合评分项",
+      "组合前置，不独立计分",
+      "按实际第几次试门匹配评分；钥匙编号不等于尝试次数",
+      "L2.select-key.key-2",
+      "修订评分表!C20:G20；修订评分表!C22:G22"
+    ],
+    [
+      "L2",
+      "第一次用钥匙试门（失败）",
+      "R20 直接尝试一把",
+      "R20 F-1",
+      "可对应",
+      "原文为直接尝试一把；对应第一次试门，F=-1，不是选择钥匙",
+      "L2.try-first",
+      "修订评分表!C20:G20"
+    ],
+    [
+      "L2",
+      "换另一把钥匙开门成功",
+      "R22 尝试第二把\nR23 放弃，不再尝试",
+      "R22 V-1\nR23 V+1",
+      "有条件对应",
+      "执行第二次参考V=-1；失败后最终放弃参考V=+1，不能把暂时停留当放弃",
+      "L2.try-second",
+      "修订评分表!C22:G22；修订评分表!C23:G23"
+    ],
+    [
+      "L2",
+      "进入已解锁的卧室",
+      "R24 停在门口，不进入\nR25 进入黑暗空间探索\nR26 直接进入\nR27 先退后进（摆动）\nR28 不进入，转去处理别的",
+      "R24 A+1\nR25 A-1\nR26 V-2；T+1\nR27 V=0；T-2\nR28 V+2；T+1",
+      "多个原表节点重叠",
+      "当前只有一个explore；进入/拒绝/先退后进可留事实，但不能把两套节点叠加",
+      "L2.explore",
+      "修订评分表!C24:G24；修订评分表!C25:G25；修订评分表!C26:G26；修订评分表!C27:G27；修订评分表!C28:G28"
+    ],
+    [
+      "L2",
+      "答应寻找耳环",
+      "R29 不寻找\nR30 寻找 <15 秒后放弃\nR31 持续寻找 >=15 秒",
+      "不独立计分；见组合评分项",
+      "组合输入，不独立计分",
+      "同一寻找评分组按拒绝/短搜索放弃/长搜索等结果取一次；开始寻找不额外加分",
+      "L2.search-start",
+      "修订评分表!C29:G29；修订评分表!C30:G30；修订评分表!C31:G31"
+    ],
+    [
+      "L2",
+      "长搜索（严格超过15秒）",
+      "R31 持续寻找 >=15 秒",
+      "R31 A+2",
+      "按已确认条件对应",
+      "向量A=+2保留；触发条件按用户确认严格>15秒；15秒整不算长",
+      "L2.search-long",
+      "修订评分表!C31:G31"
+    ],
+    [
+      "L2",
+      "找到另一只耳环",
+      "原表无独立条目",
+      "缺失",
+      "缺失向量",
+      "第三次窗帘点击找到耳环；不等于长搜索或放弃",
+      "L2.earring-found",
+      ""
+    ],
+    [
+      "L2",
+      "返回大厅",
+      "R30 寻找 <15 秒后放弃\nR31 持续寻找 >=15 秒",
+      "R30 A=0\nR31 A+2",
+      "仅搜索结果有分",
+      "返回本身不加分；<15秒未找到后放弃A=0，>15秒长搜索A=+2不重复计；恰好15秒短搜索分未明确",
+      "L2.return-hall",
+      "修订评分表!C30:G30；修订评分表!C31:G31"
+    ],
+    [
+      "L2",
+      "整理房间最后确认结果",
+      "R32 靠墙/窗程度 最高四分位\nR33 次高四分位\nR34 次低四分位\nR35 最低四分位（多在空旷处）\nR36 整齐度 最高四分位\nR37 次高四分位\nR38 次低四分位\nR39 最低四分位\nR40 调整次数 最少四分位（一步到位）\nR41 次少四分位\nR42 次多四分位\nR43 最多四分位（反复挪动）",
+      "R32 A+2\nR33 A+1\nR34 A-1\nR35 A-2\nR36 F+2\nR37 F+1\nR38 F-1\nR39 F-2\nR40 T+2\nR41 T+1\nR42 T-1\nR43 T-2",
+      "当前结果向量缺失",
+      "原表按四分位，当前按最后确认reasonable/tidy/openPlacement；没有可靠映射，不强套或新增次数加分",
+      "L2.furniture-final",
+      "修订评分表!C32:G32；修订评分表!C33:G33；修订评分表!C34:G34；修订评分表!C35:G35；修订评分表!C36:G36；修订评分表!C37:G37；修订评分表!C38:G38；修订评分表!C39:G39；修订评分表!C40:G40；修订评分表!C41:G41；修订评分表!C42:G42；修订评分表!C43:G43"
+    ],
+    [
+      "L3-01",
+      "打开风暴房间门",
+      "R44 不打开，保持半开\nR45 打开并保持\nR46 打开后又关上（摆动）",
+      "不独立计分；见组合评分项",
+      "组合输入，不独立计分",
+      "开/关门终态组合一次；未开却关的合法组合原表未覆盖",
+      "L3.open",
+      "修订评分表!C44:G44；修订评分表!C45:G45；修订评分表!C46:G46"
+    ],
+    [
+      "L3-01",
+      "关上风暴房间门",
+      "R44 不打开，保持半开\nR45 打开并保持\nR46 打开后又关上（摆动）",
+      "不独立计分；见组合评分项",
+      "组合输入，不独立计分",
+      "归属l3.storm-door；无需给开门/关门拆独立向量",
+      "L3.close",
+      "修订评分表!C44:G44；修订评分表!C45:G45；修订评分表!C46:G46"
+    ],
+    [
+      "L3-01",
+      "等待",
+      "R47 坐在沙发等待\nR48 不等待，继续行动",
+      "R47 A+1\nR48 A-1",
+      "可对应",
+      "是A=+1；否A=-1，均为原表现有分值",
+      "L3.wait",
+      "修订评分表!C47:G47；修订评分表!C48:G48"
+    ],
+    [
+      "L3-01",
+      "拉开窗帘",
+      "R49 拉开窗帘，看清风暴\nR50 留帘作屏障",
+      "R49 V-1\nR50 V+1",
+      "可对应",
+      "是V=-1；否V=+1，均为原表现有分值",
+      "L3.curtain",
+      "修订评分表!C49:G49；修订评分表!C50:G50"
+    ],
+    [
+      "L3-01",
+      "关窗",
+      "R51 关窗 + 关风扇\nR52 关窗，不关风扇\nR53 不关窗，关风扇\nR54 都不关",
+      "R51 F+2\nR52 F=0\nR53 F=0\nR54 F-2",
+      "组合对象不同",
+      "原表关窗+关风扇；本地关窗+关电视；保留原分，但不自动迁移",
+      "L3.window",
+      "修订评分表!C51:G51；修订评分表!C52:G52；修订评分表!C53:G53；修订评分表!C54:G54"
+    ],
+    [
+      "L3-01",
+      "关电视",
+      "R51 关窗 + 关风扇\nR52 关窗，不关风扇\nR53 不关窗，关风扇\nR54 都不关",
+      "R51 F+2\nR52 F=0\nR53 F=0\nR54 F-2",
+      "缺少电视对应向量",
+      "本地保留电视事件；原表电扇组合分需确认能否迁移",
+      "L3.television",
+      "修订评分表!C51:G51；修订评分表!C52:G52；修订评分表!C53:G53；修订评分表!C54:G54"
+    ],
+    [
+      "L3-02",
+      "决定携带物品",
+      "R55 不带走任何东西",
+      "R55 全维 NA",
+      "过程/不测量",
+      "是仅进入选物，不加基础分；否全维NA",
+      "L3.carry",
+      "修订评分表!C55:G55"
+    ],
+    [
+      "L3-02",
+      "最终带走围巾",
+      "R56 围巾（陪伴/温度）",
+      "R56 A-1；V-2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.scarf",
+      "修订评分表!C56:G56"
+    ],
+    [
+      "L3-02",
+      "最终带走灯笼",
+      "R57 小灯笼（寻找回应）",
+      "R57 A+2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.lantern",
+      "修订评分表!C57:G57"
+    ],
+    [
+      "L3-02",
+      "最终带走伞",
+      "R58 雨伞（自我保护/边界）",
+      "R58 V+2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.umbrella",
+      "修订评分表!C58:G58"
+    ],
+    [
+      "L3-02",
+      "最终带走指南针",
+      "R59 指南针（自己判断方向）",
+      "R59 A-2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.compass",
+      "修订评分表!C59:G59"
+    ],
+    [
+      "L3-02",
+      "最终带走玩偶",
+      "R60 小玩偶（依恋/熟悉）",
+      "R60 A+1；V-1",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.doll",
+      "修订评分表!C60:G60"
+    ],
+    [
+      "L3-02",
+      "最终带走钥匙",
+      "R61 钥匙（保留选择/主动权）",
+      "R61 V+1",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.key",
+      "修订评分表!C61:G61"
+    ],
+    [
+      "L3-02",
+      "最终带走日记",
+      "R62 日记本（内在世界/自我安定）",
+      "R62 A-2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.journal",
+      "修订评分表!C62:G62"
+    ],
+    [
+      "L3-02",
+      "最终带走绳子",
+      "R63 登山绳（抓住连接）",
+      "R63 A+2",
+      "可对应",
+      "只对最终confirm的物品一次计分；草稿不计",
+      "L3.item.rope",
+      "修订评分表!C63:G63"
+    ],
+    [
+      "L3-02",
+      "最终带走背包",
+      "原表无独立条目",
+      "缺失",
+      "缺失向量",
+      "原表无背包",
+      "L3.item.backpack",
+      ""
+    ],
+    [
+      "L4",
+      "确认微光门",
+      "R64 微光门（寻求连接与安全）",
+      "R64 A-1；V-1",
+      "可对应",
+      "四选一最终confirm一次；不因原文建议修改当前门位",
+      "L4.village",
+      "修订评分表!C64:G64"
+    ],
+    [
+      "L4",
+      "确认静塔门",
+      "R65 静塔门（保持距离、独立观察）",
+      "R65 A+1；V+1",
+      "可对应",
+      "四选一最终confirm一次；不因原文建议修改当前门位",
+      "L4.coast",
+      "修订评分表!C65:G65"
+    ],
+    [
+      "L4",
+      "确认森林门",
+      "R66 森林门（主动探索、自由寻求）",
+      "R66 A-1；V+1",
+      "可对应",
+      "四选一最终confirm一次；不因原文建议修改当前门位",
+      "L4.forest",
+      "修订评分表!C66:G66"
+    ],
+    [
+      "L4",
+      "确认宫殿门",
+      "R67 宫殿门（稳定关系与确定性）",
+      "R67 A+1；V-1",
+      "可对应",
+      "四选一最终confirm一次；不因原文建议修改当前门位",
+      "L4.castle",
+      "修订评分表!C67:G67"
+    ]
+  ],
+  "scoring_items": [
+    {
+      "group_id": "l1.crossing",
+      "option_id": "bridge",
+      "label": "修好桥并走桥过河",
+      "condition": "repaired=true AND route=bridge，进入对岸",
+      "source_rows": [
+        4
+      ],
+      "vector": [
+        1,
+        null,
+        null,
+        1
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l1.crossing",
+      "option_id": "swim",
+      "label": "游泳过河",
+      "condition": "route=swim，进入对岸",
+      "source_rows": [
+        5
+      ],
+      "vector": [
+        -1,
+        null,
+        null,
+        -2
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l1.crossing",
+      "option_id": "ring",
+      "label": "救生圈过河",
+      "condition": "route=ring，进入对岸",
+      "source_rows": [
+        6
+      ],
+      "vector": [
+        -1,
+        null,
+        null,
+        1
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l1.crossing",
+      "option_id": "boat",
+      "label": "修好船并划船过河",
+      "condition": "oar=true AND strokes=5 AND route=boat",
+      "source_rows": [
+        7
+      ],
+      "vector": [
+        1,
+        null,
+        null,
+        0
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l1.talk.woman",
+      "option_id": "yes",
+      "label": "与女生主动交谈",
+      "condition": "greetedWoman=true，首次成功",
+      "source_rows": [
+        10
+      ],
+      "vector": [
+        null,
+        -2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "不同人物分别计一次；同一人物重复不计"
+    },
+    {
+      "group_id": "l1.talk.man",
+      "option_id": "yes",
+      "label": "与男生主动交谈",
+      "condition": "greeted=true，首次成功",
+      "source_rows": [
+        10
+      ],
+      "vector": [
+        null,
+        -2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "不同人物分别计一次；同一人物重复不计"
+    },
+    {
+      "group_id": "l1.lamp",
+      "option_id": "lit_taken",
+      "label": "点亮并带走灯",
+      "condition": "L1结束 AND lampLit=true AND lampTaken=true",
+      "source_rows": [
+        13
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        2
+      ],
+      "status": "已对应",
+      "note": "四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分"
+    },
+    {
+      "group_id": "l1.lamp",
+      "option_id": "lit_left",
+      "label": "点亮但未带走灯",
+      "condition": "L1结束 AND lampLit=true AND lampTaken=false",
+      "source_rows": [
+        14
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "status": "已对应",
+      "note": "四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分"
+    },
+    {
+      "group_id": "l1.lamp",
+      "option_id": "unlit_taken",
+      "label": "未点亮但带走灯",
+      "condition": "L1结束 AND lampLit=false AND lampTaken=true",
+      "source_rows": [
+        15
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "status": "已对应",
+      "note": "四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分"
+    },
+    {
+      "group_id": "l1.lamp",
+      "option_id": "unlit_left",
+      "label": "未点亮且未带走灯",
+      "condition": "L1结束 AND lampLit=false AND lampTaken=false",
+      "source_rows": [
+        16
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        -2
+      ],
+      "status": "已对应",
+      "note": "四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分"
+    },
+    {
+      "group_id": "l2.seat",
+      "option_id": "window",
+      "label": "坐窗边椅",
+      "condition": "当前座位事件历史；首选/最终选项截止待定",
+      "source_rows": [
+        17
+      ],
+      "vector": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "status": "条件待定",
+      "note": "原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对"
+    },
+    {
+      "group_id": "l2.seat",
+      "option_id": "table",
+      "label": "坐桌前椅",
+      "condition": "当前座位事件历史；首选/最终选项截止待定",
+      "source_rows": [
+        18
+      ],
+      "vector": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "status": "条件待定",
+      "note": "原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对"
+    },
+    {
+      "group_id": "l2.seat",
+      "option_id": "none",
+      "label": "不坐直接到桌边",
+      "condition": "当前座位事件历史；首选/最终选项截止待定",
+      "source_rows": [
+        19
+      ],
+      "vector": [
+        0,
+        null,
+        null,
+        null
+      ],
+      "status": "条件待定",
+      "note": "原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对"
+    },
+    {
+      "group_id": "l2.first-try",
+      "option_id": "attempt",
+      "label": "第一次用钥匙试门",
+      "condition": "try-door outcome.attempt=1",
+      "source_rows": [
+        20
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        -1
+      ],
+      "status": "已对应",
+      "note": "任意首把均失败；只选中钥匙不触发F-1"
+    },
+    {
+      "group_id": "l2.retry",
+      "option_id": "retry",
+      "label": "失败后换钥匙再试",
+      "condition": "outcome.attempt=2",
+      "source_rows": [
+        22
+      ],
+      "vector": [
+        null,
+        -1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l2.retry",
+      "option_id": "abandon",
+      "label": "失败后不再尝试",
+      "condition": "最终截止仅有一次试门",
+      "source_rows": [
+        23
+      ],
+      "vector": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "status": "截止待定",
+      "note": "没有单独放弃按钮；不能把暂时停留当放弃"
+    },
+    {
+      "group_id": "l2.explore",
+      "option_id": "pending",
+      "label": "进入/不进入卧室探索",
+      "condition": "当前只有一个explore流程",
+      "source_rows": [
+        24,
+        25,
+        26,
+        27,
+        28
+      ],
+      "vector": null,
+      "status": "映射待定",
+      "note": "原表两节点重叠；先选定一套互斥评分规则，不能叠加"
+    },
+    {
+      "group_id": "l2.search",
+      "option_id": "declined",
+      "label": "不寻找耳环",
+      "condition": "search-choice=false；最终状态截止待定",
+      "source_rows": [
+        29
+      ],
+      "vector": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "status": "截止待定",
+      "note": "否后可改是，不能累加拒绝与最后搜索结果"
+    },
+    {
+      "group_id": "l2.search",
+      "option_id": "short_quit",
+      "label": "短搜索后放弃",
+      "condition": "未找到且返回，activeMs<15000",
+      "source_rows": [
+        30
+      ],
+      "vector": [
+        0,
+        null,
+        null,
+        null
+      ],
+      "status": "截止待定",
+      "note": "15秒整不命中长搜索；其短搜索分值未明确"
+    },
+    {
+      "group_id": "l2.search",
+      "option_id": "long",
+      "label": "长搜索",
+      "condition": "activeMs>15000",
+      "source_rows": [
+        31
+      ],
+      "vector": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "以用户确认>15秒为准；多次上报不重复得分；与最终搜索选项互斥"
+    },
+    {
+      "group_id": "l2.search",
+      "option_id": "found_short",
+      "label": "短时间找到耳环",
+      "condition": "status=found且未超过15秒",
+      "source_rows": [],
+      "vector": null,
+      "status": "缺失向量",
+      "note": "长搜索后找到不能另累加一份找到分；快速成功原表未提供结果分"
+    },
+    {
+      "group_id": "l2.furniture",
+      "option_id": "final_layout",
+      "label": "最终确认家具布局",
+      "condition": "最终确认layout/classification",
+      "source_rows": [
+        32,
+        33,
+        34,
+        35,
+        36,
+        37,
+        38,
+        39,
+        40,
+        41,
+        42,
+        43
+      ],
+      "vector": null,
+      "status": "映射待定",
+      "note": "原表有A/F/T四分位，但当前结果无法直接匹配；移动/撤销/重复确认不加分"
+    },
+    {
+      "group_id": "l3.storm-door",
+      "option_id": "unopened",
+      "label": "保持半开",
+      "condition": "风暴选择结束 AND open=false AND close=false",
+      "source_rows": [
+        44
+      ],
+      "vector": [
+        null,
+        2,
+        1,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.storm-door",
+      "option_id": "opened",
+      "label": "打开并保持",
+      "condition": "风暴选择结束 AND open=true AND close=false",
+      "source_rows": [
+        45
+      ],
+      "vector": [
+        null,
+        -2,
+        1,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.storm-door",
+      "option_id": "closed",
+      "label": "打开后又关上",
+      "condition": "风暴选择结束 AND open=true AND close=true",
+      "source_rows": [
+        46
+      ],
+      "vector": [
+        null,
+        0,
+        -2,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.storm-door",
+      "option_id": "unopened_closed",
+      "label": "未开但选择关门",
+      "condition": "open=false AND close=true",
+      "source_rows": [],
+      "vector": null,
+      "status": "缺失向量",
+      "note": "服务器允许此组合，原表未给分"
+    },
+    {
+      "group_id": "l3.wait",
+      "option_id": "yes",
+      "label": "等待",
+      "condition": "风暴结束 choices.wait=yes",
+      "source_rows": [
+        47
+      ],
+      "vector": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.wait",
+      "option_id": "no",
+      "label": "不等待",
+      "condition": "风暴结束 choices.wait=no",
+      "source_rows": [
+        48
+      ],
+      "vector": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.curtain",
+      "option_id": "yes",
+      "label": "拉开窗帘",
+      "condition": "风暴结束 choices.curtain=yes",
+      "source_rows": [
+        49
+      ],
+      "vector": [
+        null,
+        -1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.curtain",
+      "option_id": "no",
+      "label": "保留窗帘",
+      "condition": "风暴结束 choices.curtain=no",
+      "source_rows": [
+        50
+      ],
+      "vector": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.environment",
+      "option_id": "both",
+      "label": "关窗且关电视",
+      "condition": "当前window/television最终组合",
+      "source_rows": [
+        51
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        2
+      ],
+      "status": "对象映射待定",
+      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+    },
+    {
+      "group_id": "l3.environment",
+      "option_id": "window",
+      "label": "关窗但未关电视",
+      "condition": "当前window/television最终组合",
+      "source_rows": [
+        52
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "status": "对象映射待定",
+      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+    },
+    {
+      "group_id": "l3.environment",
+      "option_id": "television",
+      "label": "未关窗但关电视",
+      "condition": "当前window/television最终组合",
+      "source_rows": [
+        53
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "status": "对象映射待定",
+      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+    },
+    {
+      "group_id": "l3.environment",
+      "option_id": "neither",
+      "label": "窗和电视都未关",
+      "condition": "当前window/television最终组合",
+      "source_rows": [
+        54
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        -2
+      ],
+      "status": "对象映射待定",
+      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "none",
+      "label": "不携带物品",
+      "condition": "carry=false完成",
+      "source_rows": [
+        55
+      ],
+      "vector": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "全维NA，不是缺分或四个零"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "scarf",
+      "label": "带走围巾",
+      "condition": "confirm最终item=scarf",
+      "source_rows": [
+        56
+      ],
+      "vector": [
+        -1,
+        -2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "lantern",
+      "label": "带走灯笼",
+      "condition": "confirm最终item=lantern",
+      "source_rows": [
+        57
+      ],
+      "vector": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "umbrella",
+      "label": "带走雨伞",
+      "condition": "confirm最终item=umbrella",
+      "source_rows": [
+        58
+      ],
+      "vector": [
+        null,
+        2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "compass",
+      "label": "带走指南针",
+      "condition": "confirm最终item=compass",
+      "source_rows": [
+        59
+      ],
+      "vector": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "doll",
+      "label": "带走玩偶",
+      "condition": "confirm最终item=doll",
+      "source_rows": [
+        60
+      ],
+      "vector": [
+        1,
+        -1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "key",
+      "label": "带走钥匙",
+      "condition": "confirm最终item=key",
+      "source_rows": [
+        61
+      ],
+      "vector": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "journal",
+      "label": "带走日记",
+      "condition": "confirm最终item=journal",
+      "source_rows": [
+        62
+      ],
+      "vector": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "rope",
+      "label": "带走绳子",
+      "condition": "confirm最终item=rope",
+      "source_rows": [
+        63
+      ],
+      "vector": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l3.item",
+      "option_id": "backpack",
+      "label": "带走背包",
+      "condition": "confirm最终item=backpack",
+      "source_rows": [],
+      "vector": null,
+      "status": "缺失向量",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l4.door",
+      "option_id": "village",
+      "label": "确认微光门",
+      "condition": "confirm door=village",
+      "source_rows": [
+        64
+      ],
+      "vector": [
+        -1,
+        -1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l4.door",
+      "option_id": "coast",
+      "label": "确认静塔门",
+      "condition": "confirm door=coast",
+      "source_rows": [
+        65
+      ],
+      "vector": [
+        1,
+        1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l4.door",
+      "option_id": "forest",
+      "label": "确认森林门",
+      "condition": "confirm door=forest",
+      "source_rows": [
+        66
+      ],
+      "vector": [
+        -1,
+        1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    },
+    {
+      "group_id": "l4.door",
+      "option_id": "castle",
+      "label": "确认宫殿门",
+      "condition": "confirm door=castle",
+      "source_rows": [
+        67
+      ],
+      "vector": [
+        1,
+        -1,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "组内互斥；最终一次"
+    }
+  ],
+  "raw": [
+    {
+      "row": 4,
+      "level": "L1 分离之河",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "找木板修桥后过河",
+      "values": [
+        1,
+        null,
+        null,
+        1
+      ],
+      "vector": "A+1；F+1"
+    },
+    {
+      "row": 5,
+      "level": "L1 分离之河",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "无游泳圈直接游泳",
+      "values": [
+        -1,
+        null,
+        null,
+        -2
+      ],
+      "vector": "A-1；F-2"
+    },
+    {
+      "row": 6,
+      "level": "L1 分离之河",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "找到游泳圈过河",
+      "values": [
+        -1,
+        null,
+        null,
+        1
+      ],
+      "vector": "A-1；F+1"
+    },
+    {
+      "row": 7,
+      "level": "L1 分离之河",
+      "node": "过河路径（强制四选一，四条路径需同等显眼）",
+      "option": "修船后过河（船桨跳跃次数不计分）",
+      "values": [
+        1,
+        null,
+        null,
+        0
+      ],
+      "vector": "A+1；F=0"
+    },
+    {
+      "row": 8,
+      "level": "L1 分离之河",
+      "node": "线索取舍（线索须定义为不含指向性的提示牌）",
+      "option": "采用线索",
+      "values": [
+        null,
+        null,
+        -1,
+        null
+      ],
+      "vector": "T-1"
+    },
+    {
+      "row": 9,
+      "level": "L1 分离之河",
+      "node": "线索取舍（线索须定义为不含指向性的提示牌）",
+      "option": "不采用线索",
+      "values": [
+        null,
+        null,
+        1,
+        null
+      ],
+      "vector": "T+1"
+    },
+    {
+      "row": 10,
+      "level": "L1 分离之河",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "点选人物并主动交谈",
+      "values": [
+        null,
+        -2,
+        null,
+        null
+      ],
+      "vector": "V-2"
+    },
+    {
+      "row": 11,
+      "level": "L1 分离之河",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "点选人物，仅打招呼即止",
+      "values": [
+        null,
+        0,
+        null,
+        null
+      ],
+      "vector": "V=0"
+    },
+    {
+      "row": 12,
+      "level": "L1 分离之河",
+      "node": "对岸人物（模糊的熟悉身影）",
+      "option": "完全不点选，绕开人物",
+      "values": [
+        null,
+        2,
+        null,
+        null
+      ],
+      "vector": "V+2"
+    },
+    {
+      "row": 13,
+      "level": "L1 分离之河",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "点亮并带走",
+      "values": [
+        null,
+        null,
+        null,
+        2
+      ],
+      "vector": "F+2"
+    },
+    {
+      "row": 14,
+      "level": "L1 分离之河",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "点亮，不带走",
+      "values": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "vector": "F=0"
+    },
+    {
+      "row": 15,
+      "level": "L1 分离之河",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "不点亮，但带走",
+      "values": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "vector": "F=0"
+    },
+    {
+      "row": 16,
+      "level": "L1 分离之河",
+      "node": "对岸的灯（点亮 × 带走，四种终态）",
+      "option": "不点亮，不带走",
+      "values": [
+        null,
+        null,
+        null,
+        -2
+      ],
+      "vector": "F-2"
+    },
+    {
+      "row": 17,
+      "level": "L2 失联房间",
+      "node": "进门座位",
+      "option": "坐靠窗椅子",
+      "values": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+1"
+    },
+    {
+      "row": 18,
+      "level": "L2 失联房间",
+      "node": "进门座位",
+      "option": "坐靠中心椅子",
+      "values": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-1"
+    },
+    {
+      "row": 19,
+      "level": "L2 失联房间",
+      "node": "进门座位",
+      "option": "不坐，直接去桌边",
+      "values": [
+        0,
+        null,
+        null,
+        null
+      ],
+      "vector": "A=0"
+    },
+    {
+      "row": 20,
+      "level": "L2 失联房间",
+      "node": "钥匙策略（首把设计为必失败）",
+      "option": "直接尝试一把",
+      "values": [
+        null,
+        null,
+        null,
+        -1
+      ],
+      "vector": "F-1"
+    },
+    {
+      "row": 21,
+      "level": "L2 失联房间",
+      "node": "钥匙策略（首把设计为必失败）",
+      "option": "反复比较确认后再尝试",
+      "values": [
+        null,
+        null,
+        null,
+        1
+      ],
+      "vector": "F+1"
+    },
+    {
+      "row": 22,
+      "level": "L2 失联房间",
+      "node": "首把失败后",
+      "option": "尝试第二把",
+      "values": [
+        null,
+        -1,
+        null,
+        null
+      ],
+      "vector": "V-1"
+    },
+    {
+      "row": 23,
+      "level": "L2 失联房间",
+      "node": "首把失败后",
+      "option": "放弃，不再尝试",
+      "values": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "vector": "V+1"
+    },
+    {
+      "row": 24,
+      "level": "L2 失联房间",
+      "node": "钥匙开门后屋内黑（仅当 N2-3=尝试第二把 时出现）",
+      "option": "停在门口，不进入",
+      "values": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+1"
+    },
+    {
+      "row": 25,
+      "level": "L2 失联房间",
+      "node": "钥匙开门后屋内黑（仅当 N2-3=尝试第二把 时出现）",
+      "option": "进入黑暗空间探索",
+      "values": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-1"
+    },
+    {
+      "row": 26,
+      "level": "L2 失联房间",
+      "node": "半开的门（池）",
+      "option": "直接进入",
+      "values": [
+        null,
+        -2,
+        1,
+        null
+      ],
+      "vector": "V-2；T+1"
+    },
+    {
+      "row": 27,
+      "level": "L2 失联房间",
+      "node": "半开的门（池）",
+      "option": "先退后进（摆动）",
+      "values": [
+        null,
+        0,
+        -2,
+        null
+      ],
+      "vector": "V=0；T-2"
+    },
+    {
+      "row": 28,
+      "level": "L2 失联房间",
+      "node": "半开的门（池）",
+      "option": "不进入，转去处理别的",
+      "values": [
+        null,
+        2,
+        1,
+        null
+      ],
+      "vector": "V+2；T+1"
+    },
+    {
+      "row": 29,
+      "level": "L2 失联房间",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "不寻找",
+      "values": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-2"
+    },
+    {
+      "row": 30,
+      "level": "L2 失联房间",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "寻找 <15 秒后放弃",
+      "values": [
+        0,
+        null,
+        null,
+        null
+      ],
+      "vector": "A=0"
+    },
+    {
+      "row": 31,
+      "level": "L2 失联房间",
+      "node": "没有配对的耳环（池；点击触发，非 hover）",
+      "option": "持续寻找 >=15 秒",
+      "values": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+2"
+    },
+    {
+      "row": 32,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "靠墙/窗程度 最高四分位",
+      "values": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+2"
+    },
+    {
+      "row": 33,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "次高四分位",
+      "values": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+1"
+    },
+    {
+      "row": 34,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "次低四分位",
+      "values": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-1"
+    },
+    {
+      "row": 35,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：靠墙/窗程度（池，连续指标按四分位计）",
+      "option": "最低四分位（多在空旷处）",
+      "values": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-2"
+    },
+    {
+      "row": 36,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "整齐度 最高四分位",
+      "values": [
+        null,
+        null,
+        null,
+        2
+      ],
+      "vector": "F+2"
+    },
+    {
+      "row": 37,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "次高四分位",
+      "values": [
+        null,
+        null,
+        null,
+        1
+      ],
+      "vector": "F+1"
+    },
+    {
+      "row": 38,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "次低四分位",
+      "values": [
+        null,
+        null,
+        null,
+        -1
+      ],
+      "vector": "F-1"
+    },
+    {
+      "row": 39,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：整齐度（池，四分位）",
+      "option": "最低四分位",
+      "values": [
+        null,
+        null,
+        null,
+        -2
+      ],
+      "vector": "F-2"
+    },
+    {
+      "row": 40,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "调整次数 最少四分位（一步到位）",
+      "values": [
+        null,
+        null,
+        2,
+        null
+      ],
+      "vector": "T+2"
+    },
+    {
+      "row": 41,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "次少四分位",
+      "values": [
+        null,
+        null,
+        1,
+        null
+      ],
+      "vector": "T+1"
+    },
+    {
+      "row": 42,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "次多四分位",
+      "values": [
+        null,
+        null,
+        -1,
+        null
+      ],
+      "vector": "T-1"
+    },
+    {
+      "row": 43,
+      "level": "L2 失联房间",
+      "node": "重摆沙发椅子：调整次数（池，四分位）",
+      "option": "最多四分位（反复挪动）",
+      "values": [
+        null,
+        null,
+        -2,
+        null
+      ],
+      "vector": "T-2"
+    },
+    {
+      "row": 44,
+      "level": "L3 风暴大厅",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "不打开，保持半开",
+      "values": [
+        null,
+        2,
+        1,
+        null
+      ],
+      "vector": "V+2；T+1"
+    },
+    {
+      "row": 45,
+      "level": "L3 风暴大厅",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "打开并保持",
+      "values": [
+        null,
+        -2,
+        1,
+        null
+      ],
+      "vector": "V-2；T+1"
+    },
+    {
+      "row": 46,
+      "level": "L3 风暴大厅",
+      "node": "半开的门与风暴（风暴无论选择都会来临）",
+      "option": "打开后又关上（摆动）",
+      "values": [
+        null,
+        0,
+        -2,
+        null
+      ],
+      "vector": "V=0；T-2"
+    },
+    {
+      "row": 47,
+      "level": "L3 风暴大厅",
+      "node": "坐稳等待",
+      "option": "坐在沙发等待",
+      "values": [
+        1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+1"
+    },
+    {
+      "row": 48,
+      "level": "L3 风暴大厅",
+      "node": "坐稳等待",
+      "option": "不等待，继续行动",
+      "values": [
+        -1,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-1"
+    },
+    {
+      "row": 49,
+      "level": "L3 风暴大厅",
+      "node": "右窗窗帘（环境控制）",
+      "option": "拉开窗帘，看清风暴",
+      "values": [
+        null,
+        -1,
+        null,
+        null
+      ],
+      "vector": "V-1"
+    },
+    {
+      "row": 50,
+      "level": "L3 风暴大厅",
+      "node": "右窗窗帘（环境控制）",
+      "option": "留帘作屏障",
+      "values": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "vector": "V+1"
+    },
+    {
+      "row": 51,
+      "level": "L3 风暴大厅",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "关窗 + 关风扇",
+      "values": [
+        null,
+        null,
+        null,
+        2
+      ],
+      "vector": "F+2"
+    },
+    {
+      "row": 52,
+      "level": "L3 风暴大厅",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "关窗，不关风扇",
+      "values": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "vector": "F=0"
+    },
+    {
+      "row": 53,
+      "level": "L3 风暴大厅",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "不关窗，关风扇",
+      "values": [
+        null,
+        null,
+        null,
+        0
+      ],
+      "vector": "F=0"
+    },
+    {
+      "row": 54,
+      "level": "L3 风暴大厅",
+      "node": "左窗与风扇电源（环境控制，合并为收尾度）",
+      "option": "都不关",
+      "values": [
+        null,
+        null,
+        null,
+        -2
+      ],
+      "vector": "F-2"
+    },
+    {
+      "row": 55,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "不带走任何东西",
+      "values": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "vector": "全维 NA"
+    },
+    {
+      "row": 56,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "围巾（陪伴/温度）",
+      "values": [
+        -1,
+        -2,
+        null,
+        null
+      ],
+      "vector": "A-1；V-2"
+    },
+    {
+      "row": 57,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "小灯笼（寻找回应）",
+      "values": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+2"
+    },
+    {
+      "row": 58,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "雨伞（自我保护/边界）",
+      "values": [
+        null,
+        2,
+        null,
+        null
+      ],
+      "vector": "V+2"
+    },
+    {
+      "row": 59,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "指南针（自己判断方向）",
+      "values": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-2"
+    },
+    {
+      "row": 60,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "小玩偶（依恋/熟悉）",
+      "values": [
+        1,
+        -1,
+        null,
+        null
+      ],
+      "vector": "A+1；V-1"
+    },
+    {
+      "row": 61,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "钥匙（保留选择/主动权）",
+      "values": [
+        null,
+        1,
+        null,
+        null
+      ],
+      "vector": "V+1"
+    },
+    {
+      "row": 62,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "日记本（内在世界/自我安定）",
+      "values": [
+        -2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A-2"
+    },
+    {
+      "row": 63,
+      "level": "L3 风暴大厅",
+      "node": "出口门前带走一件东西（不带走 = NA；按行为归类，非物件直接对应分数）",
+      "option": "登山绳（抓住连接）",
+      "values": [
+        2,
+        null,
+        null,
+        null
+      ],
+      "vector": "A+2"
+    },
+    {
+      "row": 64,
+      "level": "L4 远方之门",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "微光门（寻求连接与安全）",
+      "values": [
+        -1,
+        -1,
+        null,
+        null
+      ],
+      "vector": "A-1；V-1"
+    },
+    {
+      "row": 65,
+      "level": "L4 远方之门",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "静塔门（保持距离、独立观察）",
+      "values": [
+        1,
+        1,
+        null,
+        null
+      ],
+      "vector": "A+1；V+1"
+    },
+    {
+      "row": 66,
+      "level": "L4 远方之门",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "森林门（主动探索、自由寻求）",
+      "values": [
+        -1,
+        1,
+        null,
+        null
+      ],
+      "vector": "A-1；V+1"
+    },
+    {
+      "row": 67,
+      "level": "L4 远方之门",
+      "node": "门的选择（对玩家展示的门名改中性、位置随机，避免语义暗示；只载 A/V）",
+      "option": "宫殿门（稳定关系与确定性）",
+      "values": [
+        1,
+        -1,
+        null,
+        null
+      ],
+      "vector": "A+1；V-1"
+    }
+  ]
+}

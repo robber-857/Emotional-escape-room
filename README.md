@@ -1,5 +1,7 @@
 # Emotional Escape Room · 情感密室
 
+最新评分交接：[组合评分与回执优化开发任务](docs/scoring-receipts-development.md)。事件条件固定后只改版本化得分表的方案已写明，评分引擎仍未启用。修桥+走桥、灯等按完整组合一次评分，不按操作条数累计。
+
 2026-09-30 最新交接：[George 数据库/前后端/Docker 启动](docs/george-start-2026-09-30.md)、[L1–L4 服务器事件与 V6.2 评分表](docs/event-scoring-audit-v6.2.md)。算法待确认；关卡权重配置支持独立版本，默认 20%/30%/30%/20%。
 
 当前交付：L1 前端 + FastAPI 权威事件校验 + PostgreSQL 持久化 + Docker Compose。

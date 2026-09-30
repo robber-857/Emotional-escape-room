@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "status": "draft_example_not_loaded_by_server",
+  "event_definition_version": "proposed-composite-events-v1",
+  "event_score_version": "Event_score_version_1",
+  "groups": {
+    "l1.crossing": {
+      "bridge": {"status": "configured", "vector": {"A": 1, "V": null, "T": null, "F": 1}},
+      "swim": {"status": "configured", "vector": {"A": -1, "V": null, "T": null, "F": -2}},
+      "ring": {"status": "configured", "vector": {"A": -1, "V": null, "T": null, "F": 1}},
+      "boat": {"status": "configured", "vector": {"A": 1, "V": null, "T": null, "F": 0}}
+    },
+    "l1.lamp": {
+      "lit_taken": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 2}},
+      "lit_left": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 0}},
+      "unlit_taken": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 0}},
+      "unlit_left": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": -2}}
+    },
+    "l2.furniture": {
+      "final_layout": {"status": "unconfigured", "vector": null}
+    },
+    "l3.item": {
+      "none": {"status": "not_measured", "vector": {"A": null, "V": null, "T": null, "F": null}},
+      "backpack": {"status": "unconfigured", "vector": null}
+    }
+  }
+}

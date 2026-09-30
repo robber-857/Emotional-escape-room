@@ -1,5 +1,7 @@
 # 项目文档索引
 
+最新：[组合评分与回执优化开发任务](scoring-receipts-development.md)、[评分组合比对表](../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表.xlsx)。操作日志与评分结果分层，覆盖固定得分表、版本追溯、最终家具冻结和稳定分类。
+
 2026-09-30：四关均已接服务器，正式评分仍待配置。最新首读：[事件证据与 V6.2 核对](event-scoring-audit-v6.2.md)、[George 本地启动](george-start-2026-09-30.md)。下文早期状态按日期区分。
 
 > 2026-09-27 L1 后端接入更新：当前实现与边界见 [L1 后端设计](l1-backend.md)，跨电脑启动见 [George 交接](george-local-setup.md)。下文早期骨架状态/全项目规划请按日期区分。

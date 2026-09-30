@@ -1,0 +1,49 @@
+﻿评分组ID,结果ID,评分事件,完整条件,A,V,T,F,状态,说明,原表行
+l1.crossing,bridge,修好桥并走桥过河,repaired=true AND route=bridge，进入对岸,1,,,1,已对应,组内互斥；最终一次,4
+l1.crossing,swim,游泳过河,route=swim，进入对岸,-1,,,-2,已对应,组内互斥；最终一次,5
+l1.crossing,ring,救生圈过河,route=ring，进入对岸,-1,,,1,已对应,组内互斥；最终一次,6
+l1.crossing,boat,修好船并划船过河,oar=true AND strokes=5 AND route=boat,1,,,0,已对应,组内互斥；最终一次,7
+l1.talk.woman,yes,与女生主动交谈,greetedWoman=true，首次成功,,-2,,,已对应,不同人物分别计一次；同一人物重复不计,10
+l1.talk.man,yes,与男生主动交谈,greeted=true，首次成功,,-2,,,已对应,不同人物分别计一次；同一人物重复不计,10
+l1.lamp,lit_taken,点亮并带走灯,L1结束 AND lampLit=true AND lampTaken=true,,,,2,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,13
+l1.lamp,lit_left,点亮但未带走灯,L1结束 AND lampLit=true AND lampTaken=false,,,,0,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,14
+l1.lamp,unlit_taken,未点亮但带走灯,L1结束 AND lampLit=false AND lampTaken=true,,,,0,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,15
+l1.lamp,unlit_left,未点亮且未带走灯,L1结束 AND lampLit=false AND lampTaken=false,,,,-2,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,16
+l2.seat,window,坐窗边椅,当前座位事件历史；首选/最终选项截止待定,1,,,,条件待定,原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对,17
+l2.seat,table,坐桌前椅,当前座位事件历史；首选/最终选项截止待定,-1,,,,条件待定,原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对,18
+l2.seat,none,不坐直接到桌边,当前座位事件历史；首选/最终选项截止待定,0,,,,条件待定,原表座位三选一；本地可换座，不按两把椅子独立双算；桌前/中心名称需核对,19
+l2.first-try,attempt,第一次用钥匙试门,try-door outcome.attempt=1,,,,-1,已对应,任意首把均失败；只选中钥匙不触发F-1,20
+l2.retry,retry,失败后换钥匙再试,outcome.attempt=2,,-1,,,已对应,组内互斥；最终一次,22
+l2.retry,abandon,失败后不再尝试,最终截止仅有一次试门,,1,,,截止待定,没有单独放弃按钮；不能把暂时停留当放弃,23
+l2.explore,pending,进入/不进入卧室探索,当前只有一个explore流程,待定,待定,待定,待定,映射待定,原表两节点重叠；先选定一套互斥评分规则，不能叠加,"24,25,26,27,28"
+l2.search,declined,不寻找耳环,search-choice=false；最终状态截止待定,-2,,,,截止待定,否后可改是，不能累加拒绝与最后搜索结果,29
+l2.search,short_quit,短搜索后放弃,未找到且返回，activeMs<15000,0,,,,截止待定,15秒整不命中长搜索；其短搜索分值未明确,30
+l2.search,long,长搜索,activeMs>15000,2,,,,已对应,以用户确认>15秒为准；多次上报不重复得分；与最终搜索选项互斥,31
+l2.search,found_short,短时间找到耳环,status=found且未超过15秒,待定,待定,待定,待定,缺失向量,长搜索后找到不能另累加一份找到分；快速成功原表未提供结果分,
+l2.furniture,final_layout,最终确认家具布局,最终确认layout/classification,待定,待定,待定,待定,映射待定,原表有A/F/T四分位，但当前结果无法直接匹配；移动/撤销/重复确认不加分,"32,33,34,35,36,37,38,39,40,41,42,43"
+l3.storm-door,unopened,保持半开,风暴选择结束 AND open=false AND close=false,,2,1,,已对应,组内互斥；最终一次,44
+l3.storm-door,opened,打开并保持,风暴选择结束 AND open=true AND close=false,,-2,1,,已对应,组内互斥；最终一次,45
+l3.storm-door,closed,打开后又关上,风暴选择结束 AND open=true AND close=true,,0,-2,,已对应,组内互斥；最终一次,46
+l3.storm-door,unopened_closed,未开但选择关门,open=false AND close=true,待定,待定,待定,待定,缺失向量,服务器允许此组合，原表未给分,
+l3.wait,yes,等待,风暴结束 choices.wait=yes,1,,,,已对应,组内互斥；最终一次,47
+l3.wait,no,不等待,风暴结束 choices.wait=no,-1,,,,已对应,组内互斥；最终一次,48
+l3.curtain,yes,拉开窗帘,风暴结束 choices.curtain=yes,,-1,,,已对应,组内互斥；最终一次,49
+l3.curtain,no,保留窗帘,风暴结束 choices.curtain=no,,1,,,已对应,组内互斥；最终一次,50
+l3.environment,both,关窗且关电视,当前window/television最终组合,,,,2,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,51
+l3.environment,window,关窗但未关电视,当前window/television最终组合,,,,0,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,52
+l3.environment,television,未关窗但关电视,当前window/television最终组合,,,,0,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,53
+l3.environment,neither,窗和电视都未关,当前window/television最终组合,,,,-2,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,54
+l3.item,none,不携带物品,carry=false完成,,,,,已对应,全维NA，不是缺分或四个零,55
+l3.item,scarf,带走围巾,confirm最终item=scarf,-1,-2,,,已对应,组内互斥；最终一次,56
+l3.item,lantern,带走灯笼,confirm最终item=lantern,2,,,,已对应,组内互斥；最终一次,57
+l3.item,umbrella,带走雨伞,confirm最终item=umbrella,,2,,,已对应,组内互斥；最终一次,58
+l3.item,compass,带走指南针,confirm最终item=compass,-2,,,,已对应,组内互斥；最终一次,59
+l3.item,doll,带走玩偶,confirm最终item=doll,1,-1,,,已对应,组内互斥；最终一次,60
+l3.item,key,带走钥匙,confirm最终item=key,,1,,,已对应,组内互斥；最终一次,61
+l3.item,journal,带走日记,confirm最终item=journal,-2,,,,已对应,组内互斥；最终一次,62
+l3.item,rope,带走绳子,confirm最终item=rope,2,,,,已对应,组内互斥；最终一次,63
+l3.item,backpack,带走背包,confirm最终item=backpack,待定,待定,待定,待定,缺失向量,组内互斥；最终一次,
+l4.door,village,确认微光门,confirm door=village,-1,-1,,,已对应,组内互斥；最终一次,64
+l4.door,coast,确认静塔门,confirm door=coast,1,1,,,已对应,组内互斥；最终一次,65
+l4.door,forest,确认森林门,confirm door=forest,-1,1,,,已对应,组内互斥；最终一次,66
+l4.door,castle,确认宫殿门,confirm door=castle,1,-1,,,已对应,组内互斥；最终一次,67
