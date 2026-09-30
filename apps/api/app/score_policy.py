@@ -11,7 +11,7 @@ from .score_rules import GROUP_OPTIONS
 
 CONFIG_PATH = Path(__file__).parent / "config" / "event-scores.json"
 AXES = ("A", "V", "T", "F")
-DEFINITION_VERSION = "server-composite-v1"
+DEFINITION_VERSION = "server-composite-v2"
 
 
 @lru_cache(maxsize=1)

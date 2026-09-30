@@ -37,6 +37,7 @@ def apply_action(state, a):
         elif t == "layout-exit": f["editing"] = False
         elif t == "layout-confirm":
             result = measure(f["layout"], f["adjustmentCount"])
+            require(not result['evidence']['outsideFloor'], 'LAYOUT_OUTSIDE_FLOOR')
             s["exitDoorOpen"] = True
             f.update(editing=False, confirmed=deepcopy(f["layout"]), baseline=deepcopy(f["layout"]), classification=result)
         elif t == "layout-undo":

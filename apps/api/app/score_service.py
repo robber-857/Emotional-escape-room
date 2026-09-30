@@ -5,7 +5,7 @@ from datetime import datetime, timezone
 from uuid import uuid4
 from sqlalchemy import insert, select
 from .db import score_evaluations, score_ledger, score_actions, sessions, l2_runs, l3_runs, l4_runs
-from .score_policy import bundle, AXES
+from .score_policy import bundle, AXES, DEFINITION_VERSION
 from .score_rules import candidates, no_score_reason
 from .score_normalization import level_summary, weighted_summary
 
@@ -22,7 +22,7 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
     if evaluation is None:
         return dict(status="legacy_unbound", reason="LEGACY_UNBOUND", delta=None, events=[])
     policy=evaluation["policy"]
-    if policy['normalization_version'] != 'avtf-minmax-v2':
+    if policy['normalization_version'] != 'avtf-minmax-v2' or policy['event_definition_version'] != DEFINITION_VERSION:
         return dict(status='legacy_normalization',reason='LEGACY_NORMALIZATION',delta=None,events=[])
     previous={e["group_id"] for e in conn.execute(select(score_ledger.c.group_id).where(score_ledger.c.session_id==sid)).mappings()}
     emitted=[]
@@ -61,6 +61,12 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
                 evaluation_id=evaluation["evaluation_id"],policy_hash=evaluation["policy_hash"],
                 source="server_database",accepted=accepted,state_changed=accepted and before!=state,
                 code=code,action=action,action_id=action_id,level=level,version=version)
+    if level=='l2' and code=='LAYOUT_OUTSIDE_FLOOR':
+        from .l2_metrics import measure
+        result['diagnostic']=measure(state['furniture']['layout'],state['furniture']['adjustmentCount'])['evidence']
+    if level=='l3' and action['type']=='decision':
+        result['settlement']=dict(cutoff='storm_answers_complete',remaining_slots=[k for k,v in state['choices'].items() if v is None],
+                                  door_locked=state['choices']['open'] is True and state['choices']['close'] is True)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
     complete=state["scene"]=="complete" if level=="l1" else state.get("exitDoorOpen",False) if level=="l2" else state["completion"]=="complete"
     result["level_score"]=level_summary(level,policy,entries,complete)
@@ -72,7 +78,7 @@ def summary(conn,sid):
     sid=str(sid)
     evaluation=conn.execute(select(score_evaluations).where(score_evaluations.c.session_id==sid)).mappings().first()
     if evaluation is None: return dict(source="server_database",session_id=sid,status="legacy_unbound",levels={},ledger=[],actions=[],final=None)
-    if evaluation['policy']['normalization_version'] != 'avtf-minmax-v2':
+    if evaluation['policy']['normalization_version'] != 'avtf-minmax-v2' or evaluation['policy']['event_definition_version'] != DEFINITION_VERSION:
         return dict(source='server_database',session_id=sid,status='legacy_normalization',levels={},ledger=[],actions=[],final=None)
     ledger=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid)).mappings()]
     levels={}

@@ -171,11 +171,16 @@ def test_table_chair_smaller_overlap_core_preserves_floor_limits(client, placeme
     _, h, url, s = open_l2(client)
     sofa = s["state"]["furniture"]["layout"]["sofa"]
     limit = 1.4*96/2.54
-    point = {"edge": dict(u=sofa["u"]-.29, v=sofa["v"]), "stacked": sofa,
+    point = {"edge": dict(u=sofa["u"]-.29, v=sofa["v"]), "stacked": dict(u=.75,v=sofa["v"]),
              "outside": dict(u=.82, v=.4), "at-limit": dict(u=.45, v=.10/2-limit/270),
              "over-limit": dict(u=.45, v=.10/2-(limit+.1)/270), "high": dict(u=.45, v=.10/2-180/270)}[placement]
     for action in [dict(type="layout-start"), dict(type="layout-move", id="table-chair", point=point), dict(type="layout-confirm")]:
-        assert act(client, url, h, s, action)[0].status_code == 200
+        r,_=act(client,url,h,s,action)
+        if action['type']=='layout-confirm' and placement in ('outside','over-limit','high'):
+            assert r.status_code==409 and r.json()['code']=='LAYOUT_OUTSIDE_FLOOR'
+            assert s['state']['furniture']['editing'] and not s['state']['exitDoorOpen']
+            return
+        assert r.status_code==200
     state = client.get(url, headers=h).json()["state"]
     assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is tidy
     assert state["exitDoorOpen"] is True
@@ -229,7 +234,7 @@ def test_server_receipts_have_immutable_outcomes_and_rejections(client):
     assert rejected["outcome"] is None and not rejected["accepted"]
     for r in rows:
         assert r["authority"] == dict(record_source="server_database", decision_source="server", input_source="client_claim")
-        assert r["validation_version"] == "l2-validation-v7"
+        assert r["validation_version"] == "l2-validation-v8"
         assert r["previous_version"] + int(r["accepted"]) == r["version"]
     first, second = sorted([r for r in rows if r["action"]["type"] == "try-door"], key=lambda r: r["version"])
     assert first["outcome"]["attempt"] == 1 and not first["outcome"]["door_open"]
@@ -258,7 +263,12 @@ def test_free_placement_suspension_tolerance_persists(client, gap, tidy):
     _, h, url, s = open_l2(client)
     point = dict(u=.45, v=.13/2-gap/270)
     for a in [dict(type="layout-start"), dict(type="layout-move", id="chair", point=point), dict(type="layout-confirm")]:
-        assert act(client, url, h, s, a)[0].status_code == 200
+        r,_=act(client,url,h,s,a)
+        if a['type']=='layout-confirm' and not tidy:
+            assert r.status_code==409 and r.json()['code']=='LAYOUT_OUTSIDE_FLOOR'
+            assert s['state']['furniture']['editing'] and not s['state']['exitDoorOpen']
+            return
+        assert r.status_code==200
     state = client.get(url, headers=h).json()["state"]
     assert state["furniture"]["confirmed"]["chair"] == point
     assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is tidy

@@ -3,7 +3,7 @@ from copy import deepcopy
 from .l2_domain import COMPLETION_POLICY_VERSION
 
 AUTHORITY = dict(record_source="server_database", decision_source="server", input_source="client_claim")
-VALIDATION_VERSION = "l2-validation-v7"
+VALIDATION_VERSION = "l2-validation-v8"
 
 def outcome(action, state, previous_state=None):
     kind = action["type"]

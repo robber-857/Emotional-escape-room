@@ -200,3 +200,54 @@ def test_old_scalar_policy_is_not_silently_reinterpreted(client):
         conn.execute(update(score_evaluations).where(score_evaluations.c.session_id==s['id']).values(policy=policy))
     assert scores(client,s,h)['status']=='legacy_normalization'
     assert send(client,s,h,'swim')[0].json()['score_effect']['status']=='legacy_normalization'
+
+
+def test_user_armchair_outside_confirm_rejected_then_recoverable(client):
+    parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type='layout-start'))
+    act(client,url,h,s,dict(type='layout-move',id='armchair',point=dict(u=.27791321372763345,v=.9298451630714811)))
+    r,_=act(client,url,h,s,dict(type='layout-confirm'))
+    assert r.status_code==409 and r.json()['code']=='LAYOUT_OUTSIDE_FLOOR'
+    assert r.json()['score_effect']['diagnostic']['outsideFloor']==['armchair']
+    assert s['state']['furniture']['assessment'] is None
+    assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id'].startswith('l2.furniture.')]
+    act(client,url,h,s,dict(type='layout-move',id='armchair',point=dict(u=.27791321372763345,v=.89)))
+    r,_=act(client,url,h,s,dict(type='layout-confirm'))
+    assert r.status_code==200
+    assert len(r.json()['score_effect']['events'])==3
+    assert all(e['status']=='applied' for e in r.json()['score_effect']['events'])
+
+
+def test_l3_open_close_true_is_final_before_remaining_answers(client):
+    parent,h,url,s=open_l3(client)
+    act(client,url,h,s,dict(type='decision',slot='open',yes=True))
+    r,_=act(client,url,h,s,dict(type='decision',slot='close',yes=False))
+    assert r.json()['score_effect']['reason']=='AWAITING_STORM_CUTOFF'
+    r,body=act(client,url,h,s,dict(type='decision',slot='close',yes=True))
+    assert r.json()['score_effect']['events'][0]['option_id']=='closed'
+    assert s['state']['segment']=='storm'
+    assert client.post(url+'/actions',headers=h,json=body).json()['score_effect']==r.json()['score_effect']
+    for slot in ['wait','curtain','window','television']:
+        act(client,url,h,s,dict(type='decision',slot=slot,yes=False))
+    assert len([e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l3.storm-door'])==1
+
+
+@pytest.mark.parametrize('seat,delta',[('chair',1),('table-seat',-1)])
+def test_first_seat_maps_and_never_scores_twice(client,seat,delta):
+    parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type='sit',seat=seat,yes=False))
+    assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l2.seat']
+    r,_=act(client,url,h,s,dict(type='sit',seat=seat,yes=True))
+    assert r.json()['score_effect']['delta']==dict(A=delta,V=None,T=None,F=None)
+    if seat=='table-seat':act(client,url,h,s,dict(type='view',view='room'))
+    r,_=act(client,url,h,s,dict(type='sit',seat='chair' if seat=='table-seat' else 'table-seat',yes=True))
+    assert r.json()['score_effect']['reason']=='ALREADY_SCORED'
+    assert len([e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l2.seat'])==1
+
+
+def test_no_seat_first_table_scores_explicit_zero(client):
+    parent,h,url,s=open_l2(client)
+    r,_=act(client,url,h,s,dict(type='arrive-table'))
+    assert r.json()['score_effect']['delta']==dict(A=0,V=None,T=None,F=None)
+    r,_=act(client,url,h,s,dict(type='sit',seat='table-seat',yes=True))
+    assert r.json()['score_effect']['reason']=='ALREADY_SCORED'

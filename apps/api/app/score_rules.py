@@ -13,7 +13,7 @@ GROUP_OPTIONS={
 
 # These scenes may legitimately end without any outcome from these groups.
 OPTIONAL_GROUPS={"l1.talk.man","l1.talk.woman","l2.seat","l2.first-try","l2.retry","l2.explore","l2.search"}
-UNRESOLVED_CONDITIONS={"l2.seat","l2.retry","l2.explore","l2.search"}
+UNRESOLVED_CONDITIONS={"l2.retry","l2.explore","l2.search"}
 
 
 def candidates(level, before, state, action):
@@ -28,6 +28,10 @@ def candidates(level, before, state, action):
         if state["scene"] == "complete" and before["scene"] != "complete":
             add("l1.lamp", ("lit" if state["lampLit"] else "unlit")+("_taken" if state["lampTaken"] else "_left"))
     elif level == "l2":
+        if action['type']=='sit' and action['yes']:
+            add('l2.seat','window' if action['seat']=='chair' else 'table')
+        elif action['type']=='arrive-table':
+            add('l2.seat','window' if state['seat']=='chair' else 'table' if state['seat']=='table-seat' else 'none')
         if action["type"] == "try-door":
             if len(state["attempts"]) == 1: add("l2.first-try","attempt")
             elif len(state["attempts"]) == 2: add("l2.retry","retry")
@@ -35,9 +39,15 @@ def candidates(level, before, state, action):
             for name in ("wall","tidiness","adjustments"):
                 add("l2.furniture."+name,"quartile")
     elif level == "l3":
+        c=state['choices']
+        door_fixed=c['open'] is True and c['close'] is True
+        previous_fixed=before['choices']['open'] is True and before['choices']['close'] is True
+        if door_fixed and not previous_fixed:
+            add('l3.storm-door','closed')
         if before["segment"] == "storm" and state["segment"] == "carry":
             c=state["choices"]
-            add("l3.storm-door", "closed" if c["open"] and c["close"] else "opened" if c["open"] else "unopened_closed" if c["close"] else "unopened")
+            if not door_fixed:
+                add("l3.storm-door", "opened" if c["open"] else "unopened_closed" if c["close"] else "unopened")
             add("l3.wait", "yes" if c["wait"] else "no")
             add("l3.curtain", "yes" if c["curtain"] else "no")
             add("l3.environment", "both" if c["window"] and c["television"] else "window" if c["window"] else "television" if c["television"] else "neither")
@@ -49,11 +59,14 @@ def candidates(level, before, state, action):
 
 
 def no_score_reason(level, action):
+    if level == 'l3':
+        return 'AWAITING_STORM_CUTOFF' if action['type']=='decision' else 'AWAITING_ITEM_CONFIRMATION'
+    if level=='l2' and action['type']=='sit':
+        return 'AWAITING_FIRST_SEAT_OR_TABLE'
     if action.get("yes") is False:
         return "AWAITING_FINALIZATION" if level in ("l2","l3") else "NO_SCORE_ON_NO"
     if level == "l1" and action.get("choice") in ("take-lamp","light-lamp"):
         return "AWAITING_FINALIZATION"
     if level == "l2" and action["type"] in ("sit","explore","search-choice","search-time","curtain-click","return-hall"):
         return "UNCONFIGURED_CONDITION"
-    if level == "l3": return "WAITING_FOR_COMPONENTS"
     return "MECHANICAL_STEP"

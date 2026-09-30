@@ -15,6 +15,7 @@ export const keyNames: Record<KeyId, string> = {"key-1":"钥匙1","key-2":"钥�
 export function transition(s: State, event: Event): State {
  if (s.events.length >= MAX_EVENTS || s.events.some(e=>e.id===event.id)) return s;
  const a=event.action;
+ if(a.type==="layout-confirm"&&measureLayout(s.furniture.layout,s.furniture.adjustmentCount).evidence.outsideFloor.length)return s;
  if(a.type.startsWith("layout-")&&s.view!=="room")return s;
  if(s.furniture.editing&&!a.type.startsWith("layout-"))return s;
  if(a.type.startsWith("layout-")&&a.type!=="layout-start"&&!s.furniture.editing)return s;

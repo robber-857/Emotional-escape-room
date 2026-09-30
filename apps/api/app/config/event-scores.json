@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "event_definition_version": "server-composite-v1",
-  "event_score_version": "event-scores-v1",
+  "event_definition_version": "server-composite-v2",
+  "event_score_version": "event-scores-v2",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -114,18 +114,33 @@
     "l2.seat": {
       "window": {
         "label": "坐窗边椅",
-        "status": "unconfigured",
-        "vector": null
+        "status": "configured",
+        "vector": {
+          "A": 1,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       },
       "table": {
-        "label": "坐桌前椅",
-        "status": "unconfigured",
-        "vector": null
+        "label": "坐桌前椅（中心椅）",
+        "status": "configured",
+        "vector": {
+          "A": -1,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       },
       "none": {
         "label": "不坐直接到桌边",
-        "status": "unconfigured",
-        "vector": null
+        "status": "configured",
+        "vector": {
+          "A": 0,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l2.first-try": {

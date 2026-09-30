@@ -1,6 +1,7 @@
 "use client";
 import {furniture,moveLayout,type FurnitureId,type Point} from "./layout";
 import {useEffect,useRef,useState} from "react";
+import {measureLayout} from "./metrics";
 import {LayoutButton} from "./LayoutButton";
 import {SearchClock} from "./searchClock";
 import Link from "next/link";
@@ -65,7 +66,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
   if(!server.current||syncError)return false;
   requestLock.current=true;setSyncing(true);
   try{const auth=api.credentials();if(auth.id!==server.current.id)throw new Error("旅程已切换，请重新载入。");const pending=api.prepare(server.current,action);applyServer(await api.submit(auth,pending));return true;}
-  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"未能记录这次移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
+  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="LAYOUT_OUTSIDE_FLOOR"){const outside=measureLayout(error.session.state.furniture.layout,error.session.state.furniture.adjustmentCount).evidence.outsideFloor;setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回地面后再次确认；本次未结算。`);return false;}if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"未能记录这次移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
   finally{requestLock.current=false;setSyncing(false);}
  }
  async function table(){if(blocked)return;if(await act({type:"arrive-table"})){setPrompt({type:"keys"});setMessage("你来到了桌边。");}}
@@ -82,7 +83,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  async function returnHall(){if(blocked||stateRef.current.view!=="bedroom")return;if(await act({type:"return-hall"})){setPrompt(null);setMessage("你回到了大厅，可以整理椅子和沙发了。");}}
  async function startLayout(){if(await act({type:"layout-start"})){setPrompt(null);setMessage("拖动家具，按你觉得合适的方式摆放。");}}
  async function moveFurniture(id:FurnitureId,point:Point){if(blocked||prompt||!stateRef.current.furniture.editing)return;if(!moveLayout(stateRef.current.furniture.layout,id,point)){setMessage("未能记录这次移动，请重试。");return;}if(await act({type:"layout-move",id,point}))setMessage(`${furniture[id].name}的位置已保留，可以继续调整。`);}
- async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存，左侧另一扇门打开了。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
+ async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(preview&&type==="layout-confirm"){const outside=measureLayout(state.furniture.layout,state.furniture.adjustmentCount).evidence.outsideFloor;if(outside.length){setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回后确认。`);return;}}if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存，左侧另一扇门打开了。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
  const anchor=prompt?.type==="seat"?prompt.seat:prompt?.type==="found"?"armchair":"keys";
  return <main className={styles.game}>
   <section className={styles.stage} aria-label="第二幕游戏舞台">

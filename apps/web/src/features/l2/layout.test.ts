@@ -18,12 +18,13 @@ test("table chair has a narrower overlap core and unchanged floor extent",()=>{
  const edge=measureLayout({...l,"table-chair":{u:l.sofa.u-.29,v:l.sofa.v}},1);
  assert.ok(Math.abs(edge.metrics.tidiness-(1-.01/.29/2))<1e-9);
 });
-test("floor eligibility remains separate from tidiness and never prevents exit",()=>{
+test("invalid floor confirmation remains editable and does not lock scoring",()=>{
  const l=initialLayout(),px=1.4*96/2.54;
  for(const [gap,inside] of [[px-.1,true],[px,true],[px+.1,false],[180,false]] as const){
   let s=act(initialState(),{type:"layout-start"});const point={u:.45,v:.13/2-gap/270};
   s=act(s,{type:"layout-move",id:"chair",point});s=act(s,{type:"layout-confirm"});
-  assert.equal(s.furniture.classification?.eligible,inside);assert.equal(s.furniture.classification?.metrics.tidiness,1);
+  if(!inside){assert.equal(s.furniture.editing,true);assert.equal(s.exitDoorOpen,false);assert.equal(s.furniture.confirmed,null);continue;}
+  assert.equal(s.furniture.classification?.eligible,true);assert.equal(s.furniture.classification?.metrics.tidiness,1);
   assert.equal(s.exitDoorOpen,true);assert.deepEqual(s.furniture.confirmed?.chair,point);
  }
 });
