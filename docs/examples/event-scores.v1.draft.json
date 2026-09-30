@@ -5,23 +5,139 @@
   "event_score_version": "Event_score_version_1",
   "groups": {
     "l1.crossing": {
-      "bridge": {"status": "configured", "vector": {"A": 1, "V": null, "T": null, "F": 1}},
-      "swim": {"status": "configured", "vector": {"A": -1, "V": null, "T": null, "F": -2}},
-      "ring": {"status": "configured", "vector": {"A": -1, "V": null, "T": null, "F": 1}},
-      "boat": {"status": "configured", "vector": {"A": 1, "V": null, "T": null, "F": 0}}
+      "bridge": {
+        "status": "configured",
+        "vector": {
+          "A": 1,
+          "V": null,
+          "T": null,
+          "F": 1
+        }
+      },
+      "swim": {
+        "status": "configured",
+        "vector": {
+          "A": -1,
+          "V": null,
+          "T": null,
+          "F": -2
+        }
+      },
+      "ring": {
+        "status": "configured",
+        "vector": {
+          "A": -1,
+          "V": null,
+          "T": null,
+          "F": 1
+        }
+      },
+      "boat": {
+        "status": "configured",
+        "vector": {
+          "A": 1,
+          "V": null,
+          "T": null,
+          "F": 0
+        }
+      }
     },
     "l1.lamp": {
-      "lit_taken": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 2}},
-      "lit_left": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 0}},
-      "unlit_taken": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": 0}},
-      "unlit_left": {"status": "configured", "vector": {"A": null, "V": null, "T": null, "F": -2}}
+      "lit_taken": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 2
+        }
+      },
+      "lit_left": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0
+        }
+      },
+      "unlit_taken": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0
+        }
+      },
+      "unlit_left": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -2
+        }
+      }
     },
     "l2.furniture": {
-      "final_layout": {"status": "unconfigured", "vector": null}
+      "final_layout": {
+        "status": "unconfigured",
+        "vector": null
+      }
     },
     "l3.item": {
-      "none": {"status": "not_measured", "vector": {"A": null, "V": null, "T": null, "F": null}},
-      "backpack": {"status": "unconfigured", "vector": null}
+      "none": {
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
+      },
+      "backpack": {
+        "status": "unconfigured",
+        "vector": null
+      }
+    },
+    "l3.environment": {
+      "both": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 2
+        }
+      },
+      "window": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0
+        }
+      },
+      "television": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": 0
+        }
+      },
+      "neither": {
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": -2
+        }
+      }
     }
   }
 }

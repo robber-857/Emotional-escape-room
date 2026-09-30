@@ -1,5 +1,8 @@
 # L3 后端接续交接（2026-09-29）
 
+> 2026-09-30 当前说明：此页是L3开发阶段的历史交接。四关现已接服务器，电视组合分已确认，后续任务改读评分与回执开发文档。 最新见[进度](progress.md)、[评分规则](scoring-design.md)、[开发任务](scoring-receipts-development.md)。下文带日期的过程记录只代表当时版本。
+
+
 ## 最新：后端 Review 与 UAT3
 
 基于已推送 `ba6adf2` 新增 [L3 Review](l3-backend-review.md)、[UAT3 可执行入口](../apps/api/tests/uat3/run.cmd)。修复最后确认额度，回执升级 `l3-validation-v2` 保存逐项服务器校验依据，前端每条回执直接展示，不修改历史回执。UAT3 PostgreSQL 89 项及桌面/模拟触屏通过；全后端 118 项、前端 64 项和类型/构建通过。本机已更新；正式评分/报告与真机/George 验收仍未完成。测试命令及范围见 [UAT 测试速查表](uat-test-matrix.md)。本批按以下功能提交至 Eltondev：`9d60d8c` 后端确认额度/校验证据；`a4672e1` 前端逐事件服务器依据；`e5c66b5` 可执行 UAT3。文档与测试速查表随后独立提交，最终提交号见 Git 日志。下方保留上一批交付索引。

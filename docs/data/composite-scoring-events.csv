@@ -29,10 +29,10 @@ l3.wait,yes,等待,风暴结束 choices.wait=yes,1,,,,已对应,组内互斥；�
 l3.wait,no,不等待,风暴结束 choices.wait=no,-1,,,,已对应,组内互斥；最终一次,48
 l3.curtain,yes,拉开窗帘,风暴结束 choices.curtain=yes,,-1,,,已对应,组内互斥；最终一次,49
 l3.curtain,no,保留窗帘,风暴结束 choices.curtain=no,,1,,,已对应,组内互斥；最终一次,50
-l3.environment,both,关窗且关电视,当前window/television最终组合,,,,2,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,51
-l3.environment,window,关窗但未关电视,当前window/television最终组合,,,,0,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,52
-l3.environment,television,未关窗但关电视,当前window/television最终组合,,,,0,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,53
-l3.environment,neither,窗和电视都未关,当前window/television最终组合,,,,-2,对象映射待定,原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分,54
+l3.environment,both,关窗关电视,风暴六项回答完成 AND window=true AND television=true,,,,2,已对应,用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分,51
+l3.environment,window,关窗开电视,风暴六项回答完成 AND window=true AND television=false,,,,0,已对应,用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分,52
+l3.environment,television,开窗关电视,风暴六项回答完成 AND window=false AND television=true,,,,0,已对应,用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分,53
+l3.environment,neither,开窗开电视,风暴六项回答完成 AND window=false AND television=false,,,,-2,已对应,用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分,54
 l3.item,none,不携带物品,carry=false完成,,,,,已对应,全维NA，不是缺分或四个零,55
 l3.item,scarf,带走围巾,confirm最终item=scarf,-1,-2,,,已对应,组内互斥；最终一次,56
 l3.item,lantern,带走灯笼,confirm最终item=lantern,2,,,,已对应,组内互斥；最终一次,57

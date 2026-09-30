@@ -45,7 +45,7 @@
 - 单会话最多 400 次状态变化；第 399 版停止接受物品更换并保留预选，为最终 confirm 预留额度（`CONFIRM_SLOT_RESERVED`）。重复否和原 ID 重试不消耗该额度。审计回执数可能多于流程事件数。
 - 业务拒绝 HTTP 409，格式错误 422，鉴权失败 404，数据库错误 503。未启动的 GET 返回 `L3_NOT_STARTED`，不是空历史。
 
-所有评分保持 `pending_configuration`，policy_version / contributions / totals 为 null。已提供的 L3-01 向量保留在交接文档，尚未启用；电视向量版本、L3-02 向量和正式报告另行推进。
+所有评分保持 `pending_configuration`，policy_version / contributions / totals 为 null。已提供的 L3-01 向量保留在交接文档，尚未启用；用户已确认电视替代电扇，关窗/关电视四组合F+2/0/0/−2，见[评分规则](scoring-design.md)。正式评分引擎、背包等缺分与结果算法仍待开发。
 
 ## 正式模式、本地预览与重开
 

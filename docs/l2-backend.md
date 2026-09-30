@@ -1,84 +1,15 @@
-# L2 后端、L1 衔接与评分留口
+# L2 当前后端与证据
 
-## 2026-09-29 用户修订：自由摆放与悬空容差（当前规则）
+更新：2026-09-30。对应已推送的本地版本：l2-rules-v1、l2-placement-v5、l2-validation-v6、l2-furniture-exit-v2。项目最新迁移0004_l4；L2表最早由0002_l2创建。旧过程与测试记录见[历史说明](history/l2-backend.md)。
 
-覆盖旧版落点退回/不稳提示：前后端均允许自由落点，确认时才判断整齐；不整齐也保存，但不因此开门。1.4 cm 容差按 96 px/in 换算约 52.9134 场景像素并等比缩放，包含阈值。实现口径与当前地面模型限制见 [L2 开发说明](development-l2.md)。家具规则 `l2-placement-v4`，回执 `l2-validation-v4`。本地预览与服务器存档继续区分；不新增正式评分。
+进入要求同一匿名旅程L1完成。接口 /api/v1/sessions/{sid}/levels/l2 提供POST初始化、GET快照、POST /actions、GET /events；父会话行锁串行化、expected_version防覆盖、action_id+载荷幂等，状态和回执同事务持久化。独立preview不导入服务器。
 
-验证：前端 56 项测试、类型检查和生产构建通过；隔离 PostgreSQL 29 项通过；桌面/触屏 × 本机/服务器四组浏览器流程通过，覆盖悬空位置保存与刷新、不整齐不开门、大沙发左侧放置、整齐后开门及 L1 原会话保留。仅本地验证，未提交或部署。
+当前行为：座位/桌边/选钥匙；任意首把试门失败、另一把成功；单一卧室探索；床头柜单一耳环入口；同意寻找后第三次窗帘点击找到。活动报告>15000ms才算长搜索，墙钟上界与累计250ms容差受限；timing_verified=false。
 
-2026-09-29。当前实现基于 Eltondev；适用于本地开发，正式评分尚未配置。
+家具：四单元自由拖动，允许保存不合理位置；确认时分类，并**无论tidy是否成立都打开出口**。桌椅重叠检测核心收窄，地面/悬空边界不变，悬空容差包含1.4cm。50步撤销、重置、退出保存草稿、刷新恢复。进入L3使用原会话真实API，不再只进入预览。
 
-## 进入与恢复
+回执保存原请求、accepted/code、previous_version/version、validation_version、authority、outcome；家具确认含layout/classification/exit_door_open/completion_policy_version。原回执不可用当前状态重造；业务拒绝可记录，但处理前的认证/结构错误并非全部入事件表。
 
-默认 `/l2` 使用服务器进度，沿用 `emotional:l1:server:v1` 中的匿名会话 ID 与 Bearer 凭据。服务器从 L1 的数据库状态检查 `scene=complete`，不信任浏览器缓存中的完成标志。L1 完成页的“进入第二幕”进入此入口；没有凭据或未完成 L1 时显示返回第一幕的提示。
+当前评分只返回pending_configuration/contributions=null。尚无评分账本、家具截止冻结、稳定终态分类修复；重复确认同布局仍可能因baseline变化使tidy改变。见[五项优化开发任务](scoring-receipts-development.md)，不要把方案当实现。
 
-L2 初始化幂等：同一会话只有一条 `l2_runs`，重复进入、刷新和初始化响应丢失不会清空或重复建立 L2。保存的 L1 过河路线、灯状态、事件、版本保持原样；L2 快照附带只读 L1 上下文，不把灯擅自转换成 L2 钥匙或新增剧情。
-
-旧本机预览保留在 `/l2?preview=1`，明确显示“本机预览”，继续使用原 `emotional:l2:preview:v2`。它与正式服务器存档隔离，不自动导入、不解锁服务器关卡。服务器模式没有清空 L2 的按钮；重玩应从第一幕明确创建新旅程，旧服务器记录保留。
-
-## 接口与数据
-
-全部接口位于 `/api/v1/sessions/{sid}/levels/l2`，复用原匿名 Bearer 凭据；不存在/凭据错误返回 404，L1 未完成返回 409 `L1_NOT_COMPLETE`。
-
-| 方法与后缀 | 用途 |
-| --- | --- |
-| POST，JSON `{}` | 初始化或返回已有 L2 |
-| GET | 读取权威快照及 L1 上下文 |
-| POST `/actions` | 提交 action_id、expected_version、action |
-| GET `/events` | 读取接受/拒绝回执及评分待配置证据 |
-
-新增迁移 `0002_l2`，仅创建 `l2_runs` 和 `l2_events`，不改写 `game_sessions/game_events`。L2 使用独立版本号，规则版本 `l2-rules-v1`，家具规则 `l2-placement-v3`。事务锁定父会话行，将初始化和动作串行化；状态、版本、回执在同一事务内保存。数据库主键 `(session_id, action_id)` 去重。
-
-相同 ID/载荷重试返回原回执及最新快照；同 ID 改载荷拒绝。旧版本请求返回 409，不能覆盖新进度。请求白名单拒绝额外 state/score、未知 action、旧版直接拾取耳环、非法座位/钥匙、非有限位置等。接受动作上限每关 1,000 条，满额后已有回执仍可幂等重试。
-
-## 已接入的规则
-
-- 座位、到桌边、钥匙拿取/切换、第一把必失败与另一把第二次成功。
-- 半开门进入/拒绝/回访、卧室返回，跨场景非法动作拒绝。
-- 明确同意后寻找、窗帘三次发现、刷新与分段返回，重复请求不累计次数。
-- 整理模式、每次有效落点保存、严重重叠/地面边界拒绝、50 步撤销、初始布局恢复、保留草稿退出及确认。
-- 服务器重新计算家具合理性、整齐/空旷事件和净空证据；不接收客户端分类。几何阈值仍为工程原型，不是正式评分依据。
-
-前端只在服务器接受后推进。待提交请求先存入 `emotional:l2:pending:{sessionId}`；请求失败保留原 ID、版本和内容，锁住后续业务操作，重试/刷新后原样发送。同浏览器其他标签页更新版本或切换 L1 会话时，旧页停止操作并要求重载。不同旅程的待确认请求按会话隔离，不会重放到新旅程。
-
-## 计时的真实性边界
-
-前端沿用活动时钟，菜单、提示、后台、竖屏、加载、断网和服务器同步期间暂停。约每 5 秒、暂停和结束寻找前发送累计 `activeMs`。服务器检查寻找前置条件、严格递增、单次增量不超过 10,000ms，且不超过上次计时锚点至本次服务器收件的时间加 250ms 工程容差；超过限制拒绝。
-
-Review 修复：同时限制从最近一次服务器接受“开始寻找”起的累计时长，250ms 容差不能逐请求累加。当前新回执标注 `validation_version=l2-validation-v3`（v2 为此前计时修复版）；不改写旧回执。
-
-该记录是 `bounded_client_report`，明确 `timing_verified=false`。服务器不能从这个接口证明真实前后台状态或真人持续寻找；严格 >15,000ms 的 long 标志仅为当前活动报告分类，不是已验证的正式计分依据。刷新不累计离页时间；突然关闭可能丢失最近未落盘的活动片段。评分方案落定前需确认是否增加服务器活动租约/心跳与离线时间策略。
-
-## 评分扩展点
-
-`app/scoring.py::evaluate_l2_event` 在接受动作的事务内被调用，当前只生成 `status=pending_configuration`、`policy_version=null`、`contributions=null` 和服务器动作证据。快照 `scoring.totals=null`，健康接口 `scoring_ready=false`；未评分不等于零分。未创建虚假的正式分数、权重或结果类型。
-
-家具确认回执固定保存当时的分类/规则版本/逐件证据；后续布局变化不会改写旧回执。耳环相关回执保存活动报告和可信度标签。后续评分应引用这些不可变动作与证据，另行引入已发布的评分策略版本、贡献表和关卡快照；不能覆盖原回执或无版本地重算历史。
-
-2026-09-29 用户确认家具通关：`layout-confirm` 在合理布局且存在实际移动时解锁 `exitDoorOpen=true`，快照 `completion=complete`；此前为 `in_progress`。策略版本 `completion_policy_version=l2-furniture-exit-v1`。探索拒绝、未找耳环均不阻止家具通关；不要求 open-placement。出口解锁持久保留。
-
-确认回执增加 `exit_door_open` 和 `completion_policy_version`，与状态同事务提交。旧存档缺少 exitDoorOpen 时，根据服务器已有 furniture.triggered.tidy 证据生成兼容快照；只读不写库、不补造历史回执，下一次接受动作正常保存兼容状态。保留 l2-rules-v1 避免旧会话失效。
-
-出口进入 `/l3?preview=1&from=l2`；L3 仍为独立本地预览，进入前明确提示。没有 L3 服务端初始化、通关判定、结果或报告接口。
-
-## 服务器选择记录
-
-菜单记录页直接读取 `/events`，唯一列表来源是服务器数据库回执，不使用前端快照事件拼装服务器记录。每条显示服务器接受/拒绝、接收时间、action_id、前后状态版本、规则/校验版本及固定的 outcome、评分证据；支持筛选和刷新。读取失败清空列表并提供重试，不以旧本机记录冒充服务器响应。
-
-authority 明确区分客户端动作请求与服务器判定。新回执的 outcome 在动作事务内持久保存；旧记录缺少 outcome 时明确提示，不从后来状态推断。NO_CHANGE/INVALID_PLACEMENT 仍留服务器拒绝回执，但界面不会把这种普通业务拒绝当成断网同步故障。
-
-复查细节见 [后端 Review](l2-backend-review.md)；新的独立可执行验收在 [uat2](../apps/api/tests/uat2/README.md)。
-
-## 验证与启动
-
-已有环境升级：`docker compose up -d --build`，确认 migrate 成功；`/api/v1/ready` 应返回 `schema_version=0002_l2`。本机当前网页端口 3100、API 8000，其他电脑以其 `.env` 为准。
-
-真实 L1 → L2 浏览器回归：
-
-```powershell
-powershell -ExecutionPolicy Bypass -File apps/api/tests/uat/run-l2.ps1 -BaseUrl http://127.0.0.1:3100 -Cases l2-server
-```
-
-它在独立上下文真实完成 L1，再验证同会话 L2 四组、刷新、计时暂停、离线重试、多标签更新和丢弃真实已提交响应后的同 ID 重试；不注入伪造服务器成功响应。原七个本机预览脚本仍独立运行，不能替代此项。
-
-后端测试使用临时 SQLite 或以 `_test` 结尾的专用 PostgreSQL 库。只有 PostgreSQL 运行覆盖真实行锁并发。本轮结果见 progress.md；浏览器触屏模拟不等于真机/Safari或团队签字 UAT。
+最近检查记录见[进度](progress.md)，复现见[UAT入口](uat-test-matrix.md)，启动见[George交接](george-start-2026-09-30.md)。

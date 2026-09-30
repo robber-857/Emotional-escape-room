@@ -287,9 +287,9 @@
       "L3-01",
       "关窗",
       "R51 关窗 + 关风扇\nR52 关窗，不关风扇\nR53 不关窗，关风扇\nR54 都不关",
-      "R51 F+2\nR52 F=0\nR53 F=0\nR54 F-2",
-      "组合对象不同",
-      "原表关窗+关风扇；本地关窗+关电视；保留原分，但不自动迁移",
+      "不独立计分；见组合评分项",
+      "已确认组合输入",
+      "用户确认电扇替换为电视；关窗/关电视终态四选一F+2/0/0/-2，不独立加分",
       "L3.window",
       "修订评分表!C51:G51；修订评分表!C52:G52；修订评分表!C53:G53；修订评分表!C54:G54"
     ],
@@ -297,9 +297,9 @@
       "L3-01",
       "关电视",
       "R51 关窗 + 关风扇\nR52 关窗，不关风扇\nR53 不关窗，关风扇\nR54 都不关",
-      "R51 F+2\nR52 F=0\nR53 F=0\nR54 F-2",
-      "缺少电视对应向量",
-      "本地保留电视事件；原表电扇组合分需确认能否迁移",
+      "不独立计分；见组合评分项",
+      "已确认组合输入",
+      "归属l3.environment；电视替代电扇，保留原表四组合向量，取消缺分标记",
       "L3.television",
       "修订评分表!C51:G51；修订评分表!C52:G52；修订评分表!C53:G53；修订评分表!C54:G54"
     ],
@@ -949,8 +949,8 @@
     {
       "group_id": "l3.environment",
       "option_id": "both",
-      "label": "关窗且关电视",
-      "condition": "当前window/television最终组合",
+      "label": "关窗关电视",
+      "condition": "风暴六项回答完成 AND window=true AND television=true",
       "source_rows": [
         51
       ],
@@ -960,14 +960,14 @@
         null,
         2
       ],
-      "status": "对象映射待定",
-      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+      "status": "已对应",
+      "note": "用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分"
     },
     {
       "group_id": "l3.environment",
       "option_id": "window",
-      "label": "关窗但未关电视",
-      "condition": "当前window/television最终组合",
+      "label": "关窗开电视",
+      "condition": "风暴六项回答完成 AND window=true AND television=false",
       "source_rows": [
         52
       ],
@@ -977,14 +977,14 @@
         null,
         0
       ],
-      "status": "对象映射待定",
-      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+      "status": "已对应",
+      "note": "用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分"
     },
     {
       "group_id": "l3.environment",
       "option_id": "television",
-      "label": "未关窗但关电视",
-      "condition": "当前window/television最终组合",
+      "label": "开窗关电视",
+      "condition": "风暴六项回答完成 AND window=false AND television=true",
       "source_rows": [
         53
       ],
@@ -994,14 +994,14 @@
         null,
         0
       ],
-      "status": "对象映射待定",
-      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+      "status": "已对应",
+      "note": "用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分"
     },
     {
       "group_id": "l3.environment",
       "option_id": "neither",
-      "label": "窗和电视都未关",
-      "condition": "当前window/television最终组合",
+      "label": "开窗开电视",
+      "condition": "风暴六项回答完成 AND window=false AND television=false",
       "source_rows": [
         54
       ],
@@ -1011,8 +1011,8 @@
         null,
         -2
       ],
-      "status": "对象映射待定",
-      "note": "原表对象为电扇；确认迁移后按组合一次，不对两个动作各加分"
+      "status": "已对应",
+      "note": "用户确认电视替代电扇；四选一仅一次，回答顺序不影响结果，单独操作不加分"
     },
     {
       "group_id": "l3.item",

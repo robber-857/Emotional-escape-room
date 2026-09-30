@@ -1,5 +1,8 @@
 # George Review：L1 / L2
 
+> 2026-09-30 当前说明：此页保留早期L1/L2审查证据。当前四关均已接服务器，L2确认即开出口；最新测试数和交付状态以progress.md为准。 最新见[进度](progress.md)、[评分规则](scoring-design.md)、[开发任务](scoring-receipts-development.md)。下文带日期的过程记录只代表当时版本。
+
+
 ## 2026-09-29 最新：L3 Review / UAT3
 
 已完成开发侧后端复查并修复最终确认额度边界；新回执单独保存服务器校验证据，前端逐事件区分客户端输入、服务器判定与数据库记录。旧回执保持原样，不补造历史。结论与保留边界见 [L3 Review](l3-backend-review.md)。
