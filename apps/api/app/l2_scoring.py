@@ -20,8 +20,14 @@ def load_policy():
     policy = config["versions"][active]
     if not isinstance(active, str) or not isinstance(policy, dict) or policy.get("metric_version") != METRIC_VERSION:
         raise ValueError("METRIC_VERSION_MISMATCH")
-    pool = policy["pool"]
-    if (not isinstance(pool, dict) or not isinstance(pool.get("id"), str) or not pool["id"]
+    pool = policy.get("pool")
+    if policy.get('boundary_source') == 'user_fixed':
+        cap=policy.get('adjustment_count_cap')
+        if type(cap) not in (int,float) or not isfinite(cap) or cap<=0:
+            raise ValueError('INVALID_ADJUSTMENT_CAP')
+        if policy['thresholds']['adjustmentCount'] != [cap*.25,cap*.5,cap*.75]:
+            raise ValueError('ADJUSTMENT_THRESHOLDS_MUST_MATCH_CAP')
+    elif (not isinstance(pool, dict) or not isinstance(pool.get("id"), str) or not pool["id"]
             or not isinstance(pool.get("version"), str) or not pool["version"]
             or type(pool.get("sample_size")) is not int or type(pool.get("minimum_sample_size")) is not int
             or not 0 < pool["minimum_sample_size"] <= pool["sample_size"]):

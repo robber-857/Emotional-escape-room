@@ -11,6 +11,6 @@ export function PlacementEvidence({scoring}:{scoring:Receipt["scoring"]}){
   <p>整齐度越高表示判定区域重叠越少；桌椅组合使用缩窄区域，不检查旋转。</p>
   <p>{scoring?.status==="scored"&&scores?`本幕贡献：A ${scores.A} / F ${scores.F} / T ${scores.T}；V 不计分。`:
    scoring?.status==="already_assessed"?"首次确认已保存评分依据，本次不重复计分。":
-   scoring?.status==="insufficient_evidence"?"本次布局越出地面范围或缺少历史调整记录，暂不计分。":"样本池四分位阈值待配置，当前仅记录原始指标。"}</p>
+   scoring?.status==="insufficient_evidence"?"本次布局越出地面范围或缺少历史调整记录，暂不计分。":"该回执未绑定有效分档配置，仅保存原始指标；新旅程已使用固定边界。"}</p>
  </div>;
 }

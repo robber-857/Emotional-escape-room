@@ -13,14 +13,14 @@ async original=>{
    await page.goto(base+'/');await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();
    await click('河面');check((await get()).ledger.length===0,'opening a client prompt generated score');
    const wait=response();await click('是');const swam=await wait,body=await swam.json();
-   check(body.score_effect.raw_total_delta===-3,'wrong swim delta');
+   check(body.score_effect.delta.A===-1&&body.score_effect.delta.F===-2,'wrong swim delta');
    await toggle();await panel.locator(`[data-score-action-id="${body.score_effect.action_id}"]`).waitFor();
    check((await panel.textContent()).includes('A -1 · V NA · T NA · F -2'),'vector missing');
    const duplicate=await page.evaluate(async request=>{const a=JSON.parse(localStorage.getItem('emotional:l1:server:v1'));return(await fetch(`/api/v1/sessions/${a.id}/actions`,{method:'POST',headers:{Authorization:`Bearer ${a.token}`,'Content-Type':'application/json'},body:JSON.stringify(request)})).json();},swam.request().postDataJSON());
    check(duplicate.duplicate&&(await get()).ledger.length===1,'retry duplicated score');
    await page.screenshot({path:`output/playwright/scoring-${mobile?'touch':'desktop'}-delta.png`});await toggle();
    await click('房门');const enterWait=response();await click('是');await enterWait;
-   let score=await get();check(Math.abs(score.levels.l1.total.normalized-400/13)<1e-8,'L1 normalization incorrect');
+   let score=await get();check(score.levels.l1.axes.A.normalized===0&&score.levels.l1.axes.F.normalized===0,'L1 normalization incorrect');
    await page.getByRole('link',{name:'进入第二幕',exact:true}).click();
    await page.waitForFunction(()=>document.querySelector('[aria-label="走到桌边"]')?.getAttribute('aria-disabled')==='false');
    // Complete L2/L3 prerequisites through their authenticated, state-validating APIs.
@@ -39,17 +39,19 @@ async original=>{
    await click('走出密室 →');await page.waitForURL('**/l4');
    await page.getByRole('button',{name:'静塔门，海岸灯塔',exact:true}).waitFor();
    await click('静塔门，海岸灯塔');const doorWait=response();await click('走进这扇门');const door=await(await doorWait).json();
-   check(door.score_effect.raw_total_delta===2,'L4 delta incorrect');
+   check(door.score_effect.delta.A===1&&door.score_effect.delta.V===1,'L4 delta incorrect');
    await click('稍后再看');
    await toggle();await panel.locator(`[data-score-action-id="${door.score_effect.action_id}"]`).waitFor();
-   score=await get();check(score.levels.l4.total.normalized===100,'L4 normalization incorrect');
-   check(score.final.status==='pending_configuration'&&score.final.score===null,'missing rules fabricated final score');
+   score=await get();check(score.levels.l4.axes.A.normalized===100&&score.levels.l4.axes.V.normalized===100,'L4 normalization incorrect');
+   check(score.final.status==='pending_configuration'&&score.final.vector.F===null,'missing rules fabricated final score');
+   check(!(await panel.textContent()).includes('总分'),'scalar total remains in UI');
+   check(score.ledger.filter(e=>e.group_id.startsWith('l2.furniture.')).every(e=>e.status==='applied'),'furniture still unconfigured');
    await page.screenshot({path:`output/playwright/scoring-${mobile?'touch':'desktop'}-levels.png`});
    await context.setOffline(true);await panel.getByRole('alert').waitFor();check(await panel.locator('[data-score-action-id]').count()===0,'stale score rows presented as fresh');
    await context.setOffline(false);await panel.locator(`[data-score-action-id="${door.score_effect.action_id}"]`).waitFor();
    await page.reload();await click('稍后再看');await toggle();await panel.locator(`[data-score-action-id="${door.score_effect.action_id}"]`).waitFor();
    check(!errors.length,errors.join(';'));
-   results.push({mobile,status:'PASS',session_id:score.session_id,ledger_count:score.ledger.length,l1:score.levels.l1.total,l4:score.levels.l4.total,final:score.final});
+   results.push({mobile,status:'PASS',session_id:score.session_id,ledger_count:score.ledger.length,l1:score.levels.l1.axes,l4:score.levels.l4.axes,final:score.final});
   }catch(e){throw Error(e.message+'\n'+await page.locator('body').ariaSnapshot());}
   finally{await context.close();}
  }

@@ -33,12 +33,18 @@ def test_out_of_range_is_error_not_silent_clamp():
 
 
 def test_fixed_weights_require_four_complete_levels():
-    levels={k:dict(complete=True,weight=w,total=dict(normalized=s,provisional=s)) for k,w,s in [('l1',.2,10),('l2',.3,20),('l3',.3,30),('l4',.2,40)]}
-    assert weighted_summary(levels)['score']==25
+    levels={k:dict(complete=True,weight=w,axes={a:dict(normalized=n,status='final') for a in 'AVTF'}) for k,w,n in [('l1',.2,10),('l2',.3,20),('l3',.3,30),('l4',.2,40)]}
+    assert weighted_summary(levels)['vector']==dict.fromkeys('AVTF',25)
+    levels['l4']['axes']['T']=dict(normalized=None,status='not_measured')
+    result=weighted_summary(levels)
+    assert result['vector']['T']==pytest.approx(21.25)
+    assert result['metrics']['authenticity']['stars']==2
+    assert result['metrics']['love']['score']==25
     levels['l4']['complete']=False
-    assert weighted_summary(levels)['score'] is None
-    levels['l4']['complete']=True;levels['l4']['total']['normalized']=None
-    assert weighted_summary(levels)['status']=='pending_configuration'
+    assert all(v is None for v in weighted_summary(levels)['vector'].values())
+    levels['l4']['complete']=True;levels['l3']['axes']['F']['normalized']=None
+    result=weighted_summary(levels)
+    assert result['vector']['F'] is None and result['vector']['A']==25
 
 
 def test_no_click_scores_and_raw_delta_matches_server_ledger(client):
@@ -49,16 +55,17 @@ def test_no_click_scores_and_raw_delta_matches_server_ledger(client):
     r,body=send(client,s,h,'swim')
     effect=r.json()['score_effect']
     assert effect['delta']==dict(A=-1,V=None,T=None,F=-2)
-    assert effect['raw_total_delta']==-3
+    assert 'raw_total_delta' not in effect
     assert effect['events'][0]['group_id']=='l1.crossing'
     duplicate=client.post(f"/api/v1/sessions/{s['id']}/actions",headers=h,json=body).json()
     assert duplicate['duplicate'] and duplicate['score_effect']==effect
     send(client,s,h,'enter')
     result=scores(client,s,h)
-    total=result['levels']['l1']['total']
-    assert total['raw']==-5 and (total['lower'],total['upper'])==(-9,4)
-    assert total['normalized']==pytest.approx(400/13)
-    assert result['final']['score'] is None
+    axes=result['levels']['l1']['axes']
+    assert axes['A']['raw']==-1 and axes['F']['raw']==-4
+    assert axes['A']['normalized']==0 and axes['F']['normalized']==0
+    assert all(v is None for v in result['final']['vector'].values())
+    assert 'total' not in result['levels']['l1']
     assert len(result['ledger'])==2 and len(result['actions'])==3
 
 
@@ -109,26 +116,26 @@ def test_environment_waits_for_all_answers_and_scores_once(client,window,tv,valu
     assert len([e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l3.environment'])==1
 
 
-def test_furniture_reconfirmation_never_duplicates_and_missing_pool_not_zero(client):
+def test_furniture_reconfirmation_never_duplicates_and_fixed_thresholds_score(client):
     parent,h,url,s=open_l2(client)
     for _ in range(2):
         act(client,url,h,s,dict(type='layout-start'))
         r,_=act(client,url,h,s,dict(type='layout-confirm'))
     assert all(e['reason']=='ALREADY_SCORED' for e in r.json()['score_effect']['events'])
     rows=[e for e in scores(client,parent,h)['ledger'] if e['level']=='l2']
-    assert len(rows)==3 and all(e['reason']=='QUARTILE_POOL_NOT_CONFIGURED' and e['vector'] is None for e in rows)
+    assert len(rows)==3 and all(e['reason']=='APPLIED' and e['vector'] is not None for e in rows)
 
 
-@pytest.mark.parametrize('door,raw,norm',[('village',-2,0),('coast',2,100),('forest',0,50),('castle',0,50)])
-def test_l4_normalized_total_and_no_fabricated_final(client,door,raw,norm):
+@pytest.mark.parametrize('door,a,v',[('village',0,0),('coast',100,100),('forest',0,100),('castle',100,0)])
+def test_l4_independent_axes_and_no_fabricated_final(client,door,a,v):
     parent,h,url,s=open_l4(client)
     act(client,url,h,s,dict(type='confirm',door=door))
     value=scores(client,parent,h)
-    assert value['levels']['l4']['total']['raw']==raw
-    assert value['levels']['l4']['total']['normalized']==norm
+    assert value['levels']['l4']['axes']['A']['normalized']==a
+    assert value['levels']['l4']['axes']['V']['normalized']==v
     assert value['levels']['l4']['axes']['F']['raw'] is None
     assert value['final']['status']=='pending_configuration'
-    assert value['final']['score'] is None
+    assert value['final']['vector']['F'] is None
 
 
 def test_bound_policy_cannot_change_when_next_journey_uses_new_version(client,monkeypatch):
@@ -173,3 +180,23 @@ def test_concurrent_crossing_exactly_one_ledger_entry(client):
     assert all(r.status_code==200 for r in responses)
     assert sorted(r.json()['duplicate'] for r in responses)==[False,True]
     assert len(scores(client,s,h)['ledger'])==1
+
+
+def test_fixed_furniture_boundaries_and_count_cap():
+    from app.l2_scoring import evaluate,load_policy
+    policy=load_policy()
+    assert policy['adjustment_count_cap']==20
+    for count,t in [(0,2),(5,2),(6,1),(10,1),(11,-1),(15,-1),(16,-2),(20,-2),(21,-2)]:
+        value=evaluate(dict(eligible=True,metrics=dict(wallWindowProximity=.25,tidiness=.75,adjustmentCount=count)))
+        assert value['contributions']==dict(A=-2,V=None,T=t,F=1)
+
+
+def test_old_scalar_policy_is_not_silently_reinterpreted(client):
+    from sqlalchemy import update
+    s,h=session(client)
+    with app.state.engine.begin() as conn:
+        row=conn.execute(select(score_evaluations).where(score_evaluations.c.session_id==s['id'])).mappings().one()
+        policy=dict(row['policy'],normalization_version='theoretical-minmax-v1')
+        conn.execute(update(score_evaluations).where(score_evaluations.c.session_id==s['id']).values(policy=policy))
+    assert scores(client,s,h)['status']=='legacy_normalization'
+    assert send(client,s,h,'swim')[0].json()['score_effect']['status']=='legacy_normalization'

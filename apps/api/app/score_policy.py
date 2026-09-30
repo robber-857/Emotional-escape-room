@@ -40,7 +40,7 @@ def published_policy():
                 raise ValueError("INVALID_SCORE_VALUE")
             if status == "not_measured" and any(v is not None for v in vector.values()):
                 raise ValueError("NOT_MEASURED_REQUIRES_NULL")
-    return dict(data, **load_weights(), normalization_version="theoretical-minmax-v1", quartile_policy=load_policy())
+    return dict(data, **load_weights(), normalization_version="avtf-minmax-v2", quartile_policy=load_policy())
 
 
 def bundle():

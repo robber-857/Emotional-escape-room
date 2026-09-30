@@ -4,7 +4,7 @@ import {usePathname} from "next/navigation";
 import type {ScoreSummary,Vector} from "./types";
 import styles from "./scoring.module.css";
 
-const reasons:Record<string,string>={APPLIED:"已计分",REJECTED:"服务器拒绝，未计分",ALREADY_SCORED:"已结算，重复不计分",NO_SCORE_ON_NO:"此否选项无分数影响",WAITING_FOR_COMPONENTS:"等待组合完整",AWAITING_FINALIZATION:"等待场景结束结算",MECHANICAL_STEP:"过程动作，不单独加分",NOT_MEASURED:"此结果不测量分数",UNCONFIGURED:"结果分值待配置",UNCONFIGURED_CONDITION:"评分条件／截止点待配置",QUARTILE_POOL_NOT_CONFIGURED:"四分位样本池待配置",INSUFFICIENT_EVIDENCE:"评分证据不足",LEGACY_UNBOUND:"旧旅程未绑定评分版本"};
+const reasons:Record<string,string>={APPLIED:"已计分",REJECTED:"服务器拒绝，未计分",ALREADY_SCORED:"已结算，重复不计分",NO_SCORE_ON_NO:"此否选项无分数影响",WAITING_FOR_COMPONENTS:"等待组合完整",AWAITING_FINALIZATION:"等待场景结束结算",MECHANICAL_STEP:"过程动作，不单独加分",NOT_MEASURED:"此结果不测量分数",UNCONFIGURED:"结果分值待配置",UNCONFIGURED_CONDITION:"评分条件／截止点待配置",QUARTILE_POOL_NOT_CONFIGURED:"四分位边界待配置",MISSING_QUARTILE_THRESHOLDS:"四分位边界待配置",MISSING_VALUES:"部分结果缺分值",MISSING_CONDITION:"事件条件待定义",INSUFFICIENT_EVIDENCE:"评分证据不足",LEGACY_UNBOUND:"旧旅程未绑定评分版本"};
 const number=(n:number|null|undefined)=>n==null?"—":Number(n.toFixed(2)).toString();
 const vector=(v:Vector|null)=>v?Object.entries(v).map(([a,n])=>`${a} ${n===null?"NA":n>0?"+"+n:n}`).join(" · "):"无评分向量";
 export function ScoreInspector(){
@@ -34,25 +34,27 @@ export function ScoreInspector(){
  },[path,retry]);
  const latest=data?.actions[0];
  return <aside className={styles.inspector} aria-label="服务端计分测试">
-  <button className={styles.toggle} aria-expanded={open} onClick={()=>setOpen(!open)}>服务端计分 {latest?`· ${reasons[latest.reason]||latest.reason}${latest.raw_total_delta!==null?` ${latest.raw_total_delta>0?"+":""}${latest.raw_total_delta}`:""}`:""} <span>{open?"收起":"展开"}</span></button>
+  <button className={styles.toggle} aria-expanded={open} onClick={()=>setOpen(!open)}>服务端计分 {latest?`· ${reasons[latest.reason]||latest.reason}`:""} <span>{open?"收起":"展开"}</span></button>
   {open&&<div className={styles.panel}>
    <h2>计分测试台</h2><p className={styles.muted}>每秒读取服务器账本。点击、动画、本机预览不会生成这里的加分。</p>
    {error&&<div role="alert">{error}<button onClick={()=>setRetry(n=>n+1)}>重试读取计分</button></div>}
    {empty&&<p>{empty}</p>}
+   {data?.status==="legacy_normalization"&&<p>这段旅程绑定的是旧合计算法，已停止展示。请开始新旅程使用四维算法；历史回执保留。</p>}
    {data?.status==="legacy_unbound"&&<p>这段旧旅程没有绑定评分版本。请从第一幕开始新旅程测试；旧记录不会自动补分。</p>}
    {data?.status==="active"&&<>
     <p className={styles.muted}>分值版本 {data.event_score_version} · 权重版本 {data.weight_version}</p>
-    <table><caption>各关卡累计分</caption><thead><tr><th>关卡／权重</th><th>原始分</th><th>0–100</th><th>状态</th></tr></thead><tbody>{Object.values(data.levels).map(l=><tr key={l.level}><td>{l.level.toUpperCase()} · {l.weight*100}%</td><td>{number(l.total.raw)}</td><td>{number(l.total.normalized??l.total.provisional)}{l.total.normalized===null&&l.total.provisional!==null?"*":""}</td><td>{l.pending_groups.length?"缺配置":l.complete?"已结算":"进行中"}</td></tr>)}</tbody></table>
-    <p className={styles.muted}>* 已配置部分的暂算值；完成全部关卡且配置齐全后才生成正式总分。NA 表示未测量，0 表示明确的零分。</p>
-    <p><strong>最终加权分：{number(data.final?.score)} / 100</strong> · {data.final?.status==="ready"?"已完成":data.final?.status==="in_progress"?"等待四关完成":"等待缺失评分配置"}</p>
-    <details><summary>归一化范围与四维明细</summary>{Object.values(data.levels).map(l=><div key={l.level}><h3>{l.level.toUpperCase()}</h3><p>理论总分范围 [{l.total.lower}, {l.total.upper}]；公式：100 × (原始分 − 最低分) / (最高分 − 最低分)</p><p>{Object.entries(l.axes).map(([axis,v])=>`${axis} 原始 ${number(v.raw)} / 归一化 ${number(v.normalized??v.provisional)}`).join("；")}</p>{l.pending_groups.length>0&&<p>待配置：{l.pending_groups.join("、")}</p>}</div>)}</details>
+    <table><caption>每关 A/V/T/F 独立评分</caption><thead><tr><th>关卡／维度</th><th>原始分</th><th>0–100</th><th>状态</th></tr></thead><tbody>{Object.values(data.levels).flatMap(l=>Object.entries(l.axes).map(([axis,v])=><tr key={`${l.level}:${axis}`}><td>{l.level.toUpperCase()} · {axis} · {l.weight*100}%</td><td>{number(v.raw)}</td><td>{v.status==="not_measured"?"NA":number(v.normalized??v.provisional)}{v.normalized===null&&v.provisional!==null?"*":""}</td><td>{v.status==="pending_configuration"?"待配置":v.status==="not_measured"?"未测量":v.status==="final"?"已结算":"进行中"}</td></tr>))}</tbody></table>
+    <p className={styles.muted}>* 暂算值。每个维度独立归一化和加权，NA 不作为零分；缺配置不会被跳过。</p>
+    <h3>最终四维（各 0–100）</h3><p>{Object.entries(data.final?.vector||{}).map(([a,v])=>`${a} ${number(v)}`).join(" · ")}</p>
+    <p>真我值（T）：{data.final?.metrics.authenticity?`${number(data.final.metrics.authenticity.score)} 分 · ${data.final.metrics.authenticity.stars}/5 星`:"待结算"}；恋爱脑指数（F）：{data.final?.metrics.love?`${number(data.final.metrics.love.score)} 分 · ${data.final.metrics.love.stars}/5 星`:"待结算"}</p>
+    <details><summary>各维度范围与待配置原因</summary>{Object.values(data.levels).map(l=><div key={l.level}><h3>{l.level.toUpperCase()}</h3>{Object.entries(l.axes).map(([axis,v])=><p key={axis}>{axis} 理论原始范围 [{v.lower}, {v.upper}]；归一化 = 100 × (该维原始分 − 下限) / (上限 − 下限)</p>)}{Object.entries(l.pending_details).map(([g,rs])=><p key={g}>{g}：{rs.map(r=>reasons[r]||r).join("、")}</p>)}</div>)}</details>
     <h3>最近服务器判定（最多 100 条）</h3>
     {!data.actions.length&&<p>尚未收到操作回执。</p>}
     <ol className={styles.events}>{data.actions.map(a=><li key={`${a.level}:${a.action_id}`} data-score-action-id={a.action_id}>
      <strong>{a.level.toUpperCase()} · {a.action.choice||a.action.slot||a.action.type} — {reasons[a.reason]||a.reason}</strong>
-     <p>本次原始总分变化：{number(a.raw_total_delta)}；{vector(a.delta)}</p>
+     <p>本次四维变化：{vector(a.delta)}</p>
      {a.events.map((e,i)=><p key={i}>{e.label||e.group_id} / {e.option_id}：{reasons[e.reason]||e.reason} · {vector(e.vector)}</p>)}
-     <details><summary>查看事件 ID 与结算依据</summary><p>{a.action_id} · 服务端版本 {a.version} · {a.code}</p><p>动作后关卡原始分 {number(a.level_score.total.raw)}，归一化暂算 {number(a.level_score.total.provisional)}</p><pre>{JSON.stringify(a.events,null,2)}</pre></details>
+     <details><summary>查看事件 ID 与结算依据</summary><p>{a.action_id} · 服务端版本 {a.version} · {a.code}</p><p>动作后四维：{Object.entries(a.level_score.axes).map(([k,v])=>`${k} 原始 ${number(v.raw)} / 暂算 ${number(v.provisional)}`).join("；")}</p><pre>{JSON.stringify(a.events,null,2)}</pre></details>
     </li>)}</ol>
    </>}
   </div>}

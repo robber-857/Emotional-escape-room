@@ -13,6 +13,6 @@
 
 实现说明：[L1](l1-backend.md)、[L2](l2-backend.md)、[L3](l3-backend.md)、[L4](l4-backend.md)、[结果页](final-results.md)。接口事实以代码与对应版本回执为准。
 
-本次 L2-04 补充：[整理房间升级](l2-04-upgrade.md)。整齐度按重叠程度，取代旧朝向／间距及 tidy/open-placement 判定；三指标和四分位引擎已实现，真实样本池阈值待配置。
+本次 L2-04 补充：[整理房间升级](l2-04-upgrade.md)。整齐度按重叠程度，取代旧朝向／间距及 tidy/open-placement 判定；三指标和四分位引擎已实现，固定边界 0.25/0.5/0.75 已启用，调整次数暂按上限 20 换算。
 
 历史与设计参考：[历史进度](history/progress.md)、[早期评分设计](history/scoring-design.md)、[需求来源](requirements-register.md)、[架构规划](architecture.md)、[存档设计](save-and-resume.md)。开发过程和Review中带日期的测试数是当时记录，不是本轮重跑。

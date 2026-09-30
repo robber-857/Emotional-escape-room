@@ -22,6 +22,8 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
     if evaluation is None:
         return dict(status="legacy_unbound", reason="LEGACY_UNBOUND", delta=None, events=[])
     policy=evaluation["policy"]
+    if policy['normalization_version'] != 'avtf-minmax-v2':
+        return dict(status='legacy_normalization',reason='LEGACY_NORMALIZATION',delta=None,events=[])
     previous={e["group_id"] for e in conn.execute(select(score_ledger.c.group_id).where(score_ledger.c.session_id==sid)).mappings()}
     emitted=[]
     facts=candidates(level,before,state,action) if accepted else []
@@ -61,7 +63,6 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
                 code=code,action=action,action_id=action_id,level=level,version=version)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
     complete=state["scene"]=="complete" if level=="l1" else state.get("exitDoorOpen",False) if level=="l2" else state["completion"]=="complete"
-    result["raw_total_delta"]=sum(v for v in delta.values() if v is not None) if applied else None
     result["level_score"]=level_summary(level,policy,entries,complete)
     conn.execute(insert(score_actions).values(session_id=sid,level=level,action_id=action_id,receipt=result,created_at=now))
     return result
@@ -71,6 +72,8 @@ def summary(conn,sid):
     sid=str(sid)
     evaluation=conn.execute(select(score_evaluations).where(score_evaluations.c.session_id==sid)).mappings().first()
     if evaluation is None: return dict(source="server_database",session_id=sid,status="legacy_unbound",levels={},ledger=[],actions=[],final=None)
+    if evaluation['policy']['normalization_version'] != 'avtf-minmax-v2':
+        return dict(source='server_database',session_id=sid,status='legacy_normalization',levels={},ledger=[],actions=[],final=None)
     ledger=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid)).mappings()]
     levels={}
     for level,table,key in (("l1",sessions,sessions.c.id),("l2",l2_runs,l2_runs.c.session_id),("l3",l3_runs,l3_runs.c.session_id),("l4",l4_runs,l4_runs.c.session_id)):
