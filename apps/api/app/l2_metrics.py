@@ -3,7 +3,7 @@ from itertools import combinations
 from .l2_layout import FURNITURE, footprint, overlap_footprint, area, intersection, inside
 from .l2_proximity import describe, METHOD
 
-METRIC_VERSION = "l2-metrics-overlap-groups-v3"
+METRIC_VERSION = "l2-metrics-full-footprint-v4"
 MOVEMENT_TOLERANCE = .002
 COUNT_VERSION = "l2-adjustments-v1"
 

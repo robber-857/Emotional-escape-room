@@ -39,7 +39,7 @@ def test_boundaries_ties_and_invalid_configuration(tmp_path,monkeypatch):
     assert l2_scoring.evaluate(p)["reasons"] == ["INVALID_QUARTILE_CONFIGURATION"]
 
 
-def test_overlap_is_continuous_and_table_chair_uses_narrower_core():
+def test_overlap_is_continuous_and_table_chair_uses_full_footprint():
     layout=initial_layout()
     assert measure(layout,0)["metrics"]["tidiness"] == 1
     values=[]
@@ -48,10 +48,10 @@ def test_overlap_is_continuous_and_table_chair_uses_narrower_core():
         values.append(measure(candidate,1)["metrics"]["tidiness"])
     assert values == sorted(values,reverse=True) and values[0] > values[-1]
     full=footprint("table-chair",layout["table-chair"]);core=overlap_footprint("table-chair",layout["table-chair"])
-    assert core["right"]-core["left"] < full["right"]-full["left"]
+    assert core == full
     assert core["top"] == full["top"] and core["bottom"] == full["bottom"]
     stacked={k:dict(u=.5,v=.5) for k in layout}
-    assert measure(stacked,4)["metrics"]["tidiness"] == 0
+    assert measure(stacked,4)["metrics"]["tidinessBand"] == 1
 
 
 def test_floor_quality_does_not_redefine_overlap_and_legacy_is_not_zero():

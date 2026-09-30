@@ -166,8 +166,8 @@ def test_concurrent_l2_actions_and_starts(client):
     assert sorted(r.status_code for r in results) == [200, 409]
     assert len(client.get(url, headers=h).json()["state"]["events"]) == 1
 
-@pytest.mark.parametrize("placement,tidy", [("edge", True), ("stacked", False), ("outside", False), ("at-limit", True), ("over-limit", False), ("high", False)])
-def test_table_chair_smaller_overlap_core_preserves_floor_limits(client, placement, tidy):
+@pytest.mark.parametrize("placement,band", [("edge",3),("stacked",3),("outside",4),("at-limit",3),("over-limit",3),("high",3)])
+def test_table_chair_full_overlap_footprint_preserves_floor_limits(client, placement, band):
     _, h, url, s = open_l2(client)
     sofa = s["state"]["furniture"]["layout"]["sofa"]
     limit = 1.4*96/2.54
@@ -178,10 +178,11 @@ def test_table_chair_smaller_overlap_core_preserves_floor_limits(client, placeme
         r,_=act(client,url,h,s,action)
         assert r.status_code==200
     state = client.get(url, headers=h).json()["state"]
-    assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is (placement != "stacked")
+    assert not state["furniture"]["classification"]["evidence"]["outsideFloor"]
+    assert state["furniture"]["classification"]["metrics"]["tidinessBand"] == band
     assert state["exitDoorOpen"] is True
     assert state["furniture"]["confirmed"]["table-chair"] == move_layout(initial_layout(),"table-chair",point)["table-chair"]
-    if placement == "edge": assert state["furniture"]["classification"]["metrics"]["tidiness"] == pytest.approx(1-.01/.29/2)
+    if placement == "edge": assert state["furniture"]["classification"]["metrics"]["tidiness"] == pytest.approx(1-.07/.41/2)
 
 def test_geometry_initial_and_light_overlap():
     layout = initial_layout();assert valid_layout(layout)

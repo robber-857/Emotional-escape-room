@@ -2,7 +2,7 @@
 from copy import deepcopy
 from math import isfinite
 
-VERSION = "l2-placement-v6"
+VERSION = "l2-placement-v7"
 FURNITURE = {"armchair": (285, 990, .19, .20), "chair": (1145, 810, .085, .13),
              "sofa": (1510, 925, .31, .23), "table-chair": (1510, 1013, .41, .10)}
 
@@ -15,9 +15,8 @@ def footprint(key, p):
     return dict(left=p["u"]-w/2, right=p["u"]+w/2, top=p["v"]-d/2, bottom=p["v"]+d/2)
 
 def overlap_footprint(key, p):
-    # Keep full floor contact/clearance; only narrow the table/chair overlap core.
-    box = footprint(key, p)
-    return dict(box, left=p["u"]-.29/2, right=p["u"]+.29/2) if key == "table-chair" else box
+    # All furniture uses its full floor footprint, including the table/chair unit.
+    return footprint(key, p)
 
 def area(r): return (r["right"]-r["left"])*(r["bottom"]-r["top"])
 def intersection(a, b):

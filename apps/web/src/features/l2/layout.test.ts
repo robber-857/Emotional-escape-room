@@ -11,13 +11,13 @@ test("overlap is continuous, with no rotation or spacing classifier",()=>{
  const values=[.19,.15,.10,0].map(offset=>measureLayout({...l,chair:{u:l.sofa.u-offset,v:l.sofa.v}},1).metrics.tidiness);
  assert.deepEqual(values,[...values].sort((a,b)=>b-a));assert.ok(values[0]>values[3]);
  const stacked=Object.fromEntries(Object.keys(l).map(k=>[k,{u:.5,v:.5}])) as typeof l;
- assert.equal(measureLayout(stacked,4).metrics.tidiness,0);
+ assert.equal(measureLayout(stacked,4).metrics.tidinessBand,1);
 });
-test("table chair has a narrower overlap core and unchanged floor extent",()=>{
+test("table chair overlap uses its full floor footprint",()=>{
  const l=initialLayout(),full=footprint("table-chair",l["table-chair"]),core=overlapFootprint("table-chair",l["table-chair"]);
- assert.ok(core.right-core.left<full.right-full.left);assert.equal(core.top,full.top);assert.equal(core.bottom,full.bottom);
+ assert.deepEqual(core,full);assert.equal(core.top,full.top);assert.equal(core.bottom,full.bottom);
  const edge=measureLayout({...l,"table-chair":{u:l.sofa.u-.29,v:l.sofa.v}},1);
- assert.ok(Math.abs(edge.metrics.tidiness-(1-.01/.29/2))<1e-9);
+ assert.ok(Math.abs(edge.metrics.tidiness-(1-.07/.41/2))<1e-9);
 });
 test("wall bounds constrain drag before confirmation",()=>{
  const l=initialLayout(),px=1.4*96/2.54;

@@ -43,9 +43,21 @@ def test_new_band_overrides_average_but_old_confirmation_keeps_old_rule():
     old['metrics'].pop('tidinessBand')
     assert metric_band(old,'tidiness',load_policy())==4
     assert evaluate(old)['contributions']['F']==2
+    v3=deepcopy(placement);v3['ruleVersion']='l2-metrics-overlap-groups-v3'
+    assert metric_band(v3,'tidiness',load_policy())==1
+
+
+def test_table_chair_outer_strip_counts_as_one_pair():
+    layout={'armchair':dict(u=.25,v=.5),'table-chair':dict(u=.52,v=.5),
+            'chair':dict(u=.8,v=.25),'sofa':dict(u=.75,v=.85)}
+    result=measure(layout,1)
+    assert result['metrics']['tidinessBand']==3
+    assert result['evidence']['overlapGroups']['pairs']==[['armchair','table-chair']]
+    assert evaluate(result)['contributions']['F']==1
 
 
 @pytest.mark.parametrize('layout,band', [
+    ({'armchair':(.25,.5),'table-chair':(.52,.5),'chair':(.8,.25),'sofa':(.75,.85)},3),
     ({'armchair':(.2,.4),'chair':(.7,.4),'sofa':(.25,.8),'table-chair':(.7,.8)},4),
     ({'armchair':(.3,.4),'chair':(.3,.4),'sofa':(.25,.8),'table-chair':(.7,.8)},3),
     ({'armchair':(.3,.4),'chair':(.3,.4),'sofa':(.6,.8),'table-chair':(.6,.8)},2),

@@ -1,7 +1,7 @@
 import {describeProximity,proximityMethod} from "./proximity";
 import {furnitureIds,footprint,overlapFootprint,overlapRatio,insideFloor,type Layout,type Rect} from "./layout";
 
-export const metricVersion="l2-metrics-overlap-groups-v3";
+export const metricVersion="l2-metrics-full-footprint-v4";
 export const countVersion="l2-adjustments-v1";
 export const movementTolerance=.002;
 
