@@ -1,5 +1,5 @@
 """Immutable score records written inside the same transaction as actions."""
-from bisect import bisect_left
+from .l2_scoring import metric_band
 from copy import deepcopy
 from datetime import datetime, timezone
 from uuid import uuid4, uuid5, NAMESPACE_URL
@@ -41,7 +41,7 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
             if not placement["eligible"]: missing_reason="INSUFFICIENT_EVIDENCE"
             elif quartile is None: missing_reason="QUARTILE_POOL_NOT_CONFIGURED"
             else:
-                option=str(1+bisect_left(quartile["thresholds"][metric],placement["metrics"][metric]))
+                option=str(metric_band(placement,metric,quartile))
                 evidence["quartile_policy"]=quartile
         configured=policy["groups"].get(group,{}).get(option)
         status="unconfigured" if missing_reason or configured is None or configured["status"]=="unconfigured" else "not_measured" if configured["status"]=="not_measured" else "applied"

@@ -10,6 +10,13 @@ CONFIG_PATH = Path(__file__).parent / "config" / "l2-04-quartiles.json"
 DIMENSIONS = {"wallWindowProximity": "A", "tidiness": "F", "adjustmentCount": "T"}
 
 
+def metric_band(placement, metric, policy):
+    if metric == 'tidiness' and placement.get('ruleVersion') == METRIC_VERSION:
+        return placement['metrics']['tidinessBand']
+    # Saved confirmations from older metric versions retain their original rule.
+    return 1+bisect_left(policy['thresholds'][metric], placement['metrics'][metric])
+
+
 def load_policy():
     config = json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
     if not isinstance(config, dict) or config.get("schema_version") != 1:
@@ -58,7 +65,7 @@ def evaluate(placement):
     contributions = dict(A=None, V=None, T=None, F=None)
     quartiles = {}
     for metric, dimension in DIMENSIONS.items():
-        bucket = bisect_left(policy["thresholds"][metric], placement["metrics"][metric])
+        bucket = metric_band(placement, metric, policy)-1
         quartiles[metric] = bucket+1
         contributions[dimension] = ((2, 1, -1, -2) if dimension == "T" else (-2, -1, 1, 2))[bucket]
     return dict(result, status="scored", policy_version=policy["version"], contributions=contributions,

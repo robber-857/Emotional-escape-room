@@ -22,7 +22,7 @@ def configured(tmp_path, monkeypatch):
 @pytest.mark.parametrize("value,count,af,t", [(.1,0,-2,2),(.4,2,-1,1),(.7,5,1,-1),(.9,8,2,-2)])
 def test_all_twelve_quartile_mappings(tmp_path,monkeypatch,value,count,af,t):
     configured(tmp_path,monkeypatch)
-    p=measure(initial_layout(),count);p["metrics"].update(wallWindowProximity=value,tidiness=value)
+    p=measure(initial_layout(),count);p["metrics"].update(wallWindowProximity=value,tidiness=value,tidinessBand={-2:1,-1:2,1:3,2:4}[af])
     result=l2_scoring.evaluate(p)
     assert result["contributions"] == dict(A=af,V=None,T=t,F=af)
     assert result["policy"]["pool"]["id"] == "synthetic-test-only"
@@ -30,7 +30,7 @@ def test_all_twelve_quartile_mappings(tmp_path,monkeypatch,value,count,af,t):
 
 def test_boundaries_ties_and_invalid_configuration(tmp_path,monkeypatch):
     path=configured(tmp_path,monkeypatch)
-    p=measure(initial_layout(),3);p["metrics"].update(wallWindowProximity=.5,tidiness=.5)
+    p=measure(initial_layout(),3);p["metrics"].update(wallWindowProximity=.5,tidiness=.5,tidinessBand=2)
     assert l2_scoring.evaluate(p)["quartiles"] == dict(wallWindowProximity=2,tidiness=2,adjustmentCount=2)
     data=json.loads(path.read_text());data["versions"]["test-v1"]["thresholds"]["adjustmentCount"]=[3,3,3]
     path.write_text(json.dumps(data))

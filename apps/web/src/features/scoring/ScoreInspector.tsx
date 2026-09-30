@@ -3,6 +3,7 @@ import {useEffect,useState} from "react";
 import {usePathname} from "next/navigation";
 import type {ScoreSummary,ScoreAction,Vector} from "./types";
 import {ProximityDetails} from "../l2/ProximityDetails";
+import {TidinessDetails} from "../l2/TidinessDetails";
 import styles from "./scoring.module.css";
 
 const reasons:Record<string,string>={APPLIED:"已计分",AWAITING_L3_ENTRY:"已保存最新确认，进入第三幕时结算",AWAITING_FIRST_SEAT_OR_TABLE:"尚未选择座位；首次坐下或到桌边时结算",AWAITING_STORM_CUTOFF:"已记录，等待风暴六项回答完成后结算",AWAITING_ITEM_CONFIRMATION:"已记录，等待确认携带物品",REJECTED:"服务器拒绝，未计分",ALREADY_SCORED:"已结算，重复不计分",NO_SCORE_ON_NO:"此否选项无分数影响",WAITING_FOR_COMPONENTS:"等待组合完整",AWAITING_FINALIZATION:"等待场景结束结算",MECHANICAL_STEP:"过程动作，不单独加分",NOT_MEASURED:"此结果不测量分数",UNCONFIGURED:"结果分值待配置",UNCONFIGURED_CONDITION:"评分条件／截止点待配置",QUARTILE_POOL_NOT_CONFIGURED:"四档边界待配置",MISSING_QUARTILE_THRESHOLDS:"四档边界待配置",MISSING_VALUES:"部分结果缺分值",MISSING_CONDITION:"事件条件待定义",INSUFFICIENT_EVIDENCE:"评分证据不足",LEGACY_UNBOUND:"旧旅程未绑定评分版本"};
@@ -59,6 +60,7 @@ export function ScoreInspector(){
      {a.settlement&&<p>这条操作当时尚未回答：{a.settlement.remaining_slots.map(k=>({open:"开门",close:"关门",wait:"等待",curtain:"窗帘",window:"窗户",television:"电视"}[k]||k)).join("、")||"无"}。{a.settlement.door_locked?"开门后关门组合已固定，可立即结算。":"含“否”的结果仍可修改，风暴六项回答齐全时统一结算。"} 历史操作回执保持原样，最终得分见对应结算事件。</p>}
      {a.events.map((e,i)=><p key={i}>{e.group_id.startsWith("l2.furniture.")?`${({"l2.furniture.wall":"靠墙／窗程度","l2.furniture.tidiness":"整齐度","l2.furniture.adjustments":"调整次数"} as Record<string,string>)[e.group_id]}${/^[1-4]$/.test(e.option_id)?`：第 ${e.option_id}/4 档`:""}`:`${e.label||e.group_id} / ${e.option_id}`}：{reasons[e.reason]||e.reason} · {vector(e.vector)}</p>)}
      {a.events.filter(e=>e.group_id==="l2.furniture.wall").map((e,i)=><ProximityDetails key={i} rows={e.evidence?.placement?.evidence?.wallProximityByObject}/>)}
+     {a.events.filter(e=>e.group_id==="l2.furniture.tidiness").map((e,i)=><TidinessDetails key={i} groups={e.evidence?.placement?.evidence?.overlapGroups}/>)}
      <details><summary>查看事件 ID 与结算依据</summary><p>{a.action_id} · 服务端版本 {a.version} · {a.code}</p><p>动作后四维：{Object.entries(a.level_score.axes).map(([k,v])=>`${k} 原始 ${number(v.raw)} / 暂算 ${number(v.provisional)}`).join("；")}</p><pre>{JSON.stringify(a.events,null,2)}</pre></details>
     </li>)}</ol>
    </>}
