@@ -7,7 +7,7 @@
 | 1 | [最新进度](progress.md) | 已实现、待开发、最近测试及交付 |
 | 2 | [George 启动](george-start-2026-09-30.md) | 拉取、数据库、迁移、前后端与Docker |
 | 3 | [评分规则](scoring-design.md) | 操作与组合评分分层、已确认向量、得分表维护 |
-| 4 | [事件比对](event-scoring-audit-v6.2.md) | 当前评分组合、原始动作及V6.2来源 |
+| 4 | [最终事件与评分对照](event-scoring-audit-v6.2.md) | 唯一最终表、原始动作及V6.2来源 |
 | 5 | [回执优化开发任务](scoring-receipts-development.md) | 五项待开发、字段、事务、版本、验收 |
 | 6 | [测试入口](uat-test-matrix.md) | UAT命令与验证边界 |
 

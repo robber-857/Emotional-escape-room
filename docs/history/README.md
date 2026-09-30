@@ -2,7 +2,7 @@
 
 # 项目文档索引
 
-最新：[组合评分与回执优化开发任务](../scoring-receipts-development.md)、[评分组合比对表](../../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表.xlsx)。操作日志与评分结果分层，覆盖固定得分表、版本追溯、最终家具冻结和稳定分类。
+最新：[组合评分与回执优化开发任务](../scoring-receipts-development.md)、[评分组合比对表](../../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表_电视确认版.xlsx)。操作日志与评分结果分层，覆盖固定得分表、版本追溯、最终家具冻结和稳定分类。
 
 2026-09-30：四关均已接服务器，正式评分仍待配置。最新首读：[事件证据与 V6.2 核对](../event-scoring-audit-v6.2.md)、[George 本地启动](../george-start-2026-09-30.md)。下文早期状态按日期区分。
 

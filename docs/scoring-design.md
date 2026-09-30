@@ -15,4 +15,4 @@
 
 配置设计：固定评分group_id/option_id及组合条件由规则层维护；后续仅调分改目标文件 apps/api/app/config/event-scores.json 并发布新分值版本。**该目标文件加载器、评分引擎、账本仍待开发**；现有[配置草案](examples/event-scores.v1.draft.json)已列路线、灯、窗/电视等例子，不能视为线上生效。当前[关卡权重配置](../apps/api/app/config/scoring-weights.json)读取/校验已实现，默认20/30/30/20，但未参与实际结果计算。
 
-完整规则与测试要求见 [开发任务](scoring-receipts-development.md)。[最新比对表](../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表_电视确认版.xlsx)保留48个评分结果候选、44条操作归属和64条原表来源；这不是48份累计加分。背包、家具最终结果映射、探索节点和部分截止点仍需确认。
+完整规则与测试要求见 [开发任务](scoring-receipts-development.md)。[用户确认的最终对照表](../outputs/01a0ed34-event-audit/本地事件与V6.2评分组合比对表_电视确认版.xlsx)保留48个评分结果候选、44条操作归属和64条原表来源；这不是48份累计加分。背包、家具最终结果映射、探索节点和部分截止点仍需确认。
