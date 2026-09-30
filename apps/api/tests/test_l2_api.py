@@ -56,10 +56,10 @@ def test_furniture_exit_after_optional_exploration_persists(client, explore):
     if explore: assert act(client, url, h, s, dict(type="return-hall"))[0].status_code == 200
     for a in [dict(type="layout-start"), dict(type="layout-confirm")]:
         assert act(client, url, h, s, a)[0].status_code == 200
-    assert s["completion"] == "in_progress"
+    assert s["completion"] == "complete"
     for a in [dict(type="layout-start"), dict(type="layout-move", id="sofa", point=dict(u=.1, v=.5))]:
         assert act(client, url, h, s, a)[0].status_code == 200
-    assert not s["state"]["exitDoorOpen"]
+    assert s["state"]["exitDoorOpen"]
     response, body = act(client, url, h, s, dict(type="layout-confirm"))
     assert response.status_code == 200
     assert s["completion"] == "complete" and s["state"]["exitDoorOpen"]
@@ -165,6 +165,22 @@ def test_concurrent_l2_actions_and_starts(client):
     assert sorted(r.status_code for r in results) == [200, 409]
     assert len(client.get(url, headers=h).json()["state"]["events"]) == 1
 
+@pytest.mark.parametrize("placement,tidy", [("edge", True), ("stacked", False), ("outside", False), ("at-limit", True), ("over-limit", False), ("high", False)])
+def test_table_chair_smaller_overlap_core_preserves_floor_limits(client, placement, tidy):
+    _, h, url, s = open_l2(client)
+    sofa = s["state"]["furniture"]["layout"]["sofa"]
+    limit = 1.4*96/2.54
+    point = {"edge": dict(u=sofa["u"]-.29, v=sofa["v"]), "stacked": sofa,
+             "outside": dict(u=.82, v=.4), "at-limit": dict(u=.45, v=.10/2-limit/270),
+             "over-limit": dict(u=.45, v=.10/2-(limit+.1)/270), "high": dict(u=.45, v=.10/2-180/270)}[placement]
+    for action in [dict(type="layout-start"), dict(type="layout-move", id="table-chair", point=point), dict(type="layout-confirm")]:
+        assert act(client, url, h, s, action)[0].status_code == 200
+    state = client.get(url, headers=h).json()["state"]
+    assert state["furniture"]["classification"]["tidy"] is tidy
+    assert state["exitDoorOpen"] is True
+    assert state["furniture"]["confirmed"]["table-chair"] == point
+    if placement == "edge": assert not state["furniture"]["classification"]["openPlacement"]
+
 def test_geometry_initial_and_light_overlap():
     layout = initial_layout();assert valid_layout(layout)
     moved = move_layout(layout, "chair", dict(u=.45, v=.35))
@@ -212,7 +228,7 @@ def test_server_receipts_have_immutable_outcomes_and_rejections(client):
     assert rejected["outcome"] is None and not rejected["accepted"]
     for r in rows:
         assert r["authority"] == dict(record_source="server_database", decision_source="server", input_source="client_claim")
-        assert r["validation_version"] == "l2-validation-v4"
+        assert r["validation_version"] == "l2-validation-v6"
         assert r["previous_version"] + int(r["accepted"]) == r["version"]
     first, second = sorted([r for r in rows if r["action"]["type"] == "try-door"], key=lambda r: r["version"])
     assert first["outcome"]["attempt"] == 1 and not first["outcome"]["door_open"]
@@ -245,5 +261,5 @@ def test_free_placement_suspension_tolerance_persists(client, gap, tidy):
     state = client.get(url, headers=h).json()["state"]
     assert state["furniture"]["confirmed"]["chair"] == point
     assert state["furniture"]["classification"]["tidy"] is tidy
-    assert state["exitDoorOpen"] is tidy
+    assert state["exitDoorOpen"] is True
     assert abs(state["furniture"]["classification"]["suspensionGapsPx"]["chair"]-gap) < 1e-8

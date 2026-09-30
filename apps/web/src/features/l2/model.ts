@@ -38,7 +38,7 @@ export function transition(s: State, event: Event): State {
  if(a.type==="layout-exit")return {...next,furniture:{...s.furniture,editing:false}};
  if(a.type==="layout-confirm"){
   const classification=classifyLayout(s.furniture.layout,s.furniture.baseline,s.furniture.triggered);
-  return {...next,exitDoorOpen:s.exitDoorOpen||classification.tidy,furniture:{...s.furniture,editing:false,confirmed:s.furniture.layout,baseline:s.furniture.layout,classification,triggered:{tidy:s.furniture.triggered.tidy||classification.tidy,openPlacement:s.furniture.triggered.openPlacement||classification.openPlacement}}};
+  return {...next,exitDoorOpen:true,furniture:{...s.furniture,editing:false,confirmed:s.furniture.layout,baseline:s.furniture.layout,classification,triggered:{tidy:s.furniture.triggered.tidy||classification.tidy,openPlacement:s.furniture.triggered.openPlacement||classification.openPlacement}}};
  }
  if(a.type==="layout-undo")return {...next,furniture:{...s.furniture,layout:s.furniture.history.at(-1)!,history:s.furniture.history.slice(0,-1),confirmed:null,classification:null}};
  if(a.type==="layout-reset"||a.type==="layout-move")return {...next,furniture:{...s.furniture,layout:a.type==="layout-reset"?initialLayout():moveLayout(s.furniture.layout,a.id,a.point)!,history:[...s.furniture.history.slice(-49),s.furniture.layout],confirmed:null,classification:null}};

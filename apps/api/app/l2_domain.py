@@ -11,7 +11,7 @@ def initial_state():
                 search=dict(curtainClicks=0, status="idle", activeMs=0, long=False), view="room", attempts=[], doorOpen=False,
                 atTable=False, seat=None, keys=[], selectedKey=None, events=[])
 
-COMPLETION_POLICY_VERSION = "l2-furniture-exit-v1"
+COMPLETION_POLICY_VERSION = "l2-furniture-exit-v2"
 
 def with_completion(state):
     s = deepcopy(state)
@@ -30,7 +30,7 @@ def apply_action(state, a):
         elif t == "layout-exit": f["editing"] = False
         elif t == "layout-confirm":
             result = classify(f["layout"], f["baseline"], f["triggered"])
-            s["exitDoorOpen"] = s["exitDoorOpen"] or result["tidy"]
+            s["exitDoorOpen"] = True
             f.update(editing=False, confirmed=deepcopy(f["layout"]), baseline=deepcopy(f["layout"]), classification=result)
             f["triggered"] = dict(tidy=f["triggered"]["tidy"] or result["tidy"], openPlacement=f["triggered"]["openPlacement"] or result["openPlacement"])
         elif t == "layout-undo":

@@ -22,6 +22,6 @@ export function ResultPage({preview}:{preview:boolean}){
  },[preview,attempt]);
  if(preview)return <ResultDesign/>;
  if(data?.status==='ready')return <ResultDesign result={data}/>;
- return <main className={styles.page}><section className={styles.pending}><p>情感密室 · 旅程终点</p><h1>{error?'暂时无法展开画像':data?'你的旅程已完成':'正在展开你的画像…'}</h1><p role={error?'alert':'status'}>{error||(data?'你的选择已保存，恋爱性格画像正在等待生成。':'正在读取你的旅程记录。')}</p><div>{(error||data)&&<button onClick={()=>setAttempt(v=>v+1)}>重新查看</button>}<Link href="/l4">返回出口</Link></div></section></main>;
+ return <main className={styles.page}><section className={styles.pending}><p>情感密室 · 旅程终点</p><h1>{error?'暂时无法展开画像':data?'你的旅程已完成':'正在展开你的画像…'}</h1><p role={error?'alert':'status'}>{error||(data?'你的选择已保存，恋爱性格画像正在等待生成。':'正在读取你的旅程记录。')}</p><div>{data?.status==="pending_configuration"&&<Link className={styles.previewEntry} href="/results/design">预览 16 种性格卡片 →</Link>}{(error||data)&&<button onClick={()=>setAttempt(v=>v+1)}>重新查看</button>}<Link href="/l4">返回出口</Link></div></section></main>;
 }
 

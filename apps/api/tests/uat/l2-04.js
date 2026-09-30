@@ -19,7 +19,7 @@ async original=>{
  await click('确认摆放');await click('否，继续调整');await page.getByRole('button',{name:'移动窗边椅',exact:true}).focus();await page.keyboard.press('ArrowRight');await click('确认摆放');await click('是，保存摆放');await page.getByRole('button',{name:'整理家具',exact:true}).waitFor();if(await page.locator('[data-layer="cabinet"]').count()!==1)throw new Error('cabinet not restored');
  await page.screenshot({path:`output/playwright/l2-layout-${mobile?'mobile':'desktop'}.jpg`,type:'jpeg',quality:65});
  await page.getByRole('button',{name:'坐在桌前椅',exact:true}).click();await click('是，坐下');await page.getByRole('img',{name:'失联房间：坐在桌前',exact:true}).waitFor();await click('关闭提示，继续探索');await click('起身回大厅');if(await table.getAttribute('transform')!==tableMoved)throw new Error('layout lost after table view');
- await click('打开第二幕菜单');await click('查看本机选择');await page.getByText('家具事件：合理整理已触发；放在空旷处已触发。',{exact:true}).waitFor();await page.getByText(/最近确认规则：l2-placement-v4/).waitFor();await click('关闭菜单');
+ await click('打开第二幕菜单');await click('查看本机选择');await page.getByText('家具事件：合理整理已触发；放在空旷处已触发。',{exact:true}).waitFor();await page.getByText(/最近确认规则：l2-placement-v5/).waitFor();await click('关闭菜单');
  es=await events();if(es.filter(e=>e.action.type==='layout-confirm').length!==1)throw new Error('confirmation duplicated');if(errors.length)throw new Error(errors.join(';'));results.push({mobile,status:'PASS',cases:['four pieces','real drag','free overlap and floating drops','table combination','undo/reset','reload','keyboard','confirm','moved seat hotspot']});
  }finally{await context.close();}
  }return results;

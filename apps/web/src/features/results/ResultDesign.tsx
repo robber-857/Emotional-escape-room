@@ -3,30 +3,39 @@ import {useRef,useState} from "react";
 import {portraits} from "./portraits";
 import styles from "./results.module.css";
 import type {FinalResult} from "./types";
-const sections=[{key:'mode',title:'恋爱模式',icon:'♡'},{key:'strength',title:'你的优势',icon:'♕'},{key:'caution',title:'需要留意',icon:'△'},{key:'advice',title:'给你的建议',icon:'❧'}] as const;
+// Original artwork coordinates, on the supplied 1920 × 1280 reference canvas.
+// Only these two rating panels are replaced when an authoritative result exists.
+const ratingPanels=[
+ [[130,632,733,128],[979,632,830,128]],[[131,636,750,126],[991,636,842,126]],
+ [[120,645,750,120],[980,645,860,120]],[[260,614,655,113],[994,614,710,113]],
+ [[97,677,820,131],[1016,677,838,131]],[[109,649,761,125],[976,649,856,125]],
+ [[124,637,762,126],[1010,637,834,126]],[[96,655,716,107],[1360,655,498,107]],
+ [[118,606,760,123],[972,606,862,123]],[[139,603,769,122],[984,603,821,122]],
+ [[117,688,766,122],[982,688,846,122]],[[114,637,627,118],[1006,637,832,118]],
+ [[114,576,775,117],[984,576,857,117]],[[117,578,778,117],[996,578,834,117]],
+ [[122,600,768,124],[980,600,848,124]],[[112,609,778,129],[990,609,859,129]],
+];
+const sections=[{key:'mode',title:'恋爱模式'},{key:'strength',title:'你的优势'},{key:'caution',title:'需要留意'},{key:'advice',title:'给你的建议'}] as const;
 export function ResultDesign({result}:{result?:FinalResult}={}){
- const [index,setIndex]=useState(0);
- const [failed,setFailed]=useState(false);
- const [retry,setRetry]=useState(0);
+ const [index,setIndex]=useState(0),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0);
  const dialog=useRef<HTMLDialogElement>(null);
  const portrait=portraits[result?Number(result.portrait_id)-1:index];
- const [x,y,width]=portrait.crop; const height=[614,627,635,558,669,642,632,647,599,584,680,629,569,555,594,602][Number(portrait.id)-1];
  function select(next:number){setIndex((next+16)%16);setFailed(false);}
+ function artwork(){return <figure className={styles.originalPoster}>
+ <img key={`${portrait.id}-${retry}`} src={portrait.image} width={2508} height={1672} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>
+ {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[Number(portrait.id)-1][i];const metric=result.metrics![key];return <div key={key} className={styles.originalRating} style={{left:`${x/1920*100}%`,top:`${y/1280*100}%`,width:`${w/1920*100}%`,height:`${h/1280*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
+ {failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(v=>v+1);}}>重新加载</button></div>}
+ </figure>;}
  return <main className={styles.page}>
- <header className={styles.header}>
- <a href={result?"/l4":"/l4?preview=1"} className={styles.brand}>情感密室<span>恋爱性格图鉴</span></a>
+ <header className={styles.header}><a href={result?'/l4':'/l4?preview=1'} className={styles.brand}>情感密室<span>恋爱性格图鉴</span></a>
  {!result&&<div className={styles.controls}><button onClick={()=>select(index-1)} aria-label="上一幅画像">←</button><select value={index} onChange={e=>select(Number(e.target.value))} aria-label="选择恋爱性格画像">{portraits.map((p,i)=><option key={p.id} value={i}>{p.id} · {p.name}</option>)}</select><button onClick={()=>select(index+1)} aria-label="下一幅画像">→</button></div>}
- <span className={styles.preview}>{result?"你的恋爱性格":`画像预览 · ${portrait.id} / 16`}</span></header>
- {!result&&<p className={styles.previewNote}>画像展示预览 · 尚未生成你的测评结果</p>}
+ <span className={styles.preview}>{result?'你的恋爱性格':`原画预览 · ${portrait.id} / 16`}</span></header>
+ {!result&&<p className={styles.previewNote}>原画预览 · 图中星级为原图内容，不代表你的测评结果</p>}
  <article key={portrait.id} className={styles.article} aria-labelledby="portrait-heading">
- <div className={styles.mobileTitle}><p>恋爱性格画像 · {portrait.id}</p><h1 id="portrait-heading">{portrait.name}<span>{portrait.type}</span></h1><blockquote>“{portrait.quote}”</blockquote></div>
- <figure className={styles.hero} style={{aspectRatio:`${width} / ${height}`}}><img key={`${portrait.id}-${retry}`} src={portrait.image} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} className={styles.art} style={{width:`${1920/width*100}%`,left:`${-x/width*100}%`,top:`${-y/height*100}%`}} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>{failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(retry+1);}}>重新加载</button></div>}</figure>
- <div className={styles.ratings}>{(["authenticity","love"] as const).map((key)=><div key={key}><strong>{key==="authenticity"?"真我值":"恋爱脑"}</strong>{result?.metrics?<><span aria-label={`${result.metrics[key].stars}星，共5星`}>{"★".repeat(result.metrics[key].stars)}{"☆".repeat(5-result.metrics[key].stars)}</span><small>{result.metrics[key].score} 分</small></>:<small>等待结果</small>}</div>)}</div>
- <section className={styles.reading} aria-label={`${portrait.name}的性格解读`}><div className={styles.cards}>{sections.map(s=><section className={styles.card} key={s.key}><h2><span aria-hidden="true">{s.icon}</span>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div><div className={styles.match}><button disabled><svg aria-hidden="true" width="22" height="26" viewBox="0 0 24 28" fill="none"><rect x="3" y="12" width="18" height="14" rx="3" fill="currentColor"/><path d="M7 12V8a5 5 0 0 1 10 0v4" stroke="currentColor" strokeWidth="3"/><circle cx="12" cy="18" r="2" fill="#b92152"/></svg>找到你的另一半 <span aria-hidden="true">→</span></button><p>匹配功能尚未开放</p></div></section>
- </article><footer className={styles.footer}><p>每一种靠近，都有自己的方式。</p>{!result&&<button onClick={()=>dialog.current?.showModal()}>查看完整原画 ↗</button>}</footer>
- <dialog ref={dialog} className={styles.dialog} aria-label={`${portrait.name}完整原画`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><img src={portrait.image} alt={`${portrait.name}完整原画，包含性格介绍及尚未开放的匹配入口设计`}/></dialog>
+ <div className={styles.screenReader}><h1 id="portrait-heading">{portrait.name} · {portrait.type}</h1><p>{portrait.quote}</p>{sections.map(s=><section key={s.key}><h2>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div>
+ {artwork()}
+ </article>
+ <footer className={styles.footer}><p>画中的匹配入口尚未开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
+ <dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
  </main>;
 }
-
-
-
