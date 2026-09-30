@@ -2,7 +2,7 @@ export const furnitureIds=["armchair","chair","sofa","table-chair"] as const;
 export type FurnitureId=typeof furnitureIds[number];
 export type Point={u:number;v:number};
 export type Layout=Record<FurnitureId,Point>;
-export const layoutRuleVersion="l2-placement-v5";
+export const layoutRuleVersion="l2-placement-v6";
 // Calibrated trapezoid ground plane; parameters are prototype values, not scoring policy.
 export const project=({u,v}:Point)=>({x:960+(u-.5)*(1100+820*Math.max(0,v)),y:760+270*v});
 export const unproject=(x:number,y:number):Point=>{const v=(y-760)/270;return {u:.5+(x-960)/(1100+820*Math.max(0,v)),v};};
@@ -29,7 +29,14 @@ export const leftFloorEdge=(v:number)=>Math.max(-.12*Math.max(0,Math.min(1,(v-.1
 export const suspensionToleranceCm=1.4;
 export const suspensionTolerancePx=suspensionToleranceCm*96/2.54;
 export const suspensionGapPx=(b:Rect)=>Math.max(0,-b.top*270);
-export const insideFloor=(b:Rect)=>suspensionGapPx(b)<=suspensionTolerancePx+1e-9&&b.bottom<=1&&b.right<=1&&b.left>=Math.max(leftFloorEdge(b.top),leftFloorEdge(b.bottom))-1e-9;
+export const sideMargin=.02,frontMargin=.04,rearContactEdge=.12;
+export function constrainPoint(id:FurnitureId,p:Point):Point{
+ const {w,d}=furniture[id];const v=Math.max(d/2+rearContactEdge,Math.min(1+frontMargin-d/2,p.v));
+ const left=Math.max(leftFloorEdge(v-d/2),leftFloorEdge(v+d/2))-sideMargin+w/2;
+ return {u:Math.max(left,Math.min(1+sideMargin-w/2,p.u)),v};
+}
+export const constrainLayout=(layout:Layout):Layout=>Object.fromEntries(furnitureIds.map(id=>[id,constrainPoint(id,layout[id])])) as Layout;
+export const insideFloor=(b:Rect)=>b.top>=rearContactEdge-1e-9&&b.bottom<=1+frontMargin+1e-9&&b.right<=1+sideMargin+1e-9&&b.left>=Math.max(leftFloorEdge(b.top),leftFloorEdge(b.bottom))-sideMargin-1e-9;
 export function validLayout(layout:Layout){
  if(!layout||furnitureIds.some(id=>!layout[id]||!Number.isFinite(layout[id].u)||!Number.isFinite(layout[id].v)))return false;
  const boxes=furnitureIds.map(id=>footprint(id,layout[id]));
@@ -38,8 +45,8 @@ export function validLayout(layout:Layout){
 }
 export function moveLayout(layout:Layout,id:FurnitureId,p:Point):Layout|null{
  if(!furnitureIds.includes(id)||!Number.isFinite(p.u)||!Number.isFinite(p.v))return null;
- // Bounds protect malformed payloads, not furniture arrangement. Preserve the drop exactly.
+ // Reject malformed coordinates, then use the same soft contact bounds as the server.
  if(p.u < -4 || p.u > 4 || p.v < -4 || p.v > 4)return null;
- return {...layout,[id]:{...p}};
+ return {...layout,[id]:constrainPoint(id,p)};
 }
 export function transformFurniture(id:FurnitureId,p:Point){const at=project(p),base=furniture[id].anchor;const scale=(.78+.25*Math.max(0,p.v))/(.78+.25*unproject(base.x,base.y).v);return `translate(${at.x} ${at.y}) scale(${scale}) translate(${-base.x} ${-base.y})`;}

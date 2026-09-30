@@ -202,19 +202,19 @@ def test_old_scalar_policy_is_not_silently_reinterpreted(client):
     assert send(client,s,h,'swim')[0].json()['score_effect']['status']=='legacy_normalization'
 
 
-def test_user_armchair_outside_confirm_rejected_then_recoverable(client):
+def test_user_armchair_edge_is_tolerated_and_extreme_moves_stop_at_wall(client):
     parent,h,url,s=open_l2(client)
     act(client,url,h,s,dict(type='layout-start'))
-    act(client,url,h,s,dict(type='layout-move',id='armchair',point=dict(u=.27791321372763345,v=.9298451630714811)))
+    point=dict(u=.27791321372763345,v=.9298451630714811)
+    act(client,url,h,s,dict(type='layout-move',id='armchair',point=point))
+    assert s['state']['furniture']['layout']['armchair']==point
+    act(client,url,h,s,dict(type='layout-move',id='chair',point=dict(u=4,v=4)))
+    count=s['state']['furniture']['adjustmentCount']
+    r,_=act(client,url,h,s,dict(type='layout-move',id='chair',point=dict(u=4,v=4)))
+    assert r.status_code==409 and r.json()['code']=='NO_CHANGE'
+    assert s['state']['furniture']['adjustmentCount']==count
     r,_=act(client,url,h,s,dict(type='layout-confirm'))
-    assert r.status_code==409 and r.json()['code']=='LAYOUT_OUTSIDE_FLOOR'
-    assert r.json()['score_effect']['diagnostic']['outsideFloor']==['armchair']
-    assert s['state']['furniture']['assessment'] is None
-    assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id'].startswith('l2.furniture.')]
-    act(client,url,h,s,dict(type='layout-move',id='armchair',point=dict(u=.27791321372763345,v=.89)))
-    r,_=act(client,url,h,s,dict(type='layout-confirm'))
-    assert r.status_code==200
-    assert len(r.json()['score_effect']['events'])==3
+    assert r.status_code==200 and s['state']['furniture']['classification']['eligible']
     assert all(e['status']=='applied' for e in r.json()['score_effect']['events'])
 
 

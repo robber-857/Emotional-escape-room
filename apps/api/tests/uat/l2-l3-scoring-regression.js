@@ -34,10 +34,6 @@ async original=>{
     await act('l2',{type:'view',view:'room'});
     await act('l2',{type:'layout-start'});
     await act('l2',{type:'layout-move',id:'armchair',point:{u:.27791321372763345,v:.9298451630714811}});
-    const rejected=await fetch(url+'/levels/l2/actions',{method:'POST',headers,body:JSON.stringify({action_id:crypto.randomUUID(),expected_version:s.version,action:{type:'layout-confirm'}})});
-    const rejection=await rejected.json();s=rejection.session;
-    if(rejected.status!==409||rejection.code!=='LAYOUT_OUTSIDE_FLOOR'||!s.state.furniture.editing)throw Error('outside confirmation not recoverable');
-    await act('l2',{type:'layout-move',id:'armchair',point:{u:.27791321372763345,v:.89}});
     const confirmed=await act('l2',{type:'layout-confirm'});
     if(!confirmed.score_effect.events.every(e=>e.status==='applied'))throw Error('repaired placement not scored');
     s=await post('/levels/l3',{});

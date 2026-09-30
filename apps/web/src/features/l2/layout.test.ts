@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {initialLayout,validLayout,moveLayout,project,unproject,footprint,overlapFootprint} from "./layout";
+import {initialLayout,validLayout,moveLayout,project,unproject,footprint,overlapFootprint,constrainPoint} from "./layout";
 import {measureLayout} from "./metrics";
 import {initialState,transition,restore,type Action,type State} from "./model";
 let n=0;
@@ -18,14 +18,13 @@ test("table chair has a narrower overlap core and unchanged floor extent",()=>{
  const edge=measureLayout({...l,"table-chair":{u:l.sofa.u-.29,v:l.sofa.v}},1);
  assert.ok(Math.abs(edge.metrics.tidiness-(1-.01/.29/2))<1e-9);
 });
-test("invalid floor confirmation remains editable and does not lock scoring",()=>{
+test("wall bounds constrain drag before confirmation",()=>{
  const l=initialLayout(),px=1.4*96/2.54;
  for(const [gap,inside] of [[px-.1,true],[px,true],[px+.1,false],[180,false]] as const){
   let s=act(initialState(),{type:"layout-start"});const point={u:.45,v:.13/2-gap/270};
   s=act(s,{type:"layout-move",id:"chair",point});s=act(s,{type:"layout-confirm"});
-  if(!inside){assert.equal(s.furniture.editing,true);assert.equal(s.exitDoorOpen,false);assert.equal(s.furniture.confirmed,null);continue;}
   assert.equal(s.furniture.classification?.eligible,true);assert.equal(s.furniture.classification?.metrics.tidiness,1);
-  assert.equal(s.exitDoorOpen,true);assert.deepEqual(s.furniture.confirmed?.chair,point);
+  assert.equal(s.exitDoorOpen,true);assert.deepEqual(s.furniture.confirmed?.chair,constrainPoint("chair",point));
  }
 });
 test("moves undo reset retry and reload preserve cumulative count",()=>{
@@ -54,3 +53,11 @@ test("default geometry and free projection retain exact coordinates",()=>{
  s=act(s,{type:"layout-move",id:"chair",point:{u:.4,v:-2.5}});s=act(s,{type:"layout-undo"});assert.deepEqual(s.furniture.layout,l);
 });
 test("missing legacy count never becomes zero",()=>{const result=measureLayout(initialLayout(),null);assert.equal(result.eligible,false);assert.equal(result.metrics.adjustmentCount,null);});
+
+test("soft edge accepts reported armchair and pushing wall does not count again",()=>{
+ const p={u:.27791321372763345,v:.9298451630714811};assert.deepEqual(constrainPoint("armchair",p),p);
+ let s=act(initialState(),{type:"layout-start"});s=act(s,{type:"layout-move",id:"armchair",point:{u:4,v:4}});
+ const count=s.furniture.adjustmentCount;const same=act(s,{type:"layout-move",id:"armchair",point:{u:4,v:4}});
+ assert.equal(same,s);assert.equal(same.furniture.adjustmentCount,count);
+ assert.equal(measureLayout(s.furniture.layout,count).eligible,true);
+});

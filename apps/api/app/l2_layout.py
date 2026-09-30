@@ -2,7 +2,7 @@
 from copy import deepcopy
 from math import isfinite
 
-VERSION = "l2-placement-v5"
+VERSION = "l2-placement-v6"
 FURNITURE = {"armchair": (285, 990, .19, .20), "chair": (1145, 810, .085, .13),
              "sofa": (1510, 925, .31, .23), "table-chair": (1510, 1013, .41, .10)}
 
@@ -30,8 +30,22 @@ SUSPENSION_TOLERANCE_PX = SUSPENSION_TOLERANCE_CM*96/2.54
 
 def suspension_gap_px(b): return max(0, -b["top"]*270)
 
+# Soft contact-area margin, not the full sprite (backs/shadows overhang).
+SIDE_MARGIN = .02
+FRONT_MARGIN = .04
+REAR_CONTACT_EDGE = .12
+
+def constrain_point(key, point):
+    _, _, w, d = FURNITURE[key]
+    v = max(d/2+REAR_CONTACT_EDGE, min(1+FRONT_MARGIN-d/2, point['v']))
+    left = max(left_floor_edge(v-d/2),left_floor_edge(v+d/2))-SIDE_MARGIN+w/2
+    return dict(u=max(left,min(1+SIDE_MARGIN-w/2,point['u'])),v=v)
+
+def constrain_layout(layout):
+    return {key:constrain_point(key,layout[key]) for key in FURNITURE}
+
 def inside(b):
-    return suspension_gap_px(b) <= SUSPENSION_TOLERANCE_PX+1e-9 and b["bottom"] <= 1 and b["right"] <= 1 and b["left"] >= max(left_floor_edge(b["top"]), left_floor_edge(b["bottom"]))-1e-9
+    return b["top"] >= REAR_CONTACT_EDGE-1e-9 and b["bottom"] <= 1+FRONT_MARGIN+1e-9 and b["right"] <= 1+SIDE_MARGIN+1e-9 and b["left"] >= max(left_floor_edge(b["top"]), left_floor_edge(b["bottom"]))-SIDE_MARGIN-1e-9
 def valid_layout(layout):
     if any(k not in layout or any(not isfinite(layout[k][axis]) for axis in ("u", "v")) for k in FURNITURE): return False
     boxes = [footprint(k, layout[k]) for k in FURNITURE]
@@ -42,5 +56,5 @@ def move_layout(layout, key, point):
     if key not in FURNITURE or any(not isfinite(point[a]) or not -4 <= point[a] <= 4 for a in ("u", "v")):
         raise ValueError("INVALID_PLACEMENT")
     result = deepcopy(layout)
-    result[key] = dict(point)
+    result[key] = constrain_point(key,point)
     return result

@@ -1,6 +1,6 @@
 """L2 authoritative facts. Furniture confirmation unlocks the exit; scoring remains unconfigured."""
 from copy import deepcopy
-from .l2_layout import initial_layout, move_layout
+from .l2_layout import initial_layout, move_layout, constrain_layout
 from .l2_metrics import measure, MOVEMENT_TOLERANCE, COUNT_VERSION
 from math import hypot
 
@@ -33,21 +33,23 @@ def apply_action(state, a):
     if t.startswith("layout-"):
         require(s["view"] == "room")
         require(not f["editing"] if t == "layout-start" else f["editing"])
-        if t == "layout-start": f["editing"] = True
+        if t == "layout-start":
+            f['layout']=constrain_layout(f['layout'])
+            f["editing"] = True
         elif t == "layout-exit": f["editing"] = False
         elif t == "layout-confirm":
+            f['layout']=constrain_layout(f['layout'])
             result = measure(f["layout"], f["adjustmentCount"])
-            require(not result['evidence']['outsideFloor'], 'LAYOUT_OUTSIDE_FLOOR')
             s["exitDoorOpen"] = True
             f.update(editing=False, confirmed=deepcopy(f["layout"]), baseline=deepcopy(f["layout"]), classification=result)
         elif t == "layout-undo":
-            require(bool(f["history"])); f.update(layout=f["history"].pop(), confirmed=None, classification=None)
+            require(bool(f["history"])); f.update(layout=constrain_layout(f["history"].pop()), confirmed=None, classification=None)
         else:
             layout = initial_layout() if t == "layout-reset" else move_layout(f["layout"], a["id"], a["point"])
             require(layout != f["layout"], "NO_CHANGE")
             if t == "layout-move":
                 previous = f["layout"][a["id"]]
-                require(hypot(a["point"]["u"]-previous["u"], a["point"]["v"]-previous["v"]) >= MOVEMENT_TOLERANCE, "NO_CHANGE")
+                require(hypot(layout[a['id']]["u"]-previous["u"], layout[a['id']]["v"]-previous["v"]) >= MOVEMENT_TOLERANCE, "NO_CHANGE")
             f.update(history=(f["history"]+[deepcopy(f["layout"])])[-50:], layout=layout, confirmed=None, classification=None)
         if t in ("layout-move", "layout-undo", "layout-reset") and f["adjustmentCount"] is not None:
             f["adjustmentCount"] += 1

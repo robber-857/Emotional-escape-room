@@ -1,4 +1,4 @@
-import {initialLayout,moveLayout,furnitureIds,type Layout,type FurnitureId,type Point} from "./layout";
+import {initialLayout,moveLayout,constrainLayout,furnitureIds,type Layout,type FurnitureId,type Point} from "./layout";
 import {measureLayout,movementTolerance,countVersion} from "./metrics";
 export const seats = ["chair", "table-seat"] as const;
 export type Seat = typeof seats[number];
@@ -15,14 +15,16 @@ export const keyNames: Record<KeyId, string> = {"key-1":"钥匙1","key-2":"钥�
 export function transition(s: State, event: Event): State {
  if (s.events.length >= MAX_EVENTS || s.events.some(e=>e.id===event.id)) return s;
  const a=event.action;
- if(a.type==="layout-confirm"&&measureLayout(s.furniture.layout,s.furniture.adjustmentCount).evidence.outsideFloor.length)return s;
  if(a.type.startsWith("layout-")&&s.view!=="room")return s;
  if(s.furniture.editing&&!a.type.startsWith("layout-"))return s;
  if(a.type.startsWith("layout-")&&a.type!=="layout-start"&&!s.furniture.editing)return s;
  if(a.type==="layout-start"&&s.furniture.editing)return s;
  if(a.type==="layout-undo"&&!s.furniture.history.length)return s;
  if(a.type==="layout-reset"&&JSON.stringify(s.furniture.layout)===JSON.stringify(initialLayout()))return s;
- if(a.type==="layout-move"&&(!furnitureIds.includes(a.id)||!moveLayout(s.furniture.layout,a.id,a.point)||Math.hypot(s.furniture.layout[a.id].u-a.point.u,s.furniture.layout[a.id].v-a.point.v)<movementTolerance))return s;
+ if(a.type==="layout-move"){
+  const moved=furnitureIds.includes(a.id)?moveLayout(s.furniture.layout,a.id,a.point):null;
+  if(!moved||Math.hypot(s.furniture.layout[a.id].u-moved[a.id].u,s.furniture.layout[a.id].v-moved[a.id].v)<movementTolerance)return s;
+ }
  if(a.type==="explore" && (!s.doorOpen || s.view!=="room")) return s;
  if(a.type==="return-hall" && s.view!=="bedroom") return s;
  if(s.view==="bedroom" && !["return-hall","search-choice","search-time","find-earring","curtain-click"].includes(a.type)) return s;
@@ -37,14 +39,14 @@ export function transition(s: State, event: Event): State {
  if(a.type==="find-earring")return s; // Legacy replay only; no direct pickup in the current rules.
  if(a.type==="curtain-click" && (s.search.status!=="searching"||s.search.curtainClicks>=3))return s;
  const next={...s,events:[...s.events,event]};
- if(a.type==="layout-start")return {...next,furniture:{...s.furniture,editing:true}};
+ if(a.type==="layout-start")return {...next,furniture:{...s.furniture,layout:constrainLayout(s.furniture.layout),editing:true}};
  if(a.type==="layout-exit")return {...next,furniture:{...s.furniture,editing:false}};
  if(a.type==="layout-confirm"){
-  const classification=measureLayout(s.furniture.layout,s.furniture.adjustmentCount);
-  return {...next,exitDoorOpen:true,furniture:{...s.furniture,editing:false,confirmed:s.furniture.layout,baseline:s.furniture.layout,classification}};
+  const layout=constrainLayout(s.furniture.layout);const classification=measureLayout(layout,s.furniture.adjustmentCount);
+  return {...next,exitDoorOpen:true,furniture:{...s.furniture,editing:false,layout,confirmed:layout,baseline:layout,classification}};
  }
  const adjustmentCount=s.furniture.adjustmentCount===null?null:s.furniture.adjustmentCount+1;
- if(a.type==="layout-undo")return {...next,furniture:{...s.furniture,adjustmentCount,layout:s.furniture.history.at(-1)!,history:s.furniture.history.slice(0,-1),confirmed:null,classification:null}};
+ if(a.type==="layout-undo")return {...next,furniture:{...s.furniture,adjustmentCount,layout:constrainLayout(s.furniture.history.at(-1)!),history:s.furniture.history.slice(0,-1),confirmed:null,classification:null}};
  if(a.type==="layout-reset"||a.type==="layout-move")return {...next,furniture:{...s.furniture,adjustmentCount,layout:a.type==="layout-reset"?initialLayout():moveLayout(s.furniture.layout,a.id,a.point)!,history:[...s.furniture.history.slice(-49),s.furniture.layout],confirmed:null,classification:null}};
  if(a.type==="search-choice")return {...next,search:{curtainClicks:s.search.curtainClicks,status:a.yes?"searching":"declined",activeMs:0,long:false}};
  if(a.type==="search-time")return {...next,search:{...s.search,activeMs:a.activeMs,long:a.activeMs>15000}};
