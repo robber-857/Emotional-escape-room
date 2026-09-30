@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "event_definition_version": "server-composite-v4",
-  "event_score_version": "event-scores-v3",
+  "event_score_version": "event-scores-v4-temporary-null",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -168,27 +168,47 @@
       },
       "abandon": {
         "label": "失败后不再尝试",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l2.explore": {
       "pending": {
         "label": "进入/不进入卧室探索",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l2.search": {
       "declined": {
         "label": "不寻找耳环",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       },
       "short_quit": {
         "label": "短搜索后放弃",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       },
       "long": {
         "label": "长搜索",
@@ -202,8 +222,13 @@
       },
       "found_short": {
         "label": "短时间找到耳环",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l3.storm-door": {
@@ -239,8 +264,13 @@
       },
       "unopened_closed": {
         "label": "未开但选择关门",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l3.wait": {
@@ -422,8 +452,13 @@
       },
       "backpack": {
         "label": "带走背包",
-        "status": "unconfigured",
-        "vector": null
+        "status": "not_measured",
+        "vector": {
+          "A": null,
+          "V": null,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l4.door": {
@@ -594,5 +629,19 @@
         }
       }
     }
-  }
+  },
+  "temporary_null_options": [
+    "l3.item/backpack",
+    "l2.retry/abandon",
+    "l2.explore/pending",
+    "l2.search/declined",
+    "l2.search/short_quit",
+    "l2.search/found_short",
+    "l3.storm-door/unopened_closed"
+  ],
+  "temporary_unresolved_conditions": [
+    "l2.retry",
+    "l2.explore",
+    "l2.search"
+  ]
 }

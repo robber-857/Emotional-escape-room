@@ -3,6 +3,7 @@ import {useRef,useState} from "react";
 import {portraits} from "./portraits";
 import styles from "./results.module.css";
 import type {FinalResult} from "./types";
+import {resolveRatingCopy} from "./rating-copy";
 // Original artwork coordinates, on the supplied 1920 × 1280 reference canvas.
 // Only these two rating panels are replaced when an authoritative result exists.
 const ratingPanels=[
@@ -23,7 +24,7 @@ export function ResultDesign({result}:{result?:FinalResult}={}){
  function select(next:number){setIndex((next+16)%16);setFailed(false);}
  function artwork(){return <figure className={styles.originalPoster}>
  <img key={`${portrait.id}-${retry}`} src={portrait.image} width={2508} height={1672} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>
- {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[Number(portrait.id)-1][i];const metric=result.metrics![key];return <div key={key} className={styles.originalRating} style={{left:`${x/1920*100}%`,top:`${y/1280*100}%`,width:`${w/1920*100}%`,height:`${h/1280*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
+ {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[Number(portrait.id)-1][i];const metric=result.metrics![key]!;return <div key={key} className={styles.originalRating} style={{left:`${x/1920*100}%`,top:`${y/1280*100}%`,width:`${w/1920*100}%`,height:`${h/1280*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
  {failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(v=>v+1);}}>重新加载</button></div>}
  </figure>;}
  return <main className={styles.page}>
@@ -34,6 +35,9 @@ export function ResultDesign({result}:{result?:FinalResult}={}){
  <article key={portrait.id} className={styles.article} aria-labelledby="portrait-heading">
  <div className={styles.screenReader}><h1 id="portrait-heading">{portrait.name} · {portrait.type}</h1><p>{portrait.quote}</p>{sections.map(s=><section key={s.key}><h2>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div>
  {artwork()}
+ {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><p className={styles.finalScores}>最终评分：{(['A','V','T','F'] as const).map(axis=>`${axis} ${result.vector?.[axis]?.toFixed(2)??'—'}`).join(' · ')}（满分 100）</p><div className={`${styles.cards} ${styles.ratingCopy}`}>
+ {(['authenticity','love'] as const).map(key=>{const metric=result.metrics![key]!,copy=resolveRatingCopy(portrait.id,key,metric.stars);return <section key={key} className={styles.card}><h2>{key==='authenticity'?'真我值':'恋爱脑'} · {metric.stars}/5 星</h2><p>{metric.score.toFixed(2)} / 100</p>{copy&&<><h3>{copy.title}</h3><p>{copy.body}</p></>}</section>;})}
+ </div></section>}
  </article>
  <footer className={styles.footer}><p>画中的匹配入口尚未开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
  <dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>

@@ -7,6 +7,7 @@ from math import isfinite
 from pathlib import Path
 from .scoring_weights import load_weights
 from .l2_scoring import load_policy
+from .portrait_policy import load_portrait_policy
 from .score_rules import GROUP_OPTIONS
 
 CONFIG_PATH = Path(__file__).parent / "config" / "event-scores.json"
@@ -40,7 +41,7 @@ def published_policy():
                 raise ValueError("INVALID_SCORE_VALUE")
             if status == "not_measured" and any(v is not None for v in vector.values()):
                 raise ValueError("NOT_MEASURED_REQUIRES_NULL")
-    return dict(data, **load_weights(), normalization_version="avtf-minmax-v2", quartile_policy=load_policy())
+    return dict(data, **load_weights(), normalization_version="avtf-minmax-v2", quartile_policy=load_policy(), portrait_policy=load_portrait_policy())
 
 
 def bundle():

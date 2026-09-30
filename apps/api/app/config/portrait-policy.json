@@ -1,0 +1,33 @@
+{
+  "schema_version": 1,
+  "active_version": "avtf-signs-v1",
+  "versions": {
+    "avtf-signs-v1": {
+      "thresholds": {
+        "A": 50,
+        "V": 50,
+        "T": 50,
+        "F": 50
+      },
+      "equal_to": "low",
+      "portraits": {
+        "LLHH": "01",
+        "LLHL": "02",
+        "LLLH": "03",
+        "LLLL": "04",
+        "HLHH": "05",
+        "HLHL": "06",
+        "HLLH": "07",
+        "HLLL": "08",
+        "LHHH": "09",
+        "LHHL": "10",
+        "LHLH": "11",
+        "LHLL": "12",
+        "HHHH": "13",
+        "HHHL": "14",
+        "HHLH": "15",
+        "HHLL": "16"
+      }
+    }
+  }
+}

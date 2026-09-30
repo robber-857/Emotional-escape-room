@@ -151,8 +151,8 @@ def test_l4_independent_axes_and_no_fabricated_final(client,door,a,v):
     assert value['levels']['l4']['axes']['A']['normalized']==a
     assert value['levels']['l4']['axes']['V']['normalized']==v
     assert value['levels']['l4']['axes']['F']['raw'] is None
-    assert value['final']['status']=='pending_configuration'
-    assert value['final']['vector']['F'] is None
+    assert value['final']['status']=='ready'
+    assert value['final']['vector']['F'] is not None
 
 
 def test_bound_policy_cannot_change_when_next_journey_uses_new_version(client,monkeypatch):

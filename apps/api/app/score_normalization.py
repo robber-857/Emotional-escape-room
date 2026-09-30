@@ -21,7 +21,7 @@ def level_summary(level, policy, entries, complete):
     for group, options in groups.items():
         reasons=[]
         if any(o['status']=='unconfigured' for o in options.values()): reasons.append('MISSING_VALUES')
-        if group in UNRESOLVED_CONDITIONS: reasons.append('MISSING_CONDITION')
+        if group in UNRESOLVED_CONDITIONS and group not in policy.get('temporary_unresolved_conditions',[]): reasons.append('MISSING_CONDITION')
         if group.startswith('l2.furniture.') and policy['quartile_policy'] is None: reasons.append('MISSING_QUARTILE_THRESHOLDS')
         reasons += [e['reason'] for e in entries if e['group_id']==group and e['status']=='unconfigured']
         if reasons: pending[group]=sorted(set(reasons))

@@ -8,7 +8,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field
 from sqlalchemy import insert, select, update
 
-from .db import sessions, l2_runs, l3_runs, l4_runs, l4_events
+from .db import sessions, l2_runs, l3_runs, l4_runs, l4_events, score_evaluations
 from .results import build_result
 from .score_service import summary as scoring_summary
 from .l2_domain import with_completion
@@ -63,7 +63,9 @@ def register_l4(app, authorize):
                                          ("l2", l2_runs, l2_runs.c.session_id),
                                          ("l3", l3_runs, l3_runs.c.session_id)):
                 snapshots[level] = dict(conn.execute(select(table).where(column == str(sid))).mappings().one())
-            return dict(build_result(sid, snapshots), score_summary=scoring_summary(conn,sid))
+            scores=scoring_summary(conn,sid)
+            binding=conn.execute(select(score_evaluations.c.policy).where(score_evaluations.c.session_id==str(sid))).scalar_one_or_none()
+            return dict(build_result(sid, snapshots, scores, (binding or {}).get('portrait_policy')), score_summary=scores)
 
     @app.post("/api/v1/sessions/{sid}/levels/l4", tags=["L4"])
     def start(sid: UUID, body: StrictModel, authorization: str = Header(default="")):

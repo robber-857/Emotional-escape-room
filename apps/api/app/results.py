@@ -18,17 +18,25 @@ def stars(score):
     return min(5, int(score // 20) + 1)
 
 
-def evaluate_journey(snapshots):
-    # Implement only after event points, normalization, portrait mapping and
-    # the two metric projections are published. Never derive from door alone.
-    return None
-
-
-def build_result(sid, snapshots):
+def build_result(sid, snapshots, score_summary=None, portrait_policy=None):
     base = dict(session_id=str(sid), source="server_database", schema_version="result-v1",
                 input_versions={key: row["version"] for key, row in snapshots.items()},
                 rating_policy_version="five-stars-v1")
-    evaluation = evaluate_journey(snapshots)
+    if score_summary is not None:
+        from .portrait_policy import select_portrait
+        final=score_summary.get('final') or {}
+        if final.get('status')!='ready':
+            return dict(base,status='pending_configuration',policy_version=None,portrait_id=None,
+                        vector=final.get('vector'),metrics=final.get('metrics'),reason='SCORING_PENDING')
+        vector=final['vector']
+        portrait_id=select_portrait(vector,portrait_policy)
+        if portrait_id is None:
+            return dict(base,status='pending_configuration',policy_version=None,portrait_id=None,
+                        vector=vector,metrics=final['metrics'],reason='PORTRAIT_MAPPING_PENDING')
+        evaluation=dict(policy_version=portrait_policy['version'],portrait_id=portrait_id,vector=vector,
+                        authenticity=vector['T'],love=vector['F'])
+    else:
+        evaluation = None
     if evaluation is None:
         return dict(base, status="pending_configuration", policy_version=None,
                     portrait_id=None, vector=None, metrics=None)
