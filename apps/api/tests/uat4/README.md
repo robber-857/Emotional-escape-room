@@ -1,5 +1,7 @@
 # UAT4：选门服务器验收
 
+> 2026-09-30 兼容性提示：现行应用迁移目标为 `0005_scoring`，但本目录 run.ps1 仍只接受旧 schema，会在 readiness 阶段阻止运行。以下是旧版本使用与验证记录。需更新版本判断及行为断言后再进行新版验收；不要降级游戏数据库来适配旧脚本。详见 [测试速查](../../../../docs/uat-test-matrix.md)。
+
 前置：本项目 Web/API/PostgreSQL 已启动，`/api/v1/ready` 为 `0004_l4`；API `.venv`、Node/npm、Chrome 可用。脚本会创建独立测试旅程并保留回执，不修改既有玩家旅程，不自动迁移或重建服务。
 
 Windows 双击 `run.cmd`，或在仓库根目录执行：

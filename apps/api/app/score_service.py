@@ -26,13 +26,16 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         return dict(status='legacy_normalization',reason='LEGACY_NORMALIZATION',delta=None,events=[])
     previous={e["group_id"] for e in conn.execute(select(score_ledger.c.group_id).where(score_ledger.c.session_id==sid)).mappings()}
     emitted=[]
-    facts=candidates(level,before,state,action) if accepted else []
+    facts=candidates(level,before,state,action,policy) if accepted else []
     for fact in facts:
         group,option=fact["group_id"],fact["option_id"]
         if group in previous:
             emitted.append(dict(group_id=group,option_id=option,status="already_scored",reason="ALREADY_SCORED",vector=None));continue
         evidence={"source":"server_validated_state","cutoff_state":deepcopy(state)}
         evidence["cutoff_state"].pop("events",None)
+        if group == "l2.search":
+            evidence.update(settlement="l2-exit" if action["type"] == "search-finalize" else "found-third-click-v1", active_ms=state["search"]["activeMs"],
+                            threshold_ms=15000, timing_source="bounded_client_report", timing_verified=False)
         missing_reason=None
         if group.startswith("l2.furniture."):
             placement=state["furniture"]["classification"];quartile=policy["quartile_policy"]
@@ -57,6 +60,11 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
     applied=[e for e in emitted if e["status"]=="applied"]
     delta={a:sum(e["vector"][a] for e in applied if e["vector"][a] is not None) if any(e["vector"][a] is not None for e in applied) else None for a in AXES}
     reason="REJECTED" if not accepted else "APPLIED" if applied else emitted[0]["reason"] if emitted else no_score_reason(level,action)
+    if accepted and not emitted and level == "l2" and policy.get("search_settlement_version") == "found-or-l2-exit-v2":
+        if action["type"] in ("search-choice", "return-hall") and state["search"]["status"] in ("declined", "returned"):
+            reason = "AWAITING_SEARCH_EXIT"
+        elif action["type"] in ("search-choice", "search-time", "curtain-click"):
+            reason = "AWAITING_SEARCH_RESULT"
     result=dict(status="applied" if applied else "no_score",reason=reason,delta=delta,events=emitted,
                 evaluation_id=evaluation["evaluation_id"],policy_hash=evaluation["policy_hash"],
                 source="server_database",accepted=accepted,state_changed=accepted and before!=state,
@@ -68,10 +76,21 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         result['settlement']=dict(cutoff='storm_answers_complete',remaining_slots=[k for k,v in state['choices'].items() if v is None],
                                   door_locked=state['choices']['open'] is True and state['choices']['close'] is True)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
-    complete=state["scene"]=="complete" if level=="l1" else action['type']=='furniture-finalize' if level=="l2" else state["completion"]=="complete"
+    complete=state["scene"]=="complete" if level=="l1" else action['type'] in ('furniture-finalize','search-finalize') if level=="l2" else state["completion"]=="complete"
     result["level_score"]=level_summary(level,policy,entries,complete)
     conn.execute(insert(score_actions).values(session_id=sid,level=level,action_id=action_id,receipt=result,created_at=now))
     return result
+
+
+def finalize_search(conn, sid):
+    policy = conn.execute(select(score_evaluations.c.policy).where(score_evaluations.c.session_id == str(sid))).scalar_one_or_none()
+    if not policy or policy.get('search_settlement_version') != 'found-or-l2-exit-v2':
+        return None
+    row = conn.execute(select(l2_runs).where(l2_runs.c.session_id == str(sid))).mappings().one()
+    state = deepcopy(row['state'])
+    return record(conn, sid, 'l2', str(uuid5(NAMESPACE_URL, f'{sid}/l2/search-finalize')),
+                  dict(type='search-finalize'), state, state, True, row['version'],
+                  'L3_ENTRY_FINALIZED', datetime.now(timezone.utc).isoformat())
 
 
 def finalize_furniture(conn,sid):

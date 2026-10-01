@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "event_definition_version": "server-composite-v4",
-  "event_score_version": "event-scores-v4-temporary-null",
+  "event_score_version": "event-scores-v6-search-exit",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -192,9 +192,9 @@
     "l2.search": {
       "declined": {
         "label": "不寻找耳环",
-        "status": "not_measured",
+        "status": "configured",
         "vector": {
-          "A": null,
+          "A": -2,
           "V": null,
           "T": null,
           "F": null
@@ -202,9 +202,9 @@
       },
       "short_quit": {
         "label": "短搜索后放弃",
-        "status": "not_measured",
+        "status": "configured",
         "vector": {
-          "A": null,
+          "A": -2,
           "V": null,
           "T": null,
           "F": null
@@ -222,9 +222,9 @@
       },
       "found_short": {
         "label": "短时间找到耳环",
-        "status": "not_measured",
+        "status": "configured",
         "vector": {
-          "A": null,
+          "A": 0,
           "V": null,
           "T": null,
           "F": null
@@ -634,14 +634,12 @@
     "l3.item/backpack",
     "l2.retry/abandon",
     "l2.explore/pending",
-    "l2.search/declined",
-    "l2.search/short_quit",
-    "l2.search/found_short",
     "l3.storm-door/unopened_closed"
   ],
   "temporary_unresolved_conditions": [
     "l2.retry",
     "l2.explore",
     "l2.search"
-  ]
+  ],
+  "search_settlement_version": "found-or-l2-exit-v2"
 }

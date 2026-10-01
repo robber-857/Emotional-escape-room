@@ -28,11 +28,11 @@
 请求严格拒绝额外字段、未知门、非整数版本、伪造状态/物品/评分。前置条件或鉴权不通过不创建 L4 存档；合法格式且通过前置检查的接受/拒绝请求均有回执。
 
 规则：`l4-flow-v1`；完成策略：`l4-confirm-door-v1`；校验：`l4-validation-v1`。
-评分保持 `pending_configuration`，贡献/总分为 `null`；未实现最终人格报告。
+L4 门选择已接服务端评分账本；完成四关的新旅程可读取最终四维、卡牌与 T/F 星级。旧快照的评分占位字段不是最终结果；以鉴权 /scoring 和 /result 为准，见 [最终结果](final-results.md)。
 
 ## 数据库与验证
 
-`0004_l4` 仅新增 `l4_runs` / `l4_events`，不改 L1–L3 表。先备份，按根 README 的 Compose 流程更新；以 `/api/v1/ready` 的 `0004_l4` 为就绪依据。
+`0004_l4` 仅新增 `l4_runs` / `l4_events`，不改 L1–L3 表。先备份，按根 README 的 Compose 流程更新；当前还需后续 `0005_scoring`（新增三张评分表），以 `/api/v1/ready` 的 `0005_scoring` 为就绪依据。
 
 2026-09-29 本机验证：
 

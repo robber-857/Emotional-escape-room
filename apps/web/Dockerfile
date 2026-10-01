@@ -5,6 +5,8 @@ COPY package.json package-lock.json ./
 COPY apps/web/package.json ./apps/web/package.json
 RUN npm ci
 COPY apps/web/ ./apps/web/
+COPY apps/api/app/config/l2-overlap-masks.json ./apps/api/app/config/l2-overlap-masks.json
+COPY content/l2-overlap-regression.json ./content/l2-overlap-regression.json
 RUN npm run build
 FROM node:22-bookworm-slim
 WORKDIR /app

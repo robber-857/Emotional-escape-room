@@ -22,7 +22,7 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
   <image data-layer="bedroom" href="/game/l2/bedroom-single-clue.png" x="-29" y="0" width="1978" height="1113" preserveAspectRatio="xMidYMid slice"/>
   {<svg data-layer="earring-clue" x="379" y="690" width="17" height="27" overflow="hidden"><image href="/game/l2/earring.png" x={17*-.4656} y={27*-.6732} width={17*3.6641} height={27*2.3415} preserveAspectRatio="none"/></svg>}
   {state.search.status==="found"&&<svg data-layer="found-earring" x="1265" y="770" width="25" height="40" overflow="hidden"><image href="/game/l2/earring.png" x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>}
-  {state.search.status==="searching"?hit("查看窗帘附近",1155,145,150,700,onFind):state.search.status!=="found"&&hit("查看床头柜上的耳环",350,658,75,85,onSearch)}
+  {state.search.status==="searching"?hit("查看窗帘附近",1155,320,150,350,onFind):state.search.status!=="found"&&hit("查看床头柜上的耳环",350,658,75,85,onSearch)}
 
  </svg>;
  if(state.view==="table")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：坐在桌前">

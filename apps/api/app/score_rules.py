@@ -16,7 +16,7 @@ OPTIONAL_GROUPS={"l1.talk.man","l1.talk.woman","l2.seat","l2.first-try","l2.retr
 UNRESOLVED_CONDITIONS={"l2.retry","l2.explore","l2.search"}
 
 
-def candidates(level, before, state, action):
+def candidates(level, before, state, action, policy=None):
     found=[]
     def add(group, option, reason="APPLIED"):
         found.append(dict(group_id=group, option_id=option, reason=reason))
@@ -35,6 +35,17 @@ def candidates(level, before, state, action):
         if action["type"] == "try-door":
             if len(state["attempts"]) == 1: add("l2.first-try","attempt")
             elif len(state["attempts"]) == 2: add("l2.retry","retry")
+        if (policy or {}).get("search_settlement_version") in ("found-third-click-v1", "found-or-l2-exit-v2") and action["type"] == "curtain-click":
+            search = state["search"]
+            if (before["search"]["status"] == "searching" and before["search"]["curtainClicks"] == 2
+                    and search["status"] == "found" and search["curtainClicks"] == 3):
+                add("l2.search", "long" if search["activeMs"] > 15000 else "found_short")
+        if (policy or {}).get("search_settlement_version") == "found-or-l2-exit-v2" and action["type"] == "search-finalize":
+            search = state["search"]
+            if search["status"] == "declined":
+                add("l2.search", "declined")
+            elif search["status"] == "returned":
+                add("l2.search", "long" if search["activeMs"] > 15000 else "short_quit")
         if action["type"] == "furniture-finalize":
             for name in ("wall","tidiness","adjustments"):
                 add("l2.furniture."+name,"quartile")

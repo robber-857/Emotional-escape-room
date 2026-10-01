@@ -1,6 +1,6 @@
 # PR 代码审查与 UAT 业务验收规则
 
-> 2026-09-30 当前说明：当前L3电源为television，六项是否回答完成即衔接携物；评分规则已确认但未启用，不使用下文早期风扇或风暴条件待定作为当前验收口径。 最新见[进度](progress.md)、[评分规则](scoring-design.md)、[开发任务](scoring-receipts-development.md)。下文带日期的过程记录只代表当时版本。
+> 2026-09-30 当前说明：当前L3电源为television，六项是否回答完成即衔接携物；版本化评分与最终卡牌已实现，不使用下文早期风扇或风暴条件待定作为当前验收口径。 最新见[进度](progress.md)、[评分规则](scoring-design.md)、[开发任务](scoring-receipts-development.md)。下文带日期的过程记录只代表当时版本。
 
 
 日期：2026-09-25。适用于情感密室 MVP 的逐步开发、George 的代码 review 与业务验收。

@@ -1,6 +1,8 @@
 # George：四关代码与本地启动
 
-2026-09-30。四关已有服务器动作校验与数据库存档，迁移目标 **0004_l4**；正式评分待配置。推荐完整 Docker 模式，不需要本机 Node/Python/Figma token。
+> Docker Desktop 中 `emotional-l1` 是本项目组，包含 db、migrate、api、web；名称沿用初版，实际已覆盖四关。启动按钮只运行已有容器，不更新代码或镜像。一次性 migrate 退出码 0 正常。2026-09-30 本轮只读检查时 db/api/web 均已停止，数据库日志正常关闭，卷 emotional-l1_postgres_data 仍存在；没有启动数据库查询实际迁移版本或验证存档完整性。
+
+2026-09-30。四关已有服务器动作校验与数据库存档，迁移目标 **0005_scoring**；评分账本、四维归一化及最终卡牌已实现，新旅程采用当前绑定策略。推荐完整 Docker 模式，不需要本机 Node/Python/Figma token。
 
 ## 获取代码与 Docker 启动
 
@@ -23,7 +25,7 @@ docker compose ps -a
 
 默认网页 http://localhost:3000，API http://localhost:8000/docs，宿主数据库 127.0.0.1:54329。作者当前网页为 3100；George 可在根 .env 设置 WEB_PORT=3100，然后相应替换网址。
 
-检查 http://localhost:3000/api/v1/ready：persistence_ready=true、schema_version=0004_l4。`/api/v1/health` 只证明进程活着。失败看 `docker compose logs --tail 100 api web migrate`。
+检查 http://localhost:3000/api/v1/ready：persistence_ready=true、schema_version=0005_scoring、scoring_engine_ready=true。当前 `/ready` 仍返回 scoring_ready=false，这是现行代码中的固定标志，不能据此认定评分引擎未实现；实际旅程计分与卡牌状态以鉴权 /scoring、/result 为准。`/api/v1/health` 只证明进程活着。失败看 `docker compose logs --tail 100 api web migrate`。
 
 | 配置 | Docker 模式 | 本机热更新模式 |
 | --- | --- | --- |
@@ -84,7 +86,7 @@ macOS/Linux 用 python3、.venv/bin/python。浏览器保持同一 localhost 地
 
 ## 更新、备份与版本差异
 
-更新：git pull --ff-only 后重跑构建、迁移、启动。停止用 `docker compose down`，不要加 -v（会删除数据库卷）。默认库备份：
+更新：保留本地修改后 git pull --ff-only；先启动 db 并按下方命令备份成功，再构建、迁移、启动。停止用 `docker compose down`，不要加 -v（会删除数据库卷）。默认库备份：
 
 ```bash
 docker compose exec db pg_dump -U emotional -d emotional -Fc -f /tmp/emotional.backup
@@ -95,8 +97,8 @@ docker compose cp db:/tmp/emotional.backup ./emotional.backup
 
 工程检查：根目录 npm run typecheck / npm test / npm run build；apps/api 下 `.venv/Scripts/python.exe -m pytest -q`。默认 SQLite 跳过 PostgreSQL 并发项；数据库测试使用独立测试库，见 [UAT 总表](uat-test-matrix.md)。不能代替 George 自己电脑的四关、续玩、断网重试验收。
 
-2026-09-30 本次同步包含：L2 确认摆放即开出口（不依赖tidy）、布局 v5/回执校验 v6、桌椅较小重叠检测核心且保留地面/悬空边界、卧室床头柜单一耳环入口和背景图，以及结果页原画预览与真实评分覆盖区域。拉取后必须重新构建，避免仍运行旧镜像。首次数据库为空正常，仓库不附作者会话。
+当前实现包含 L2 确认即开出口、布局 v7/回执 v9、可见轮廓重叠评分、首次进入 L3 结算最后确认家具，以及服务器最终卡牌与星级。拉取后必须重新构建，避免仍运行旧镜像。首次数据库为空正常，仓库不附作者会话。
 
-评分组合与回执的下一阶段开发见 [开发任务](scoring-receipts-development.md)。家具最终分类稳定性、跨关冻结和评分账本均是待开发项，不属于本次已有L2改动。当前评分仍为pending_configuration。
+评分版本快照、事务账本、动作 score_effect、L2 最后确认结算与进入 L3 后锁定均已实现。现行 event-scores-v4-temporary-null 将未配置选项临时设为 NULL；不把 NULL 当零，也不回写旧旅程。详见 [计分测试指南](scoring-test-guide.md) 与 [最终结果](final-results.md)。
 
-本次发布前检查：前端typecheck、73项测试、production build通过；后端179通过、6跳过（默认SQLite）。未在本轮重跑真实PostgreSQL并发或桌面/触屏浏览器UAT，George另一台电脑验收仍需执行。Excel的组合分组、来源向量与文件完整性已核查。
+此前批次发布前检查（历史记录，不代表最新代码重测）：前端typecheck、73项测试、production build通过；后端179通过、6跳过（默认SQLite）。未在本轮重跑真实PostgreSQL并发或桌面/触屏浏览器UAT，George另一台电脑验收仍需执行。Excel的组合分组、来源向量与文件完整性已核查。

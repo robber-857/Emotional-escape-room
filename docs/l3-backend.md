@@ -1,5 +1,7 @@
 # L3 后端（基于 Eltondev / 3447d74）
 
+> 2026-09-30 文档核对：现行迁移目标为 `0005_scoring`；评分账本、每关四维归一化及最终卡牌已实现。启动见 [George 交接](george-start-2026-09-30.md)，计算与配置边界见 [计分测试指南](scoring-test-guide.md) 和 [最终结果](final-results.md)。以下旧版本实现与验证记录按日期保留，不代表当前运行状态或本轮重测。
+
 当前已实现服务器 API、状态机、不可变回执、迁移及正式前端接入。本机 3100/8000 与游戏数据库已更新，浏览器自动化已验证；Git 交付索引见 [L3 交接](l3-backend-handoff.md)；未生产部署，真机与 George 验收待完成。
 
 最新 Review / UAT3：见 [审查结论](l3-backend-review.md) 与 [可执行测试说明](../apps/api/tests/uat3/README.md)。新回执使用 `l3-validation-v2`，在动作事务内保存鉴权/前置、版本、流程及额度校验证据；旧 v1 回执不回填。前端逐条展示服务器来源及校验，不以当前状态重建历史。当前工作区修复尚未提交推送。
@@ -45,7 +47,7 @@
 - 单会话最多 400 次状态变化；第 399 版停止接受物品更换并保留预选，为最终 confirm 预留额度（`CONFIRM_SLOT_RESERVED`）。重复否和原 ID 重试不消耗该额度。审计回执数可能多于流程事件数。
 - 业务拒绝 HTTP 409，格式错误 422，鉴权失败 404，数据库错误 503。未启动的 GET 返回 `L3_NOT_STARTED`，不是空历史。
 
-所有评分保持 `pending_configuration`，policy_version / contributions / totals 为 null。已提供的 L3-01 向量保留在交接文档，尚未启用；用户已确认电视替代电扇，关窗/关电视四组合F+2/0/0/−2，见[评分规则](scoring-design.md)。正式评分引擎、背包等缺分与结果算法仍待开发。
+现行评分读取事务账本和动作 score_effect，版本随旅程绑定；旧快照的 pending_scoring 占位字段不代表评分引擎未启用。窗/电视与门组合已接结算，背包等未配置选项按 event-scores-v4-temporary-null 处理。详见 [计分测试指南](scoring-test-guide.md) 与 [最终结果](final-results.md)。
 
 ## 正式模式、本地预览与重开
 

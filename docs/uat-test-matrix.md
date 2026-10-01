@@ -26,14 +26,14 @@ powershell -NoProfile -ExecutionPolicy Bypass -File apps/api/tests/uat2/run.ps1 
 # UAT3：后端 + 迁移 + 浏览器
 .\apps\api\tests\uat3\run.cmd -BaseUrl http://127.0.0.1:3100
 
-# UAT4：后端 + 迁移 + 浏览器（要求 schema 0004_l4）
+# UAT4：旧入口仅接受 0004_l4，当前 0005_scoring 会被拦截，修复兼容性后再使用
 .\apps\api\tests\uat4\run.cmd -BaseUrl http://127.0.0.1:3100
 
 # 可选：仅 L2 本地预览回归
 powershell -NoProfile -ExecutionPolicy Bypass -File apps/api/tests/uat/run-l2.ps1 -BaseUrl http://127.0.0.1:3100
 ```
 
-需要 Node/npm、Chrome；UAT2/UAT3/UAT4 还需要已安装依赖的 `apps/api/.venv`。UAT3 要求服务已更新到 schema `0003_l3` 或 `0004_l4` 及新回执代码。UAT4 要求 `0004_l4`。浏览器会在目标服务新增独立测试旅程并保留记录，不操作现有玩家会话。建议逐套运行。
+需要 Node/npm、Chrome；UAT2/UAT3/UAT4 还需要已安装依赖的 `apps/api/.venv`。现行服务要求 schema `0005_scoring`。UAT2 已接受该版本；UAT3 旧脚本只接受 `0003_l3`/`0004_l4`，UAT4 只接受 `0004_l4`，会在 readiness 检查拒绝现行服务，须先更新脚本及行为断言再验收，不能为运行旧测试而降级数据库。浏览器会在目标服务新增独立测试旅程并保留记录，不操作现有玩家会话。建议逐套运行。
 
 ## PostgreSQL 并发模式
 
@@ -51,6 +51,6 @@ $env:TEST_DATABASE_URL = 'postgresql+psycopg://USER:PASSWORD@127.0.0.1:54329/emo
 
 2026-09-29 已实际运行 UAT3 入口：默认 SQLite **88 通过 / 1 并发跳过**；独立 PostgreSQL **89 通过 / 0 跳过**；两次桌面/模拟触屏浏览器均通过。最终 PostgreSQL 报告：`output/playwright/uat3/uat3-20260929-151811-dae242/report.json`。本次整理表格未重跑 UAT1/UAT2；这些数字不代表未来每次运行结果。
 
-真实手机 Safari/Chrome、团队人工签字仍需测试。正式评分/报告未启用，不属于上述通过范围。本地预览结果与服务器记录必须分别验收。
+真实手机 Safari/Chrome、团队人工签字仍需测试。服务端计分与最终卡牌现已实现，但不属于上述 2026-09-29 历史通过范围；对应批次证据见 [计分测试指南](scoring-test-guide.md) 和 [最终结果](final-results.md)。本地预览结果与服务器记录必须分别验收。
 
 详细说明：[UAT1](../apps/api/tests/uat/README.md) · [UAT2](../apps/api/tests/uat2/README.md) · [UAT3](../apps/api/tests/uat3/README.md) · [L3 Review](l3-backend-review.md)。

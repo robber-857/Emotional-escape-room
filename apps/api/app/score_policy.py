@@ -22,6 +22,8 @@ def published_policy():
         raise ValueError("INVALID_SCORE_DEFINITION_VERSION")
     if not data.get("event_score_version") or not isinstance(data.get("groups"), dict):
         raise ValueError("INVALID_SCORE_POLICY")
+    if data.get("search_settlement_version") not in (None, "found-third-click-v1", "found-or-l2-exit-v2"):
+        raise ValueError("INVALID_SEARCH_SETTLEMENT_VERSION")
     if set(data["groups"]) != set(GROUP_OPTIONS):
         raise ValueError("SCORE_GROUP_SET_MISMATCH")
     for group, options in data["groups"].items():
