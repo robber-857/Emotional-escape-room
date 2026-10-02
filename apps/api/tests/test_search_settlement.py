@@ -20,7 +20,7 @@ def test_third_click_settles_bound_search_once(client, elapsed, expected, legacy
     for action in [dict(type='explore',yes=True),dict(type='search-choice',yes=True)]:
         r,_=act(client,url,h,s,action)
         assert r.json()['accepted']
-        assert r.json()['score_effect']['events']==[]
+        assert not [e for e in r.json()['score_effect']['events'] if e['group_id']=='l2.search']
     # Seed accepted elapsed time to cover exact millisecond boundaries without sleeping.
     # Client time validation remains covered by test_l2_api.
     with app.state.engine.begin() as conn:

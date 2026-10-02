@@ -4,7 +4,7 @@ GROUP_OPTIONS={
     "l1.crossing":{"bridge","swim","ring","boat"},"l1.talk.woman":{"yes"},"l1.talk.man":{"yes"},
     "l1.lamp":{"lit_taken","lit_left","unlit_taken","unlit_left"},
     "l2.seat":{"window","table","none"},"l2.first-try":{"attempt"},"l2.retry":{"retry","abandon"},
-    "l2.explore":{"pending"},"l2.search":{"declined","short_quit","long","found_short"},
+    "l2.explore":{"direct","returned","stayed"},"l2.search":{"declined","short_quit","long","found_short"},
     **{"l2.furniture."+k:{"1","2","3","4"} for k in ("wall","tidiness","adjustments")},
     "l3.storm-door":{"unopened","opened","closed","unopened_closed"},"l3.wait":{"yes","no"},
     "l3.curtain":{"yes","no"},"l3.environment":{"both","window","television","neither"},
@@ -35,6 +35,12 @@ def candidates(level, before, state, action, policy=None):
         if action["type"] == "try-door":
             if len(state["attempts"]) == 1: add("l2.first-try","attempt")
             elif len(state["attempts"]) == 2: add("l2.retry","retry")
+        if (policy or {}).get("explore_settlement_version") == "first-entry-or-l2-exit-v1":
+            choices = [e["action"]["yes"] for e in before.get("events", []) if e["action"]["type"] == "explore"]
+            if action["type"] == "explore" and action["yes"] and True not in choices:
+                add("l2.explore", "returned" if False in choices else "direct")
+            elif action["type"] == "explore-finalize" and state["doorOpen"] and True not in choices:
+                add("l2.explore", "stayed")
         if (policy or {}).get("search_settlement_version") in ("found-third-click-v1", "found-or-l2-exit-v2") and action["type"] == "curtain-click":
             search = state["search"]
             if (before["search"]["status"] == "searching" and before["search"]["curtainClicks"] == 2

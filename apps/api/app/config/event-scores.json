@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "event_definition_version": "server-composite-v4",
-  "event_score_version": "event-scores-v6-search-exit",
+  "event_score_version": "event-scores-v7-l2-explore",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -178,13 +178,33 @@
       }
     },
     "l2.explore": {
-      "pending": {
-        "label": "进入/不进入卧室探索",
-        "status": "not_measured",
+      "direct": {
+        "label": "直接进入卧室",
+        "status": "configured",
         "vector": {
           "A": null,
-          "V": null,
-          "T": null,
+          "V": -2,
+          "T": 1,
+          "F": null
+        }
+      },
+      "returned": {
+        "label": "先不进入，后来进入卧室",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 0,
+          "T": -2,
+          "F": null
+        }
+      },
+      "stayed": {
+        "label": "不进入，留在大厅",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 2,
+          "T": 1,
           "F": null
         }
       }
@@ -633,7 +653,6 @@
   "temporary_null_options": [
     "l3.item/backpack",
     "l2.retry/abandon",
-    "l2.explore/pending",
     "l3.storm-door/unopened_closed"
   ],
   "temporary_unresolved_conditions": [
@@ -641,5 +660,6 @@
     "l2.explore",
     "l2.search"
   ],
-  "search_settlement_version": "found-or-l2-exit-v2"
+  "search_settlement_version": "found-or-l2-exit-v2",
+  "explore_settlement_version": "first-entry-or-l2-exit-v1"
 }

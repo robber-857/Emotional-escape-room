@@ -36,6 +36,9 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         if group == "l2.search":
             evidence.update(settlement="l2-exit" if action["type"] == "search-finalize" else "found-third-click-v1", active_ms=state["search"]["activeMs"],
                             threshold_ms=15000, timing_source="bounded_client_report", timing_verified=False)
+        if group == "l2.explore":
+            evidence.update(settlement="l2-exit" if action["type"] == "explore-finalize" else "first-entry",
+                            rule_version=policy["explore_settlement_version"])
         missing_reason=None
         if group.startswith("l2.furniture."):
             placement=state["furniture"]["classification"];quartile=policy["quartile_policy"]
@@ -65,6 +68,8 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
             reason = "AWAITING_SEARCH_EXIT"
         elif action["type"] in ("search-choice", "search-time", "curtain-click"):
             reason = "AWAITING_SEARCH_RESULT"
+    if accepted and not emitted and level == "l2" and action["type"] == "explore" and policy.get("explore_settlement_version") == "first-entry-or-l2-exit-v1":
+        reason = "ALREADY_SCORED" if "l2.explore" in previous else "AWAITING_EXPLORE_EXIT"
     result=dict(status="applied" if applied else "no_score",reason=reason,delta=delta,events=emitted,
                 evaluation_id=evaluation["evaluation_id"],policy_hash=evaluation["policy_hash"],
                 source="server_database",accepted=accepted,state_changed=accepted and before!=state,
@@ -76,10 +81,21 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         result['settlement']=dict(cutoff='storm_answers_complete',remaining_slots=[k for k,v in state['choices'].items() if v is None],
                                   door_locked=state['choices']['open'] is True and state['choices']['close'] is True)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
-    complete=state["scene"]=="complete" if level=="l1" else action['type'] in ('furniture-finalize','search-finalize') if level=="l2" else state["completion"]=="complete"
+    complete=state["scene"]=="complete" if level=="l1" else action['type'] in ('furniture-finalize','search-finalize','explore-finalize') if level=="l2" else state["completion"]=="complete"
     result["level_score"]=level_summary(level,policy,entries,complete)
     conn.execute(insert(score_actions).values(session_id=sid,level=level,action_id=action_id,receipt=result,created_at=now))
     return result
+
+
+def finalize_explore(conn, sid):
+    policy = conn.execute(select(score_evaluations.c.policy).where(score_evaluations.c.session_id == str(sid))).scalar_one_or_none()
+    if not policy or policy.get('explore_settlement_version') != 'first-entry-or-l2-exit-v1':
+        return None
+    row = conn.execute(select(l2_runs).where(l2_runs.c.session_id == str(sid))).mappings().one()
+    state = deepcopy(row['state'])
+    return record(conn, sid, 'l2', str(uuid5(NAMESPACE_URL, f'{sid}/l2/explore-finalize')),
+                  dict(type='explore-finalize'), state, state, True, row['version'],
+                  'L3_ENTRY_FINALIZED', datetime.now(timezone.utc).isoformat())
 
 
 def finalize_search(conn, sid):

@@ -1,4 +1,4 @@
-from .score_service import record as record_scoring, finalize_furniture, finalize_search
+from .score_service import record as record_scoring, finalize_furniture, finalize_search, finalize_explore
 from datetime import datetime, timezone
 from typing import Annotated, Literal
 from uuid import UUID
@@ -66,6 +66,7 @@ def register_l3(app, authorize):
         with app.state.engine.begin() as conn:
             row = run(conn, sid, authorization, lock=True)
             if row is None:
+                finalize_explore(conn,sid)
                 finalize_search(conn,sid)
                 finalize_furniture(conn,sid)
                 row = dict(session_id=str(sid), rules_version=RULES_VERSION, version=0, state=initial_state())
