@@ -74,7 +74,6 @@ export function canChoose(s: L1State, choice: Choice): boolean {
       (choice === "light-lamp" && !s.lampLit)
     );
   }
-  if (s.rowing) return false;
   switch (choice) {
     case "take-rope":
       return s.ropeClicks < 5 && !s.repaired;
@@ -90,7 +89,7 @@ export function canChoose(s: L1State, choice: Choice): boolean {
     case "search":
       return !s.oar;
     case "board":
-      return s.oar;
+      return s.oar && !s.rowing;
     default:
       return false;
   }
@@ -132,11 +131,11 @@ export function transition(s: L1State, event: GameEvent): L1State {
     case "board":
       return { ...next, rowing: true };
     case "cross-bridge":
-      return { ...next, scene: "shore", route: "bridge" };
+      return { ...next, scene: "shore", rowing: false, route: "bridge" };
     case "swim":
-      return { ...next, scene: "shore", route: "swim" };
+      return { ...next, scene: "shore", rowing: false, route: "swim" };
     case "use-ring":
-      return { ...next, scene: "shore", route: "ring" };
+      return { ...next, scene: "shore", rowing: false, route: "ring" };
     case "greet-woman":
       return { ...next, greetedWoman: true };
     case "greet":
@@ -159,10 +158,10 @@ export type Prompt = {
   next?: Subject;
 };
 export function promptFor(s: L1State, subject: Subject): Prompt {
-  if (s.rowing)
+  if (s.rowing && subject === "boat")
     return {
       title: `划向对岸 · ${s.strokes} / 5`,
-      body: "握住船桨，继续划向那束光。每按一次完成一次划桨。",
+      body: "每按一次完成一次划桨。到岸前，也可以点击其他物品，换一种过河方式。",
       action: "paddle",
       yes: "划桨一次",
     };

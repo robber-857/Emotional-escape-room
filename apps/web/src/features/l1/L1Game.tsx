@@ -261,8 +261,7 @@ export function L1Game() {
       repairMaterialsReady(next) &&
       stateRef.current.ropeClicks === 5 &&
       !stateRef.current.repaired &&
-      stateRef.current.scene === "river" &&
-      !stateRef.current.rowing
+      stateRef.current.scene === "river"
     ) {
       if (!stateRef.current.wood)
         await act({ type: "choose", choice: "collect-wood", yes: true });
@@ -315,15 +314,10 @@ export function L1Game() {
     externalChange ||
     state.scene === "complete" ||
     !!effect;
-  const prompt = state.rowing
-    ? promptFor(state, "boat")
-    : selected
-      ? promptFor(state, selected)
-      : null;
+  const prompt = selected ? promptFor(state, selected) : null;
   if (
     prompt &&
     !state.repaired &&
-    !state.rowing &&
     selected &&
     !(selected === "rope" && state.ropeClicks < 5) &&
     ["bridge", "planks", "rope"].includes(selected)
@@ -336,7 +330,7 @@ export function L1Game() {
       prompt.body = "绳子已放到缺口，还需要把木板移过来。";
   }
   function select(subject: Subject) {
-    if (blocked || (state.rowing && subject !== "boat")) return;
+    if (blocked) return;
     setSelected(subject);
     if (subject === "bush" && !state.oar)
       act({ type: "choose", choice: "search", yes: true });
@@ -356,7 +350,7 @@ export function L1Game() {
     lamp: state.lampTaken ? [91, 81] : [13, 83],
     door: [43, 49],
   };
-  const activeSubject = state.rowing ? "boat" : selected;
+  const activeSubject = selected;
   const baseAnchor = anchor[activeSubject || "bridge"];
   const delta = activeSubject && !(activeSubject === "rope" && state.ropeClicks < 5) ? positions[activeSubject] : undefined;
   const bubbleX = Math.max(
@@ -494,15 +488,13 @@ export function L1Game() {
                     <h2 ref={promptHeading} tabIndex={-1}>
                       {prompt.title}
                     </h2>
-                    {!state.rowing && (
-                      <button
-                        className="closePrompt"
-                        aria-label="关闭提示，继续探索"
-                        onClick={() => setSelected(null)}
-                      >
-                        ×
-                      </button>
-                    )}
+                    <button
+                      className="closePrompt"
+                      aria-label="关闭提示，继续探索"
+                      onClick={() => setSelected(null)}
+                    >
+                      ×
+                    </button>
                   </div>
                   <p>{prompt.body}</p>
                   <div className="decisions">

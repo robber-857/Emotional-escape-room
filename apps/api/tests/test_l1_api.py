@@ -56,7 +56,7 @@ def test_boat_fifth_search_and_fifth_paddle(client):
         assert send(client, s, h, "search")[0].status_code == 200
         assert s["state"]["oar"] is (i == 4)
     assert send(client, s, h, "board")[0].status_code == 200
-    assert send(client, s, h, "swim")[0].status_code == 409
+    assert send(client, s, h, "board")[0].status_code == 409
     for i in range(5):
         assert send(client, s, h)[0].status_code == 200
         assert s["state"]["scene"] == ("shore" if i == 4 else "river")
@@ -82,6 +82,42 @@ def test_bridge_geometry_and_completion(client):
     restored = client.get(f"/api/v1/sessions/{s['id']}", headers=h).json()
     assert restored["state"] == s["state"]
 
+
+@pytest.mark.parametrize("strokes", [0, 1, 4])
+@pytest.mark.parametrize("choice,route", [("swim", "swim"), ("use-ring", "ring"), ("cross-bridge", "bridge")])
+def test_switch_route_while_rowing_preserves_receipts_and_scores_only_arrival(client, strokes, choice, route):
+    s, h = session(client)
+    url = f"/api/v1/sessions/{s['id']}"
+    for _ in range(5):
+        assert send(client, s, h, "search")[0].status_code == 200
+    assert send(client, s, h, "board")[0].status_code == 200
+    for _ in range(strokes):
+        assert send(client, s, h)[0].status_code == 200
+    assert send(client, s, h, "swim", yes=False)[0].status_code == 200
+    assert s["state"]["rowing"] is True
+    assert s["state"]["strokes"] == strokes
+    s.update(client.get(url, headers=h).json())
+    for _ in range(5):
+        assert send(client, s, h, "take-rope")[0].status_code == 200
+    positions = {"planks": {"x": (960-2446.355)/2944, "y": (1160-1426.75)/1568},
+                 "rope": {"x": (960-2104.5)/2944, "y": (1160-1413.5)/1568}}
+    assert send(client, s, h, "collect-wood", positions=positions)[0].status_code == 200
+    assert send(client, s, h, "repair", positions=positions)[0].status_code == 200
+    assert client.get(url + "/scoring", headers=h).json()["ledger"] == []
+    r, body = send(client, s, h, choice)
+    assert r.status_code == 200
+    assert s["state"]["scene"] == "shore"
+    assert s["state"]["route"] == route
+    assert s["state"]["rowing"] is False
+    assert s["state"]["strokes"] == strokes
+    assert client.post(url + "/actions", headers=h, json=body).json()["duplicate"] is True
+    ledger = client.get(url + "/scoring", headers=h).json()["ledger"]
+    assert len(ledger) == 1
+    assert r.json()["score_effect"]["events"][0]["group_id"] == "l1.crossing"
+    assert send(client, s, h)[0].status_code == 409
+    assert send(client, s, h, "swim")[0].status_code == 409
+    assert client.get(url, headers=h).json()["state"] == s["state"]
+
 @pytest.mark.parametrize("choice,route", [("swim","swim"),("use-ring","ring")])
 def test_refusal_then_other_routes(client, choice, route):
     s, h = session(client)
@@ -96,7 +132,7 @@ def test_rope_fifth_click_resume_retry_and_forged_position(client):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
     assert s["state"]["ropeClicks"] == 0
-    assert s["rules_version"] == "l1-rules-v2-rope"
+    assert s["rules_version"] == "l1-rules-v3-route-switch"
     assert send(client, s, h, "take-rope", False)[0].status_code == 200
     assert s["state"]["ropeClicks"] == 0
     for count in range(1, 6):
@@ -129,11 +165,9 @@ def test_legacy_session_keeps_rope_available(client):
     assert send(client, s, h, "search")[0].status_code == 200
     assert s["state"]["ropeClicks"] == 5
 
-@pytest.mark.parametrize("route", ["swim", "use-ring", "board"])
-def test_rope_unavailable_after_leaving_bank_or_boarding(client, route):
+@pytest.mark.parametrize("route", ["swim", "use-ring"])
+def test_rope_unavailable_after_arrival(client, route):
     s, h = session(client)
-    if route == "board":
-        for _ in range(5): send(client, s, h, "search")
     assert send(client, s, h, route)[0].status_code == 200
     assert send(client, s, h, "take-rope")[0].status_code == 409
     assert s["state"]["ropeClicks"] == 0

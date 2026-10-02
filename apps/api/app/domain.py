@@ -1,8 +1,8 @@
 """L1 rules v1. UI coordinates are claims, validated here; never accept client state."""
 from copy import deepcopy
 
-RULES_VERSION = "l1-rules-v2-rope"
-SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", RULES_VERSION)
+RULES_VERSION = "l1-rules-v3-route-switch"
+SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", RULES_VERSION)
 
 def initial_state(): #初始化这一关
     return dict(scene="river", wood=False, repaired=False, ropeClicks=0, oar=False, bushClicks=0,
@@ -19,11 +19,10 @@ def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态
         fields = {"greet": "greeted", "greet-woman": "greetedWoman",
                   "take-lamp": "lampTaken", "light-lamp": "lampLit"}
         return choice == "enter" or (choice in fields and not s[fields[choice]])
-    if s["rowing"]: return False
     return {"take-rope": s.get("ropeClicks", 5) < 5 and not s["repaired"],
             "collect-wood": not s["wood"] and not s["repaired"],
             "repair": s["wood"] and not s["repaired"], "cross-bridge": s["repaired"],
-            "swim": True, "use-ring": True, "search": not s["oar"], "board": s["oar"]}.get(choice, False)
+            "swim": True, "use-ring": True, "search": not s["oar"], "board": s["oar"] and not s["rowing"]}.get(choice, False)
 
 def materials_ready(positions): #检查木板和绳子是不是真的拖到桥的位置
     for key, cx, cy in [("planks", 2446.355, 1426.75), ("rope", 2104.5, 1413.5)]:
@@ -57,7 +56,7 @@ def apply_action(state, action, positions):#真正执行游戏操作
         s["oar"] = s["bushClicks"] == 5
     elif choice == "board": s["rowing"] = True
     elif choice in ("cross-bridge", "swim", "use-ring"):
-        s.update(scene="shore", route={"cross-bridge":"bridge", "swim":"swim", "use-ring":"ring"}[choice])
+        s.update(scene="shore", rowing=False, route={"cross-bridge":"bridge", "swim":"swim", "use-ring":"ring"}[choice])
     elif choice == "enter": s["scene"] = "complete"
     else:
         s[{"greet":"greeted", "greet-woman":"greetedWoman", "take-lamp":"lampTaken", "light-lamp":"lampLit"}[choice]] = True

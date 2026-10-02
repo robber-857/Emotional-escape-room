@@ -85,7 +85,7 @@ test("boat requires oar; exactly five valid, unique strokes, including after res
   assert.equal(paddle(s), s);
   for (let i = 0; i < 5; i++) s = choose(s, "search");
   s = choose(s, "board");
-  assert.equal(choose(s, "swim"), s);
+  assert.equal(choose(s, "board"), s);
   for (let i = 1; i <= 4; i++) {
     const e = event({ type: "paddle" });
     s = transition(s, e);
@@ -102,6 +102,34 @@ test("boat requires oar; exactly five valid, unique strokes, including after res
   assert.equal(s.strokes, 5);
   assert.equal(transition(s, fifth), s);
   assert.equal(paddle(s), s);
+});
+
+test("rowing permits exploring and changing route before arrival, including after resume", () => {
+  for (const strokes of [0, 1, 4]) {
+    let s = initialState();
+    for (let i = 0; i < 5; i++) s = choose(s, "search");
+    s = choose(s, "board");
+    for (let i = 0; i < strokes; i++) s = paddle(s);
+    s = restore(saved(s)).state;
+    assert.equal(promptFor(s, "water").choice, "swim");
+    assert.equal(promptFor(s, "ring").choice, "use-ring");
+    assert.equal(promptFor(s, "rope").action, "take-rope");
+    assert.equal(promptFor(s, "boat").action, "paddle");
+    const declined = choose(s, "swim", false);
+    assert.equal(declined.rowing, true);
+    assert.equal(paddle(declined).strokes, strokes + 1);
+    for (let i = 0; i < 5; i++) s = choose(s, "take-rope");
+    s = choose(choose(s, "collect-wood"), "repair");
+    for (const [choice, route] of [["swim", "swim"], ["use-ring", "ring"], ["cross-bridge", "bridge"]] as const) {
+      const crossed = choose(s, choice);
+      assert.equal(crossed.scene, "shore");
+      assert.equal(crossed.rowing, false);
+      assert.equal(crossed.route, route);
+      assert.equal(crossed.strokes, strokes);
+      assert.equal(paddle(crossed), crossed);
+      assert.deepEqual(restore(saved(crossed)).state, crossed);
+    }
+  }
 });
 
 test("lamp and person order is preserved; direct entry is possible without invented refusal", () => {
