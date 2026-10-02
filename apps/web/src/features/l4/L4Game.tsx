@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState,type CSSProperties} from "react";
 import Link from "next/link";
+import {RestartJourney} from "../shared/RestartJourney";
 import {LevelHeading} from "../shared/LevelHeading";
 import {SAVE_KEY,restore,items,type Item} from "../l3/model";
 import {useServerL4} from "./useServerL4";
@@ -83,7 +84,7 @@ export function L4Game({preview}:{preview:boolean}) {
         <img key={attempt} className={styles.scene} src="/game/l4/doors-reference.png" alt="玫瑰环绕的金色拱廊，四扇门从左到右通向田园小屋、海岸灯塔、森林小径与花园宫殿" onLoad={()=>{setReady(true);setAssetError(false);}} onError={()=>{setReady(false);setAssetError(true);}}/>
       </div>
       <LevelHeading className={styles.heading} ready={ready&&loaded}><p>第四幕 · 出口</p><h1>门的选择</h1></LevelHeading>
-      <nav className={styles.back}><Link href={back}>← 返回密室</Link>{!preview&&<button aria-label="查看第四幕记录" onClick={()=>setTraceOpen(true)}>☰</button>}</nav>
+      <nav className={styles.back}><RestartJourney/><Link href={back}>← 返回密室</Link>{!preview&&<button aria-label="查看第四幕记录" onClick={()=>setTraceOpen(true)}>☰</button>}</nav>
       {doors.map((door,index)=><button key={door.id} style={{"--left":`${door.left}%`,"--width":`${door.width}%`,"--delay":`${index*90}ms`} as CSSProperties} className={`${styles.door} ${confirmed?.id===door.id?styles.chosen:""}`} aria-label={`${door.name}，${door.view}`} aria-pressed={confirmed?.id===door.id} disabled={!ready||!loaded||!!error||!!confirmed||busy} onClick={()=>setSelected(door)}/>)}
       <footer className={styles.footer}><p role="status">{busy?"正在确认选择…":confirmed?`你选择了${confirmed.name}`:""}</p><span>{item?`随身携带 · ${items[item]}`:"随身物品 · 无"}</span></footer>
       {(!ready||!loaded||error)&&<div className={styles.loading} role={error||assetError?"alert":"status"}><p>{error|| (assetError?"场景图片加载失败。":"正在走出密室…")}</p>{error?<><button disabled={busy} onClick={()=>preview?window.location.reload():void server.sync()}>{preview?"重新载入":"重试同步"}</button><Link href={back}>返回第三幕</Link></>:assetError?<button onClick={()=>{setAssetError(false);setAttempt(v=>v+1);}}>重新加载图片</button>:null}</div>}

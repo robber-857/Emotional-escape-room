@@ -299,6 +299,13 @@ export function L1Game() {
     setMessage("河水静静流淌。先看看岸边，寻找过河的方式。");
     save(next, {});
   }
+  const restartFromExit = useRef(false);
+  useEffect(() => {
+    if (!loaded || restartFromExit.current || new URLSearchParams(window.location.search).get("restart") !== "1") return;
+    restartFromExit.current = true;
+    window.history.replaceState(null, "", "/");
+    void fresh();
+  }, [loaded, fresh]);
   const blocked =
     syncing || pendingSync || strokeBusy ||
     !started ||
