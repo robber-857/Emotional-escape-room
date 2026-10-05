@@ -16,6 +16,14 @@ def bind(conn, sid):
         policy_hash=digest,created_at=datetime.now(timezone.utc).isoformat()))
 
 
+def l1_complete(conn, sid, state, policy):
+    if state["scene"] != "complete":
+        return False
+    if policy.get("greeting_settlement_version") != "l2-entry-v1":
+        return True
+    return conn.execute(select(l2_runs.c.session_id).where(l2_runs.c.session_id == str(sid))).first() is not None
+
+
 def record(conn, sid, level, action_id, action, before, state, accepted, version, code, now):
     sid=str(sid);action_id=str(action_id)
     evaluation=conn.execute(select(score_evaluations).where(score_evaluations.c.session_id==sid)).mappings().first()
@@ -33,6 +41,10 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
             emitted.append(dict(group_id=group,option_id=option,status="already_scored",reason="ALREADY_SCORED",vector=None));continue
         evidence={"source":"server_validated_state","cutoff_state":deepcopy(state)}
         evidence["cutoff_state"].pop("events",None)
+        if group in ("l1.talk.man", "l1.talk.woman") and policy.get("greeting_settlement_version") == "l2-entry-v1":
+            choice = "greet" if group == "l1.talk.man" else "greet-woman"
+            evidence.update(settlement="l2-entry", rule_version=policy["greeting_settlement_version"],
+                            greeting_action_ids=[e["id"] for e in state.get("events", []) if e["action"].get("choice") == choice])
         if group == "l2.search":
             evidence.update(settlement="l2-exit" if action["type"] == "search-finalize" else "found-third-click-v1", active_ms=state["search"]["activeMs"],
                             threshold_ms=15000, timing_source="bounded_client_report", timing_verified=False)
@@ -63,6 +75,8 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
     applied=[e for e in emitted if e["status"]=="applied"]
     delta={a:sum(e["vector"][a] for e in applied if e["vector"][a] is not None) if any(e["vector"][a] is not None for e in applied) else None for a in AXES}
     reason="REJECTED" if not accepted else "APPLIED" if applied else emitted[0]["reason"] if emitted else no_score_reason(level,action)
+    if accepted and not emitted and level == "l1" and action.get("choice") in ("greet", "greet-woman") and policy.get("greeting_settlement_version") == "l2-entry-v1":
+        reason = "AWAITING_L2_ENTRY"
     if accepted and not emitted and level == "l2" and policy.get("search_settlement_version") == "found-or-l2-exit-v2":
         if action["type"] in ("search-choice", "return-hall") and state["search"]["status"] in ("declined", "returned"):
             reason = "AWAITING_SEARCH_EXIT"
@@ -81,10 +95,21 @@ def record(conn, sid, level, action_id, action, before, state, accepted, version
         result['settlement']=dict(cutoff='storm_answers_complete',remaining_slots=[k for k,v in state['choices'].items() if v is None],
                                   door_locked=state['choices']['open'] is True and state['choices']['close'] is True)
     entries=[r["entry"] for r in conn.execute(select(score_ledger).where(score_ledger.c.session_id==sid,score_ledger.c.level==level)).mappings()]
-    complete=state["scene"]=="complete" if level=="l1" else action['type'] in ('furniture-finalize','search-finalize','explore-finalize') if level=="l2" else state["completion"]=="complete"
+    complete=l1_complete(conn,sid,state,policy) if level=="l1" else action['type'] in ('furniture-finalize','search-finalize','explore-finalize') if level=="l2" else state["completion"]=="complete"
     result["level_score"]=level_summary(level,policy,entries,complete)
     conn.execute(insert(score_actions).values(session_id=sid,level=level,action_id=action_id,receipt=result,created_at=now))
     return result
+
+
+def finalize_greetings(conn, sid):
+    policy = conn.execute(select(score_evaluations.c.policy).where(score_evaluations.c.session_id == str(sid))).scalar_one_or_none()
+    if not policy or policy.get("greeting_settlement_version") != "l2-entry-v1":
+        return None
+    row = conn.execute(select(sessions).where(sessions.c.id == str(sid))).mappings().one()
+    state = deepcopy(row["state"])
+    return record(conn, sid, "l1", str(uuid5(NAMESPACE_URL, f"{sid}/l1/greeting-finalize")),
+                  dict(type="greeting-finalize"), state, state, True, row["version"],
+                  "L2_ENTRY_FINALIZED", datetime.now(timezone.utc).isoformat())
 
 
 def finalize_explore(conn, sid):
@@ -134,7 +159,7 @@ def summary(conn,sid):
     levels={}
     for level,table,key in (("l1",sessions,sessions.c.id),("l2",l2_runs,l2_runs.c.session_id),("l3",l3_runs,l3_runs.c.session_id),("l4",l4_runs,l4_runs.c.session_id)):
         row=conn.execute(select(table).where(key==sid)).mappings().first()
-        complete=bool(row and (row["state"]["scene"]=="complete" if level=="l1" else conn.execute(select(l3_runs.c.session_id).where(l3_runs.c.session_id==sid)).first() is not None if level=="l2" else row["state"]["completion"]=="complete"))
+        complete=bool(row and (l1_complete(conn,sid,row["state"],evaluation["policy"]) if level=="l1" else conn.execute(select(l3_runs.c.session_id).where(l3_runs.c.session_id==sid)).first() is not None if level=="l2" else row["state"]["completion"]=="complete"))
         levels[level]=level_summary(level,evaluation["policy"],[e for e in ledger if e["level"]==level],complete)
     actions=[r["receipt"] for r in conn.execute(select(score_actions).where(score_actions.c.session_id==sid).order_by(score_actions.c.created_at.desc(),score_actions.c.action_id.desc()).limit(100)).mappings()]
     return dict(source="server_database",session_id=sid,status="active",evaluation_id=evaluation["evaluation_id"],policy_hash=evaluation["policy_hash"],

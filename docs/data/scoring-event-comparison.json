@@ -1,5 +1,5 @@
 {
-  "revision": "composite-scoring-v3",
+  "revision": "composite-scoring-v4-l1-greetings",
   "source": "D:\\wechat\\messagerecord\\xwechat_files\\wxid_gxfhj6ejns1922_33af\\msg\\file\\2026-09\\情感密室_V6.2_评分表修改后26Aug(2).xlsx",
   "sha256": "7f8aade7935530918617c64ba3ece8b527cd5b32a1d3037a6ab463978506ccb9",
   "rows": [
@@ -68,20 +68,60 @@
       "主动与女生交谈",
       "R10 点选人物并主动交谈",
       "R10 V-2",
-      "可对应",
-      "用户已确认greet-woman即主动交谈；同一女生最多一次",
+      "已确认延迟结算",
+      "v8：greet-woman=true先留回执；首次正式进入L2才结算l1.talk.woman/yes；女生三选一",
       "L1.greet-woman",
       "修订评分表!C10:G10"
+    ],
+    [
+      "L1-02",
+      "对女生明确选择不交谈",
+      "R12 完全不点选，绕开人物（原表旧条件）",
+      "R12 V+2",
+      "用户截图修订条件",
+      "v8：有已接受的greet-woman=false且最终未选是；首次正式进入L2结算l1.talk.woman/no；条件按2026-10-06用户截图，原表仅提供数值来源",
+      "L1.greet-woman",
+      "修订评分表!C12:G12；2026-10-06用户截图（未标行号）"
+    ],
+    [
+      "L1-02",
+      "未回应女生直接进入第二幕",
+      "R11 点选人物，仅打招呼即止（原表旧条件）",
+      "R11 V=0",
+      "用户截图修订条件",
+      "v8：无已接受的greet-woman回答；首次正式进入L2结算l1.talk.woman/skipped；只关闭提示仍属未作答；条件按2026-10-06用户截图，原表仅提供数值来源",
+      "L1.greeting-finalize",
+      "修订评分表!C11:G11；2026-10-06用户截图（未标行号）"
     ],
     [
       "L1-02",
       "主动与男生交谈",
       "R10 点选人物并主动交谈",
       "R10 V-2",
-      "可对应",
-      "用户已确认greet即主动交谈；同一男生最多一次",
+      "已确认延迟结算",
+      "v8：greet=true先留回执；首次正式进入L2才结算l1.talk.man/yes；男生三选一",
       "L1.greet",
       "修订评分表!C10:G10"
+    ],
+    [
+      "L1-02",
+      "对男生明确选择不交谈",
+      "R12 完全不点选，绕开人物（原表旧条件）",
+      "R12 V+2",
+      "用户截图修订条件",
+      "v8：有已接受的greet=false且最终未选是；首次正式进入L2结算l1.talk.man/no；条件按2026-10-06用户截图，原表仅提供数值来源",
+      "L1.greet",
+      "修订评分表!C12:G12；2026-10-06用户截图（未标行号）"
+    ],
+    [
+      "L1-02",
+      "未回应男生直接进入第二幕",
+      "R11 点选人物，仅打招呼即止（原表旧条件）",
+      "R11 V=0",
+      "用户截图修订条件",
+      "v8：无已接受的greet回答；首次正式进入L2结算l1.talk.man/skipped；只关闭提示仍属未作答；条件按2026-10-06用户截图，原表仅提供数值来源",
+      "L1.greeting-finalize",
+      "修订评分表!C11:G11；2026-10-06用户截图（未标行号）"
     ],
     [
       "L1-02",
@@ -517,7 +557,7 @@
       "group_id": "l1.talk.woman",
       "option_id": "yes",
       "label": "与女生主动交谈",
-      "condition": "greetedWoman=true，首次成功",
+      "condition": "首次正式进入L2 AND greetedWoman=true",
       "source_rows": [
         10
       ],
@@ -528,13 +568,47 @@
         null
       ],
       "status": "已对应",
-      "note": "不同人物分别计一次；同一人物重复不计"
+      "note": "v8：进入第二幕结算；女生三选一；此前否后改是仅按是结算"
+    },
+    {
+      "group_id": "l1.talk.woman",
+      "option_id": "no",
+      "label": "对女生明确选择不交谈",
+      "condition": "首次正式进入L2 AND greetedWoman=false AND 有已接受的greet-woman=false回执",
+      "source_rows": [
+        12
+      ],
+      "vector": [
+        null,
+        2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "v8：进入第二幕结算；女生三选一；V+2沿用原表R12数值，条件按2026-10-06用户截图修订；原R12描述为完全不点选"
+    },
+    {
+      "group_id": "l1.talk.woman",
+      "option_id": "skipped",
+      "label": "未回应女生直接进入第二幕",
+      "condition": "首次正式进入L2 AND 无已接受的greet-woman回答",
+      "source_rows": [
+        11
+      ],
+      "vector": [
+        null,
+        0,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "v8：进入第二幕结算；女生三选一；V0沿用原表R11数值，条件按2026-10-06用户截图修订；原R11描述为仅打招呼；只关闭提示不视为否"
     },
     {
       "group_id": "l1.talk.man",
       "option_id": "yes",
       "label": "与男生主动交谈",
-      "condition": "greeted=true，首次成功",
+      "condition": "首次正式进入L2 AND greeted=true",
       "source_rows": [
         10
       ],
@@ -545,7 +619,41 @@
         null
       ],
       "status": "已对应",
-      "note": "不同人物分别计一次；同一人物重复不计"
+      "note": "v8：进入第二幕结算；男生三选一；此前否后改是仅按是结算"
+    },
+    {
+      "group_id": "l1.talk.man",
+      "option_id": "no",
+      "label": "对男生明确选择不交谈",
+      "condition": "首次正式进入L2 AND greeted=false AND 有已接受的greet=false回执",
+      "source_rows": [
+        12
+      ],
+      "vector": [
+        null,
+        2,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "v8：进入第二幕结算；男生三选一；V+2沿用原表R12数值，条件按2026-10-06用户截图修订；原R12描述为完全不点选"
+    },
+    {
+      "group_id": "l1.talk.man",
+      "option_id": "skipped",
+      "label": "未回应男生直接进入第二幕",
+      "condition": "首次正式进入L2 AND 无已接受的greet回答",
+      "source_rows": [
+        11
+      ],
+      "vector": [
+        null,
+        0,
+        null,
+        null
+      ],
+      "status": "已对应",
+      "note": "v8：进入第二幕结算；男生三选一；V0沿用原表R11数值，条件按2026-10-06用户截图修订；原R11描述为仅打招呼；只关闭提示不视为否"
     },
     {
       "group_id": "l1.lamp",

@@ -63,10 +63,17 @@ def test_no_click_scores_and_raw_delta_matches_server_ledger(client):
     result=scores(client,s,h)
     axes=result['levels']['l1']['axes']
     assert axes['A']['raw']==-1 and axes['F']['raw']==-4
-    assert axes['A']['normalized']==0 and axes['F']['normalized']==0
+    assert axes['A']['normalized'] is None and axes['F']['normalized'] is None
+    assert result['levels']['l1']['complete'] is False
     assert all(v is None for v in result['final']['vector'].values())
     assert 'total' not in result['levels']['l1']
     assert len(result['ledger'])==2 and len(result['actions'])==3
+    assert client.post(f"/api/v1/sessions/{s['id']}/levels/l2",headers=h,json={}).status_code==200
+    result=scores(client,s,h)
+    axes=result['levels']['l1']['axes']
+    assert axes['A']['normalized']==0 and axes['F']['normalized']==0
+    assert result['levels']['l1']['complete'] is True
+    assert len(result['ledger'])==4 and len(result['actions'])==4
 
 
 def test_refusal_and_rejection_are_not_zero_score_events(client):

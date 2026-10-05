@@ -304,6 +304,27 @@ test("L1-02 direct entry records no invented greetings; shore actions blocked at
   assert.equal(s.events.length, 2);
 });
 
+test("L1-02 explicit greeting refusal stays distinct from an untouched character after entry and resume", () => {
+  for (const declined of ["greet", "greet-woman"] as const) {
+    const untouched = declined === "greet" ? "greet-woman" : "greet";
+    const shore = choose(initialState(), "swim");
+    const completed = choose(choose(shore, declined, false), "enter");
+    const restored = restore(saved(completed)).state;
+    assert.equal(restored.scene, "complete");
+    assert.equal(restored.greeted, false);
+    assert.equal(restored.greetedWoman, false);
+    assert.equal(restored.events.length, 3);
+    assert.deepEqual(
+      restored.events.filter((e) => e.action.type === "choose" && e.action.choice === declined).map((e) => e.action),
+      [{ type: "choose", choice: declined, yes: false }],
+    );
+    assert.equal(
+      restored.events.some((e) => e.action.type === "choose" && e.action.choice === untouched),
+      false,
+    );
+  }
+});
+
 
 test("boat exploration never unlocks rope; bridge inspection survives resume", () => {
   let s = initialState();

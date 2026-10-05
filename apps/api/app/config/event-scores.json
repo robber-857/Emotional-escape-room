@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "event_definition_version": "server-composite-v4",
-  "event_score_version": "event-scores-v7-l2-explore",
+  "event_score_version": "event-scores-v8-l1-greetings",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -55,6 +55,26 @@
           "T": null,
           "F": null
         }
+      },
+      "no": {
+        "label": "点选女生但不交谈",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 2.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "skipped": {
+        "label": "未选择与女生打招呼，直接进入第二幕",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 0.0,
+          "T": null,
+          "F": null
+        }
       }
     },
     "l1.talk.man": {
@@ -64,6 +84,26 @@
         "vector": {
           "A": null,
           "V": -2.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "no": {
+        "label": "点选男生但不交谈",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 2.0,
+          "T": null,
+          "F": null
+        }
+      },
+      "skipped": {
+        "label": "未选择与男生打招呼，直接进入第二幕",
+        "status": "configured",
+        "vector": {
+          "A": null,
+          "V": 0.0,
           "T": null,
           "F": null
         }
@@ -661,5 +701,6 @@
     "l2.search"
   ],
   "search_settlement_version": "found-or-l2-exit-v2",
-  "explore_settlement_version": "first-entry-or-l2-exit-v1"
+  "explore_settlement_version": "first-entry-or-l2-exit-v1",
+  "greeting_settlement_version": "l2-entry-v1"
 }

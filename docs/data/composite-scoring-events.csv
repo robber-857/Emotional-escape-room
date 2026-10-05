@@ -3,8 +3,12 @@ l1.crossing,bridge,修好桥并走桥过河,repaired=true AND route=bridge，进
 l1.crossing,swim,游泳过河,route=swim，进入对岸,-1,,,-2,已对应,组内互斥；最终一次,5
 l1.crossing,ring,救生圈过河,route=ring，进入对岸,-1,,,1,已对应,组内互斥；最终一次,6
 l1.crossing,boat,修好船并划船过河,oar=true AND strokes=5 AND route=boat,1,,,0,已对应,组内互斥；最终一次,7
-l1.talk.woman,yes,与女生主动交谈,greetedWoman=true，首次成功,,-2,,,已对应,不同人物分别计一次；同一人物重复不计,10
-l1.talk.man,yes,与男生主动交谈,greeted=true，首次成功,,-2,,,已对应,不同人物分别计一次；同一人物重复不计,10
+l1.talk.woman,yes,与女生主动交谈,首次正式进入L2 AND greetedWoman=true,,-2,,,已对应,v8：进入第二幕结算；女生三选一；此前否后改是仅按是结算,10
+l1.talk.woman,no,对女生明确选择不交谈,首次正式进入L2 AND greetedWoman=false AND 有已接受的greet-woman=false回执,,2,,,已对应,v8：进入第二幕结算；女生三选一；V+2沿用原表R12数值，条件按2026-10-06用户截图修订；原R12描述为完全不点选,12
+l1.talk.woman,skipped,未回应女生直接进入第二幕,首次正式进入L2 AND 无已接受的greet-woman回答,,0,,,已对应,v8：进入第二幕结算；女生三选一；V0沿用原表R11数值，条件按2026-10-06用户截图修订；原R11描述为仅打招呼；只关闭提示不视为否,11
+l1.talk.man,yes,与男生主动交谈,首次正式进入L2 AND greeted=true,,-2,,,已对应,v8：进入第二幕结算；男生三选一；此前否后改是仅按是结算,10
+l1.talk.man,no,对男生明确选择不交谈,首次正式进入L2 AND greeted=false AND 有已接受的greet=false回执,,2,,,已对应,v8：进入第二幕结算；男生三选一；V+2沿用原表R12数值，条件按2026-10-06用户截图修订；原R12描述为完全不点选,12
+l1.talk.man,skipped,未回应男生直接进入第二幕,首次正式进入L2 AND 无已接受的greet回答,,0,,,已对应,v8：进入第二幕结算；男生三选一；V0沿用原表R11数值，条件按2026-10-06用户截图修订；原R11描述为仅打招呼；只关闭提示不视为否,11
 l1.lamp,lit_taken,点亮并带走灯,L1结束 AND lampLit=true AND lampTaken=true,,,,2,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,13
 l1.lamp,lit_left,点亮但未带走灯,L1结束 AND lampLit=true AND lampTaken=false,,,,0,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,14
 l1.lamp,unlit_taken,未点亮但带走灯,L1结束 AND lampLit=false AND lampTaken=true,,,,0,已对应,四种终态只命中一种；不累计拿/不拿/亮/不亮的操作分,15

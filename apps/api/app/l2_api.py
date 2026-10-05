@@ -1,4 +1,4 @@
-from .score_service import record as record_scoring
+from .score_service import record as record_scoring, finalize_greetings
 from datetime import datetime, timezone
 from copy import deepcopy
 import logging
@@ -81,6 +81,7 @@ def register_l2(app, authorize):
             if row is None:
                 row = dict(session_id=str(sid), rules_version=RULES_VERSION, version=0, state=initial_state(), time_anchor=None)
                 conn.execute(insert(l2_runs).values(**row))
+                finalize_greetings(conn, sid)
             return snapshot(row, parent)
 
     @app.get("/api/v1/sessions/{sid}/levels/l2", tags=["L2"])

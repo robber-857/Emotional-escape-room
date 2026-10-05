@@ -20,9 +20,13 @@ async original=>{
    check(duplicate.duplicate&&(await get()).ledger.length===1,'retry duplicated score');
    await page.screenshot({path:`output/playwright/scoring-${mobile?'touch':'desktop'}-delta.png`});await toggle();
    await click('房门');const enterWait=response();await click('是');await enterWait;
-   let score=await get();check(score.levels.l1.axes.A.normalized===0&&score.levels.l1.axes.F.normalized===0,'L1 normalization incorrect');
+   let score=await get();check(!score.levels.l1.complete&&score.levels.l1.axes.A.normalized===null&&score.levels.l1.axes.F.normalized===null,'L1 finalized before L2 entry');
+   check(!score.ledger.some(e=>e.group_id.startsWith('l1.talk.')),'greetings scored before L2 entry');
    await page.getByRole('link',{name:'进入第二幕',exact:true}).click();
    await page.waitForFunction(()=>document.querySelector('[aria-label="走到桌边"]')?.getAttribute('aria-disabled')==='false');
+   score=await get();check(score.levels.l1.complete&&score.levels.l1.axes.A.normalized===0&&score.levels.l1.axes.F.normalized===0,'L1 normalization incorrect');
+   const greetings=score.ledger.filter(e=>e.group_id.startsWith('l1.talk.'));
+   check(greetings.length===2&&greetings.every(e=>e.option_id==='skipped'&&e.status==='applied'&&e.vector.V===0),'untouched greetings did not settle as V0');
 
    await click('整理家具');
    await page.getByRole('button',{name:'移动单人沙发',exact:true}).waitFor();

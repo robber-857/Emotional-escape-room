@@ -26,6 +26,8 @@ def published_policy():
         raise ValueError("INVALID_SEARCH_SETTLEMENT_VERSION")
     if data.get("explore_settlement_version") != "first-entry-or-l2-exit-v1":
         raise ValueError("INVALID_EXPLORE_SETTLEMENT_VERSION")
+    if data.get("greeting_settlement_version") != "l2-entry-v1":
+        raise ValueError("INVALID_GREETING_SETTLEMENT_VERSION")
     if set(data["groups"]) != set(GROUP_OPTIONS):
         raise ValueError("SCORE_GROUP_SET_MISMATCH")
     for group, options in data["groups"].items():

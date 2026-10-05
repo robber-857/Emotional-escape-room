@@ -1,7 +1,7 @@
 """Derive final score groups only from server-accepted facts, never clicks."""
 
 GROUP_OPTIONS={
-    "l1.crossing":{"bridge","swim","ring","boat"},"l1.talk.woman":{"yes"},"l1.talk.man":{"yes"},
+    "l1.crossing":{"bridge","swim","ring","boat"},"l1.talk.woman":{"yes","no","skipped"},"l1.talk.man":{"yes","no","skipped"},
     "l1.lamp":{"lit_taken","lit_left","unlit_taken","unlit_left"},
     "l2.seat":{"window","table","none"},"l2.first-try":{"attempt"},"l2.retry":{"retry","abandon"},
     "l2.explore":{"direct","returned","stayed"},"l2.search":{"declined","short_quit","long","found_short"},
@@ -23,8 +23,15 @@ def candidates(level, before, state, action, policy=None):
     if level == "l1":
         if state["route"] and not before.get("route"):
             add("l1.crossing", state["route"])
-        for key, group in (("greeted", "l1.talk.man"), ("greetedWoman", "l1.talk.woman")):
-            if state[key] and not before.get(key): add(group,"yes")
+        delayed_greetings = (policy or {}).get("greeting_settlement_version") == "l2-entry-v1"
+        for key, choice, group in (("greeted", "greet", "l1.talk.man"), ("greetedWoman", "greet-woman", "l1.talk.woman")):
+            if delayed_greetings:
+                if action["type"] == "greeting-finalize" and state["scene"] == "complete":
+                    declined = any(e["action"].get("choice") == choice and e["action"].get("yes") is False
+                                   for e in state.get("events", []))
+                    add(group, "yes" if state[key] else "no" if declined else "skipped")
+            elif state[key] and not before.get(key):
+                add(group,"yes")
         if state["scene"] == "complete" and before["scene"] != "complete":
             add("l1.lamp", ("lit" if state["lampLit"] else "unlit")+("_taken" if state["lampTaken"] else "_left"))
     elif level == "l2":
