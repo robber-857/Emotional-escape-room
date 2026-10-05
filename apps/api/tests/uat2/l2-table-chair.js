@@ -4,10 +4,22 @@ async original=>{
   const context=await original.context().browser().newContext({viewport:mobile?{width:844,height:390}:{width:1280,height:720},hasTouch:mobile,isMobile:mobile});
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   const check=(ok,message)=>{if(!ok)throw new Error(`${mobile}/${scenario}: ${message}`);};
+  const enterCover = async () => {
+    const cover = page.locator('[data-game-cover]');
+    await page.waitForFunction(() => {
+      const cover = document.querySelector('[data-game-cover]');
+      return !cover || cover.getAttribute('data-stage') === '3';
+    });
+    await page.locator('body').ariaSnapshot();
+    if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+      await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+    await cover.waitFor({ state: 'hidden' });
+    await page.locator('body').ariaSnapshot();
+  };
   const click=async name=>{const prompt=page.getByRole('region',{name:'场景提示',exact:true}).getByRole('button',{name,exact:true});const b=await prompt.count()?prompt:page.getByRole('button',{name,exact:true});if(mobile)await b.tap();else await b.click();};
   const action=async(name,type)=>{const wait=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().method()==='POST'&&r.request().postDataJSON().action.type===type);await click(name);const body=await(await wait).json();check(body.accepted,body.code);return body;};
   try{
-   await page.goto(base+'/');await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();await click('河面');await action('是','choose');await click('房门');const parent=(await action('是','choose')).session;
+   await page.goto(base+'/');await enterCover();await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();await click('河面');await action('是','choose');await click('房门');const parent=(await action('是','choose')).session;
    await page.getByRole('link',{name:'进入第二幕',exact:true}).click();await page.waitForFunction(()=>document.querySelector('[aria-label="走到桌边"]')?.getAttribute('aria-disabled')==='false');
    const initial=(await action('整理家具','layout-start')).session;
    await page.waitForFunction(()=>document.querySelector('[aria-label="移动桌椅组合"]')?.getAttribute('aria-disabled')==='false');

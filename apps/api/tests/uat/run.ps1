@@ -12,6 +12,14 @@ try {
     if (-not $ready.persistence_ready) { throw 'Database is not ready' }
     & $cli --yes --package @playwright/cli playwright-cli "-s=$sessionName" open $BaseUrl
     if ($LASTEXITCODE -ne 0) { throw 'Browser startup failed' }
+    & $cli --yes --package @playwright/cli playwright-cli "-s=$sessionName" snapshot | Out-Null
+    $entryResult = & $cli --yes --package @playwright/cli playwright-cli "-s=$sessionName" run-code --filename apps/api/tests/uat/cover-entry.js 2>&1
+    $entryExitCode = $LASTEXITCODE
+    $entryResult | Set-Content -Encoding utf8 (Join-Path $outputDir 'cover-entry.log')
+    if ($entryExitCode -ne 0 -or ($entryResult -join "`n") -match '### Error' -or ($entryResult -join "`n") -notmatch '"status":\s*"PASS"') {
+        throw 'UAT cover entry failed. See output/playwright/uat/cover-entry.log'
+    }
+    Write-Host 'PASS cover-entry'
     foreach ($caseName in @('swim','ring','boat','bridge','mobile')) {
         & $cli --yes --package @playwright/cli playwright-cli "-s=$sessionName" snapshot | Out-Null
         $result = & $cli --yes --package @playwright/cli playwright-cli "-s=$sessionName" run-code --filename "apps/api/tests/uat/$caseName.js" 2>&1

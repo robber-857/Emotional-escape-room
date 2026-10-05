@@ -23,6 +23,18 @@ async original => {
       const check = (ok, message) => { if (!ok) throw Error(message); };
       const activate = locator => mobile ? locator.tap() : locator.click();
       const click = name => activate(page.getByRole('button', { name, exact: true }));
+      const enterCover = async () => {
+        const cover = page.locator('[data-game-cover]');
+        await page.waitForFunction(() => {
+          const cover = document.querySelector('[data-game-cover]');
+          return !cover || cover.getAttribute('data-stage') === '3';
+        });
+        await page.locator('body').ariaSnapshot();
+        if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+          await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+        await cover.waitFor({ state: 'hidden' });
+        await page.locator('body').ariaSnapshot();
+      };
       const idle = name => page.waitForFunction(name =>
         document.querySelector(`[aria-label="${name}"]`)?.getAttribute('aria-disabled') === 'false', name);
       const score = () => page.evaluate(async () => {
@@ -60,6 +72,7 @@ async original => {
       };
       try {
         await page.goto(base + '/');
+        await enterCover();
         await click('开始探索');
         await idle('河面');
         await page.locator('body').ariaSnapshot();
@@ -88,6 +101,7 @@ async original => {
         }
         const answered = await state();
         await page.reload();
+        await enterCover();
         await click('继续上次旅程');
         await idle(names.man);
         check(JSON.stringify((await state()).events) === JSON.stringify(answered.events), 'refresh lost accepted greeting evidence');
@@ -100,6 +114,7 @@ async original => {
         check(!beforeL2.levels.l1.complete && beforeL2.levels.l1.axes.V.normalized === null, 'L1 score finalized before actual L2 start');
         check(greetings(beforeL2).length === 0 && settlements(beforeL2).length === 0, 'early greeting settlement receipt');
         await page.reload();
+        await enterCover();
         await click('继续上次旅程');
         await page.getByRole('link', { name: '进入第二幕', exact: true }).waitFor();
         check(greetings(await score()).length === 0, 'refreshing completed L1 settled greetings');

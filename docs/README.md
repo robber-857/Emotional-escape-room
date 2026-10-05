@@ -11,7 +11,7 @@
 | 5 | [回执优化开发任务](scoring-receipts-development.md) | 原开发规格、字段、事务、版本、验收 |
 | 6 | [测试入口](uat-test-matrix.md) | UAT命令与验证边界 |
 
-实现说明：[L1](l1-backend.md)、[L2](l2-backend.md)、[L3](l3-backend.md)、[L4](l4-backend.md)、[结果页](final-results.md)。接口事实以代码与对应版本回执为准。
+实现说明：[游戏封面](game-cover.md)、[L1](l1-backend.md)、[L2](l2-backend.md)、[L3](l3-backend.md)、[L4](l4-backend.md)、[结果页](final-results.md)。接口事实以代码与对应版本回执为准。
 
 L2 当前重叠采用 [可见轮廓算法](l2-visual-overlap-fix.md)，不是早期地面矩形；靠墙与次数规则见 [计分测试指南](scoring-test-guide.md)。[整理房间升级](l2-04-upgrade.md)保留阶段演进。
 

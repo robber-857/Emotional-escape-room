@@ -134,7 +134,7 @@ def test_rope_fifth_click_resume_retry_and_forged_position(client):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
     assert s["state"]["ropeClicks"] == 0
-    assert s["rules_version"] == "l1-rules-v4-hidden-rope"
+    assert s["rules_version"] == "l1-rules-v5-wood-placement"
     assert send(client, s, h, "take-rope")[0].status_code == 409
     assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     assert send(client, s, h, "take-rope", False)[0].status_code == 200

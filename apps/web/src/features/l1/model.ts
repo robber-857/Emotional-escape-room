@@ -14,6 +14,7 @@ export type Subject =
   | "door";
 export type Choice =
   | "inspect-bridge"
+  | "place-wood"
   | "take-rope"
   | "collect-wood"
   | "repair"
@@ -35,6 +36,7 @@ export type GameEvent = { id: string; at: string; action: Action };
 export type L1State = {
   scene: "river" | "shore" | "complete";
   wood: boolean;
+  woodPlaced: boolean;
   repaired: boolean;
   bridgeInspected: boolean;
   ropeClicks: number;
@@ -52,6 +54,7 @@ export type L1State = {
 export const initialState = (): L1State => ({
   scene: "river",
   wood: false,
+  woodPlaced: false,
   repaired: false,
   bridgeInspected: false,
   ropeClicks: 0,
@@ -81,8 +84,10 @@ export function canChoose(s: L1State, choice: Choice): boolean {
   switch (choice) {
     case "inspect-bridge":
       return !s.bridgeInspected && !s.repaired;
+    case "place-wood":
+      return !s.woodPlaced && !s.repaired;
     case "take-rope":
-      return s.bridgeInspected && s.ropeClicks < 5 && !s.repaired;
+      return (s.bridgeInspected || s.woodPlaced) && s.ropeClicks < 5 && !s.repaired;
     case "collect-wood":
       return s.ropeClicks === 5 && !s.wood && !s.repaired;
     case "repair":
@@ -124,6 +129,8 @@ export function transition(s: L1State, event: GameEvent): L1State {
   switch (a.choice) {
     case "inspect-bridge":
       return { ...next, bridgeInspected: true };
+    case "place-wood":
+      return { ...next, woodPlaced: true };
     case "take-rope":
       return { ...next, ropeClicks: s.ropeClicks + 1 };
     case "collect-wood":
@@ -315,6 +322,7 @@ export const labels: Record<Subject, string> = {
 };
 export const choiceLabels: Record<Choice, string> = {
   "inspect-bridge": "查看木桥",
+  "place-wood": "木板就位",
   "take-rope": "拨动上方草丛",
   "collect-wood": "拾起木板",
   repair: "拾起绳子和木板修桥",

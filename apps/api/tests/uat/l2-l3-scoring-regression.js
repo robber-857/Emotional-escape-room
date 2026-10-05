@@ -4,13 +4,25 @@ async original=>{
   const context=await original.context().browser().newContext({viewport:mobile?{width:844,height:390}:{width:1440,height:900},hasTouch:mobile,isMobile:mobile});
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   const check=(ok,message)=>{if(!ok)throw Error(message);};
+  const enterCover = async () => {
+    const cover = page.locator('[data-game-cover]');
+    await page.waitForFunction(() => {
+      const cover = document.querySelector('[data-game-cover]');
+      return !cover || cover.getAttribute('data-stage') === '3';
+    });
+    await page.locator('body').ariaSnapshot();
+    if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+      await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+    await cover.waitFor({ state: 'hidden' });
+    await page.locator('body').ariaSnapshot();
+  };
   const click=async name=>{const b=page.getByRole('button',{name,exact:true});await(mobile?b.tap():b.click());};
   const get=()=>page.evaluate(async()=>{const a=JSON.parse(localStorage.getItem('emotional:l1:server:v1'));return(await fetch(`/api/v1/sessions/${a.id}/scoring`,{headers:{Authorization:`Bearer ${a.token}`}})).json();});
   const panel=page.getByRole('complementary',{name:'服务端计分测试'});
   const toggle=()=>panel.getByRole('button',{name:/^服务端计分/}).click();
   const response=()=>page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().method()==='POST');
   try{
-   await page.goto(base+'/');await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();
+   await page.goto(base+'/');await enterCover();await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();
    await click('河面');check((await get()).ledger.length===0,'opening a client prompt generated score');
    const wait=response();await click('是');const swam=await wait,body=await swam.json();
    check(body.score_effect.delta.A===-1&&body.score_effect.delta.F===-2,'wrong swim delta');

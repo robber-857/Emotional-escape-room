@@ -1,0 +1,176 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="600" viewBox="0 0 600 600" fill="none" aria-hidden="true">
+  <defs>
+    <linearGradient id="arch" x1="250" y1="434" x2="338" y2="149" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#8B602D" stop-opacity=".18"/>
+      <stop offset=".28" stop-color="#D19B51" stop-opacity=".7"/>
+      <stop offset=".67" stop-color="#FFDEA0"/>
+      <stop offset="1" stop-color="#FFF0C7"/>
+    </linearGradient>
+    <linearGradient id="inside" x1="304" y1="149" x2="302" y2="451" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#D6A15D" stop-opacity=".065"/>
+      <stop offset=".48" stop-color="#A67132" stop-opacity=".035"/>
+      <stop offset="1" stop-color="#171411" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="stem" x1="220" y1="437" x2="226" y2="325" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#79623B" stop-opacity=".25"/>
+      <stop offset=".7" stop-color="#988152" stop-opacity=".72"/>
+      <stop offset="1" stop-color="#B4A16C" stop-opacity=".7"/>
+    </linearGradient>
+    <linearGradient id="leafGreen" x1="0" y1="0" x2="24" y2="-30" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#17231B"/>
+      <stop offset=".55" stop-color="#3E4934"/>
+      <stop offset="1" stop-color="#71704A"/>
+    </linearGradient>
+    <linearGradient id="leafOlive" x1="0" y1="0" x2="24" y2="-31" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#282B1B"/>
+      <stop offset=".6" stop-color="#636141"/>
+      <stop offset="1" stop-color="#B1A56B"/>
+    </linearGradient>
+    <linearGradient id="leafGold" x1="0" y1="0" x2="22" y2="-34" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#4D3B22"/>
+      <stop offset=".52" stop-color="#A78A51"/>
+      <stop offset="1" stop-color="#DDC38A"/>
+    </linearGradient>
+    <radialGradient id="floor">
+      <stop stop-color="#E4B468" stop-opacity=".21"/>
+      <stop offset=".45" stop-color="#C79148" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#C79148" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="halo">
+      <stop stop-color="#D8A15A" stop-opacity=".09"/>
+      <stop offset=".65" stop-color="#B9823F" stop-opacity=".025"/>
+      <stop offset="1" stop-color="#B9823F" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="light">
+      <stop stop-color="#FFF3D2"/>
+      <stop offset=".13" stop-color="#FFE4A7" stop-opacity=".93"/>
+      <stop offset=".4" stop-color="#E3A459" stop-opacity=".45"/>
+      <stop offset="1" stop-color="#DB9450" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="archGlow" x="-70%" y="-30%" width="240%" height="160%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="6.5"/>
+    </filter>
+    <filter id="softGlow" x="-100%" y="-100%" width="300%" height="300%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="2.8"/>
+    </filter>
+    <filter id="floorBlur" x="-30%" y="-150%" width="160%" height="400%" color-interpolation-filters="sRGB">
+      <feGaussianBlur stdDeviation="6"/>
+    </filter>
+    <path id="archPath" d="M249 447V201C249 168.4 272.4 142 301 142S353 168.4 353 201V447"/>
+    <g id="greenLeaf">
+      <path d="M0 0C-1-13 7-28 22-34C25-20 19-8 0 0Z" fill="url(#leafGreen)"/>
+      <path d="M1-1L20-31" stroke="#9A9770" stroke-opacity=".15" stroke-width=".7"/>
+    </g>
+    <g id="oliveLeaf">
+      <path d="M0 0C-1-13 7-28 22-34C25-20 19-8 0 0Z" fill="url(#leafOlive)"/>
+      <path d="M1-1L20-31" stroke="#C1B180" stroke-opacity=".19" stroke-width=".7"/>
+    </g>
+    <g id="goldLeaf">
+      <path d="M0 0C-1-12 5-26 18-32C21-20 16-8 0 0Z" fill="url(#leafGold)"/>
+      <path d="M1-1L17-29" stroke="#F2DBA8" stroke-opacity=".24" stroke-width=".7"/>
+    </g>
+  </defs>
+
+  <ellipse cx="301" cy="308" rx="154" ry="195" fill="url(#halo)"/>
+  <ellipse cx="301" cy="459" rx="142" ry="21" fill="url(#floor)" filter="url(#floorBlur)"/>
+  <path d="M249 447V201C249 168.4 272.4 142 301 142S353 168.4 353 201V447Z" fill="url(#inside)"/>
+
+  <!-- The outer botanicals stay in shadow, with light catching a few edges. -->
+  <g opacity=".67">
+    <path d="M239 450C211 427 190 397 184 354C180 328 174 305 163 284" stroke="#48503A" stroke-width="1.4"/>
+    <path d="M214 422C195 414 179 409 165 407M196 392C177 386 166 377 160 364M185 358C181 344 187 331 193 323" stroke="#51533A" stroke-width=".9"/>
+    <use href="#greenLeaf" transform="translate(180 321) rotate(-61) scale(.68)"/>
+    <use href="#greenLeaf" transform="translate(178 338) rotate(-18) scale(.8)"/>
+    <use href="#greenLeaf" transform="translate(185 357) rotate(25) scale(.75)"/>
+    <use href="#greenLeaf" transform="translate(190 369) rotate(-99) scale(.83)"/>
+    <use href="#greenLeaf" transform="translate(195 390) rotate(30) scale(.86)"/>
+    <use href="#greenLeaf" transform="translate(202 405) rotate(-95) scale(.84)"/>
+    <use href="#greenLeaf" transform="translate(215 423) rotate(26) scale(.85)"/>
+    <use href="#greenLeaf" transform="translate(167 407) rotate(-91) scale(.63)"/>
+    <use href="#greenLeaf" transform="translate(160 365) rotate(-69) scale(.55)"/>
+    <use href="#greenLeaf" transform="translate(184 345) rotate(12) scale(.51)"/>
+    <use href="#greenLeaf" transform="translate(170 300) rotate(-57) scale(.53)"/>
+  </g>
+  <g opacity=".56">
+    <path d="M357 448C387 427 407 398 415 358C419 338 426 320 439 305" stroke="#55553B" stroke-width="1.3"/>
+    <path d="M396 401C410 397 425 390 434 380M414 363C409 347 408 336 409 322" stroke="#535539" stroke-width=".9"/>
+    <use href="#greenLeaf" transform="translate(380 428) rotate(-94) scale(.76)"/>
+    <use href="#greenLeaf" transform="translate(391 413) rotate(39) scale(.84)"/>
+    <use href="#greenLeaf" transform="translate(404 392) rotate(-91) scale(.8)"/>
+    <use href="#greenLeaf" transform="translate(409 378) rotate(32) scale(.76)"/>
+    <use href="#greenLeaf" transform="translate(416 359) rotate(-62) scale(.68)"/>
+    <use href="#greenLeaf" transform="translate(421 340) rotate(31) scale(.6)"/>
+    <use href="#greenLeaf" transform="translate(431 321) rotate(19) scale(.53)"/>
+    <use href="#greenLeaf" transform="translate(430 385) rotate(30) scale(.61)"/>
+    <use href="#greenLeaf" transform="translate(410 334) rotate(-58) scale(.52)"/>
+  </g>
+
+  <!-- The narrow illuminated arch. -->
+  <use href="#archPath" stroke="url(#arch)" stroke-width="6" opacity=".48" filter="url(#archGlow)"/>
+  <use href="#archPath" stroke="url(#arch)" stroke-width="2.1" stroke-linecap="round"/>
+  <path d="M254 436V202C254 172 274.8 147 301 147S348 172 348 202V436" stroke="#E2B16E" stroke-width=".7" opacity=".29"/>
+  <path d="M251 303V202C251 172.2 271.6 145 301 145" stroke="#FFF3CE" stroke-width=".6" opacity=".68"/>
+  <path d="M352 198C350 176 338 157 320 148" stroke="#FFF4D6" stroke-width=".9" opacity=".74"/>
+
+  <g opacity=".82">
+    <path d="M245 450C242 419 231 395 217 367C208 348 205 330 207 312" stroke="url(#stem)" stroke-width="1.4"/>
+    <path d="M234 414C218 412 205 406 193 395M220 373C227 360 234 353 241 348" stroke="#797045" stroke-width=".9" opacity=".67"/>
+    <use href="#oliveLeaf" transform="translate(211 345) rotate(-68) scale(.69)"/>
+    <use href="#oliveLeaf" transform="translate(216 363) rotate(4) scale(.66)"/>
+    <use href="#oliveLeaf" transform="translate(224 385) rotate(-77) scale(.74)"/>
+    <use href="#oliveLeaf" transform="translate(231 403) rotate(7) scale(.63)"/>
+    <use href="#oliveLeaf" transform="translate(239 426) rotate(-93) scale(.76)"/>
+    <use href="#oliveLeaf" transform="translate(214 410) rotate(-81) scale(.67)"/>
+    <use href="#oliveLeaf" transform="translate(230 358) rotate(16) scale(.48)"/>
+    <use href="#oliveLeaf" transform="translate(207 326) rotate(-46) scale(.5)"/>
+  </g>
+  <g opacity=".77">
+    <path d="M354 450C369 428 378 404 376 376C375 360 377 344 383 330" stroke="#8D7950" stroke-width="1.25" opacity=".75"/>
+    <path d="M372 412C385 412 396 407 404 399" stroke="#8D7950" stroke-width=".9" opacity=".56"/>
+    <use href="#oliveLeaf" transform="translate(365 432) rotate(-80) scale(.58)"/>
+    <use href="#oliveLeaf" transform="translate(373 414) rotate(41) scale(.71)"/>
+    <use href="#oliveLeaf" transform="translate(376 398) rotate(-78) scale(.64)"/>
+    <use href="#oliveLeaf" transform="translate(376 379) rotate(34) scale(.64)"/>
+    <use href="#oliveLeaf" transform="translate(377 362) rotate(-63) scale(.58)"/>
+    <use href="#oliveLeaf" transform="translate(380 346) rotate(5) scale(.46)"/>
+    <use href="#oliveLeaf" transform="translate(397 406) rotate(37) scale(.57)"/>
+  </g>
+
+  <!-- A single warm sprig grows into the doorway light. -->
+  <g>
+    <path d="M260 449C263 416 264 385 271 356C276 334 286 314 292 294" stroke="#BE9C60" stroke-width="1.45" opacity=".76"/>
+    <path d="M267 376C258 368 253 361 250 352M280 334C290 327 298 320 303 312" stroke="#D3B276" stroke-width=".85" opacity=".65"/>
+    <use href="#goldLeaf" transform="translate(265 411) rotate(-66) scale(.69)" opacity=".77"/>
+    <use href="#goldLeaf" transform="translate(268 390) rotate(7) scale(.69)" opacity=".85"/>
+    <use href="#goldLeaf" transform="translate(272 370) rotate(-62) scale(.63)" opacity=".9"/>
+    <use href="#goldLeaf" transform="translate(277 347) rotate(5) scale(.62)" opacity=".94"/>
+    <use href="#goldLeaf" transform="translate(284 328) rotate(-47) scale(.47)" opacity=".98"/>
+    <use href="#goldLeaf" transform="translate(289 309) rotate(-8) scale(.39)"/>
+    <use href="#goldLeaf" transform="translate(292 322) rotate(16) scale(.4)" opacity=".87"/>
+    <use href="#goldLeaf" transform="translate(258 367) rotate(-62) scale(.4)" opacity=".74"/>
+  </g>
+
+  <path d="M216 450C241 444 269 446 293 449C315 451 342 446 370 450" stroke="#D0A25D" stroke-opacity=".22" stroke-width="1"/>
+  <path d="M260 453C283 456 310 456 337 452" stroke="#ECC282" stroke-opacity=".28" stroke-width=".7"/>
+
+  <!-- A small distant light and quiet airborne flecks. -->
+  <circle cx="323" cy="217" r="24" fill="url(#light)" opacity=".68"/>
+  <circle cx="323" cy="217" r="3" fill="#FFDCAE" opacity=".7" filter="url(#softGlow)"/>
+  <circle cx="323" cy="217" r="1.25" fill="#FFF0CE"/>
+  <path d="M319.2 217H326.8M323 212.7V221.3" stroke="#FFDEA2" stroke-width=".45" opacity=".45"/>
+
+  <g fill="#DBC18C">
+    <circle cx="230" cy="174" r=".8" opacity=".62"/>
+    <circle cx="374" cy="179" r=".65" opacity=".63"/>
+    <circle cx="221" cy="236" r=".7" opacity=".36"/>
+    <circle cx="393" cy="246" r=".6" opacity=".48"/>
+    <circle cx="282" cy="118" r=".65" opacity=".39"/>
+    <circle cx="346" cy="112" r=".8" opacity=".45"/>
+    <circle cx="368" cy="291" r=".8" opacity=".48"/>
+    <circle cx="292" cy="266" r=".6" opacity=".38"/>
+    <circle cx="330" cy="346" r=".55" opacity=".3"/>
+    <circle cx="243" cy="283" r=".6" opacity=".42"/>
+    <circle cx="202" cy="294" r=".65" opacity=".24"/>
+  </g>
+  <path d="M211 197H214M212.5 195.5V198.5M389 216H392M390.5 214.5V217.5" stroke="#E2C28B" stroke-width=".45" opacity=".48"/>
+</svg>

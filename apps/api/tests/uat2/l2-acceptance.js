@@ -5,13 +5,25 @@ async original=>{
   const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
   const base=original.url().split('/').slice(0,3).join('/');
   const check=(ok,message)=>{if(!ok)throw new Error(message);};
+  const enterCover = async () => {
+    const cover = page.locator('[data-game-cover]');
+    await page.waitForFunction(() => {
+      const cover = document.querySelector('[data-game-cover]');
+      return !cover || cover.getAttribute('data-stage') === '3';
+    });
+    await page.locator('body').ariaSnapshot();
+    if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+      await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+    await cover.waitFor({ state: 'hidden' });
+    await page.locator('body').ariaSnapshot();
+  };
   const click=async name=>{const inPrompt=page.getByRole('region',{name:'场景提示',exact:true}).getByRole('button',{name,exact:true});const button=await inPrompt.count()?inPrompt:page.getByRole('button',{name,exact:true});if(mobile)await button.tap();else await button.click();};
   const idle=()=>page.waitForFunction(()=>!document.querySelector('[aria-label="场景提示"]')?.inert && !document.querySelector('[role="alert"]')?.textContent?.includes('同步失败'));
   const action=async(name,type)=>{const wait=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().method()==='POST'&&(!type||r.request().postDataJSON().action.type===type));const [response]=await Promise.all([wait,click(name)]);const result=await response.json();check(result.accepted,result.code);await idle();return result;};
   const snapshot=async()=>page.evaluate(async()=>{const s=JSON.parse(localStorage.getItem('emotional:l1:server:v1'));const h={Authorization:`Bearer ${s.token}`};const l1=await(await fetch(`/api/v1/sessions/${s.id}`,{headers:h})).json();const l2=await(await fetch(`/api/v1/sessions/${s.id}/levels/l2`,{headers:h})).json();return {l1,l2};});
   try{
    await page.goto(base+'/l2');await page.getByRole('alert').filter({hasText:'请先完成第一幕'}).waitFor();
-   await page.goto(base+'/');await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();
+   await page.goto(base+'/');await enterCover();await click('开始探索');await page.getByRole('button',{name:'河面',exact:true}).waitFor();
    await click('河面');await action('是','choose');await click('房门');const completed=await action('是','choose');
    check(completed.session.state.scene==='complete','L1 not complete');
    const parent=completed.session;await page.getByRole('link',{name:'进入第二幕',exact:true}).click();

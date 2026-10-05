@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
 import "./globals.css";
-import {ScoreInspector} from "../features/scoring/ScoreInspector";
+import { GameShell } from "../features/cover/GameShell";
 
 export const metadata: Metadata = {
-  title: "分离之河 · 情感密室",
-  description: "第一幕：在河岸探索，找到属于你的过河方式。",
+  title: "情感密室 · The Emotional Room",
+  description: "一个关于你与爱的探索之旅。每一次选择，都是一次靠近真实的自己。",
   robots: { index: false, follow: false },
 };
 
@@ -13,7 +13,7 @@ export default function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="zh-CN">
-      <body>{children}<ScoreInspector/></body>
+      <body><GameShell>{children}</GameShell></body>
     </html>
   );
 }

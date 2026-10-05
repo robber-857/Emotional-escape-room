@@ -7,6 +7,18 @@ async original => {
       const page = await context.newPage(), errors = [];
       page.on('pageerror', e => errors.push(e.message));
       const check = (ok, message) => { if (!ok) throw new Error(message); };
+      const enterCover = async () => {
+        const cover = page.locator('[data-game-cover]');
+        await page.waitForFunction(() => {
+          const cover = document.querySelector('[data-game-cover]');
+          return !cover || cover.getAttribute('data-stage') === '3';
+        });
+        await page.locator('body').ariaSnapshot();
+        if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+          await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+        await cover.waitFor({ state: 'hidden' });
+        await page.locator('body').ariaSnapshot();
+      };
       try {
         // Prepare only the prerequisite journey and unlocked door via the real API.
         const auth = await (await context.request.post(base+'/api/v1/sessions', {data:{}})).json();
@@ -22,6 +34,7 @@ async original => {
         await context.request.post(root+'/levels/l2',{headers,data:{}}); version = 0;
         for (const action of [{type:'arrive-table'},{type:'select-key',key:'key-1'},{type:'try-door',key:'key-1'},{type:'select-key',key:'key-2'},{type:'try-door',key:'key-2'}]) await send(root+'/levels/l2',action);
         await page.goto(base);
+        await enterCover();
         await page.evaluate(s => localStorage.setItem('emotional:l1:server:v1',JSON.stringify(s)),auth);
         await page.goto(base+'/l2');
         await page.getByRole('navigation',{name:'房间探索操作'}).waitFor();

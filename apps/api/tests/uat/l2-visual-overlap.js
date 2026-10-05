@@ -1,6 +1,18 @@
 async page=>{
  const base='http://127.0.0.1:3120';
- await page.goto(base);
+ const enterCover = async () => {
+   const cover = page.locator('[data-game-cover]');
+   await page.waitForFunction(() => {
+     const cover = document.querySelector('[data-game-cover]');
+     return !cover || cover.getAttribute('data-stage') === '3';
+   });
+   await page.locator('body').ariaSnapshot();
+   if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+     await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+   await cover.waitFor({ state: 'hidden' });
+   await page.locator('body').ariaSnapshot();
+ };
+ await page.goto(base);await enterCover();
  await page.setViewportSize({width:1440,height:900});
  await page.evaluate(async()=>{
   const auth=await(await fetch('/api/v1/sessions',{method:'POST',headers:{'Content-Type':'application/json'},body:'{}'})).json();

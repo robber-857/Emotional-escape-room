@@ -2,6 +2,18 @@ async page => {
  const check=(ok,msg)=>{if(!ok)throw new Error(msg)};
  const snap=async()=>await page.locator('body').ariaSnapshot();
  const click=async name=>{await page.getByRole('button',{name,exact:true}).click();await snap();};
+ const enterCover = async () => {
+   const cover = page.locator('[data-game-cover]');
+   await page.waitForFunction(() => {
+     const cover = document.querySelector('[data-game-cover]');
+     return !cover || cover.getAttribute('data-stage') === '3';
+   });
+   await page.locator('body').ariaSnapshot();
+   if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+     await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+   await cover.waitFor({ state: 'hidden' });
+   await page.locator('body').ariaSnapshot();
+ };
  const action=async name=>{const wait=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().method()==='POST');await click(name);const r=await(await wait).json();check(r.accepted,r.code);return r;};
  await click('打开游戏菜单');await click('重新开始旅程');await click('确认重新开始');
  await click('小船');check((await snap()).includes('小船还缺一支船桨'),'missing oar prompt');await click('关闭提示，继续探索');
@@ -11,7 +23,7 @@ async page => {
  await click('拨开草丛 · 1 / 5');await page.getByRole('button',{name:'重试同步 / 载入服务器进度'}).waitFor();check(serverProcessed,'did not commit');
  const retry=await action('重试同步 / 载入服务器进度');check(retry.duplicate&&retry.session.state.bushClicks===2,'duplicate counted twice');check(retry.session.state.events.at(-1).id===originalId,'retry id changed');
  const third=await action('草丛');check(third.session.state.bushClicks===3,'third');await action('拨开草丛 · 3 / 5');
- await page.reload();await snap();await click('继续上次旅程');await page.getByRole('button',{name:'草丛',exact:true}).waitFor();
+ await page.reload();await enterCover();await snap();await click('继续上次旅程');await page.getByRole('button',{name:'草丛',exact:true}).waitFor();
  const fifth=await action('草丛');check(fifth.session.state.bushClicks===5&&fifth.session.state.oar,'fifth search');
  await page.getByRole('button',{name:'是',exact:true}).click({trial:true});
  const board=await action('是');check(board.session.state.rowing&&board.session.state.strokes===0,'board strokes');

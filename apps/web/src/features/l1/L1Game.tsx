@@ -226,8 +226,9 @@ export function L1Game() {
         action.choice === "enter" ? "第一幕已结束。" : `${choiceLabels[action.choice]}。`,
       );
       if (action.choice === "inspect-bridge") setSelected("bridge");
+      else if (action.choice === "place-wood") setSelected("planks");
       else if (action.choice === "search") {
-        setSelected(next.oar ? "boat" : null);
+        setSelected(next.oar ? "boat" : "bush");
         setMessage(next.oar ? "船桨落在了小船上。" : "草叶轻轻晃动。" );
       }
       else if (action.choice === "take-rope") {
@@ -261,6 +262,11 @@ export function L1Game() {
     positionsRef.current = next;
     setPositions(next);
     save(stateRef.current, next);
+    if (next.planks && woodAtGap(next.planks) && !stateRef.current.woodPlaced &&
+        !stateRef.current.repaired && stateRef.current.scene === "river") {
+      await act({ type: "choose", choice: "place-wood", yes: true });
+      if (!stateRef.current.woodPlaced) return;
+    }
     if (
       repairMaterialsReady(next) &&
       stateRef.current.ropeClicks === 5 &&
@@ -328,16 +334,22 @@ export function L1Game() {
   ) {
     const woodReady = positions.planks && woodAtGap(positions.planks);
     const ropeReady = positions.rope && ropeAtGap(positions.rope);
-    if (woodReady && !ropeReady)
-      prompt.body = !state.bridgeInspected ? "木板已放到缺口。" : state.ropeClicks < 5 ? "木板就位，还缺绳子。" : "木板就位，用绳子固定。";
+    if (woodReady && state.woodPlaced && !ropeReady)
+      prompt.body = "木板就位，还缺绳子。";
     else if (ropeReady && !woodReady)
       prompt.body = "绳子就位，还缺木板。";
   }
-  function select(subject: Subject) {
+  async function select(subject: Subject) {
     if (blocked) return;
     if (subject === "rope-bush") {
       setSelected(null);
-      if (state.bridgeInspected && state.ropeClicks < 5 && !state.repaired)
+      // Reconcile wood placed in a saved cosmetic draft before this event existed.
+      const wood = positionsRef.current.planks;
+      if (wood && woodAtGap(wood) && !stateRef.current.woodPlaced && !stateRef.current.repaired) {
+        await act({ type: "choose", choice: "place-wood", yes: true });
+        if (!stateRef.current.woodPlaced) return;
+      }
+      if ((stateRef.current.bridgeInspected || stateRef.current.woodPlaced) && stateRef.current.ropeClicks < 5 && !stateRef.current.repaired)
         void act({ type: "choose", choice: "take-rope", yes: true });
       else setMessage("草叶轻轻晃动。" );
       return;

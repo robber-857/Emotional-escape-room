@@ -8,6 +8,18 @@ async original => {
     await page.getByRole('button', { name, exact: true }).tap();
     await page.locator('body').ariaSnapshot();
   };
+  const enterCover = async () => {
+    const cover = page.locator('[data-game-cover]');
+    await page.waitForFunction(() => {
+      const cover = document.querySelector('[data-game-cover]');
+      return !cover || cover.getAttribute('data-stage') === '3';
+    });
+    await page.locator('body').ariaSnapshot();
+    if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+      await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+    await cover.waitFor({ state: 'hidden' });
+    await page.locator('body').ariaSnapshot();
+  };
   const action = async name => {
     const response = page.waitForResponse(r => r.url().endsWith('/actions') && r.request().method() === 'POST');
     await tap(name);
@@ -18,6 +30,7 @@ async original => {
   const results = [];
   try {
     await page.goto(original.url());
+    await enterCover();
     await tap('开始探索');
     for (const route of ['swim', 'ring', 'boat']) {
       if (results.length) {
@@ -43,6 +56,7 @@ async original => {
           result = await action('是');
         } else {
           await page.reload();
+          await enterCover();
           await tap('继续上次旅程');
           await tap('小船');
           for (let i = 1; i < 5; i++) result = await action(`划桨一次 ${i} / 5`);
