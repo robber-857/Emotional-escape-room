@@ -46,3 +46,11 @@
   background: #6bbd9f;
   border-color: #a4ddc4;
 }
+
+:root a.gameYes {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #8dcfb4;
+  border-radius: 7px;
+}
