@@ -79,11 +79,11 @@ export function L4Game({preview}:{preview:boolean}) {
   }
   return <main className={styles.game}>
     <aside className={styles.rotation}><h2>请翻转手机</h2><p>横屏后，选择你想走向的那扇门。</p></aside>
-    <section className={styles.stage} aria-label="第四幕：四扇出口之门">
+    <section className={styles.stage} aria-label="第四幕：远方之门">
       <div className={styles.art}>
         <img key={attempt} className={styles.scene} src="/game/l4/doors-reference.png" alt="玫瑰环绕的金色拱廊，四扇门从左到右通向田园小屋、海岸灯塔、森林小径与花园宫殿" onLoad={()=>{setReady(true);setAssetError(false);}} onError={()=>{setReady(false);setAssetError(true);}}/>
       </div>
-      <LevelHeading className={styles.heading} ready={ready&&loaded}><p>第四幕 · 出口</p><h1>门的选择</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={ready&&loaded}><p>第四幕 · 出口</p><h1>远方之门</h1></LevelHeading>
       <nav className={styles.back}><RestartJourney/><Link href={back}>← 返回密室</Link>{!preview&&<button aria-label="查看第四幕记录" onClick={()=>setTraceOpen(true)}>☰</button>}</nav>
       {doors.map((door,index)=><button key={door.id} data-door={door.id} data-door-state={confirmed?(confirmed.id===door.id?"chosen":"dimmed"):"available"} style={{"--left":`${door.left}%`,"--width":`${door.width}%`,"--delay":`${index*90}ms`} as CSSProperties} className={`${styles.door} ${confirmed?.id===door.id?styles.chosen:confirmed?styles.dimmed:""}`} aria-label={`${door.name}，${door.view}`} aria-pressed={confirmed?.id===door.id} disabled={!ready||!loaded||!!error||!!confirmed||busy} onClick={()=>setSelected(door)}/>)}
       <footer className={styles.footer}><p role="status">{busy?"正在确认选择…":confirmed?`你选择了${confirmed.name}`:""}</p><span>{item?`随身携带 · ${items[item]}`:"随身物品 · 无"}</span></footer>
