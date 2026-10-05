@@ -42,7 +42,7 @@ export function L1Game() {
   const [loadAttempt, setLoadAttempt] = useState(0);
   const [saveStatus, setSaveStatus] = useState("连接服务器后开始保存进度");
   const [message, setMessage] = useState(
-    "河水静静流淌。先看看岸边，寻找过河的方式。",
+    "河水静静流淌。",
   );
   const [modal, setModal] = useState<"help" | "restart" | "trace" | null>(null);
   const [externalChange, setExternalChange] = useState(false);
@@ -157,7 +157,7 @@ export function L1Game() {
       }
       setPendingSync(false);
       setReceipts(await getReceipts(session));
-      setSelected(null); setStarted(true); setMessage("已从服务器恢复进度，可以继续探索。");
+      setSelected(null); setStarted(true); setMessage("进度已恢复。");
     } catch (error) {
       if (error instanceof RejectedAction) {
         applySession(error.session); setSelected(null); setReceipts((r) => [...r, error.receipt]);
@@ -179,7 +179,7 @@ export function L1Game() {
     )
       return;
     if (stateRef.current.events.length >= 1000) {
-      setMessage("本次探索记录已满，请从菜单重新开始。");
+      setMessage("记录已满，请重新开始。");
       return;
     }
     const session = sessionRef.current;
@@ -215,20 +215,24 @@ export function L1Game() {
       }, 450);
       setMessage(
         next.scene === "shore"
-          ? "五次划桨后，你抵达了对岸。"
-          : `船向前移动了一段。已完成 ${next.strokes} 次划桨。`,
+          ? "你已抵达对岸。"
+          : "小船缓缓向前。",
       );
     } else if (!action.yes) {
-      setMessage("你选择了暂不这样做。可以继续探索，之后也能重新选择。");
+      setMessage("暂不行动，继续探索。" );
       setSelected(null);
     } else {
       setMessage(
-        `${choiceLabels[action.choice]}${action.choice === "enter" ? "，第一幕体验已结束。" : "。"}`,
+        action.choice === "enter" ? "第一幕已结束。" : `${choiceLabels[action.choice]}。`,
       );
-      if (action.choice === "search") setSelected(next.oar ? "boat" : "bush");
+      if (action.choice === "inspect-bridge") setSelected("bridge");
+      else if (action.choice === "search") {
+        setSelected(next.oar ? "boat" : null);
+        setMessage(next.oar ? "船桨落在了小船上。" : "草叶轻轻晃动。" );
+      }
       else if (action.choice === "take-rope") {
-        setSelected("rope");
-        setMessage(next.ropeClicks === 5 ? "绳子掉到了岸边，现在可以拖动它修桥。" : `再点击${5 - next.ropeClicks}次就可以拿下来了。`);
+        setSelected(null);
+        setMessage(next.ropeClicks === 5 ? "绳子跃出，落在岸边。" : "草叶轻轻晃动。" );
       }
       else if (action.choice === "repair") setSelected("bridge");
       else if (action.choice === "greet") setSelected("person");
@@ -295,7 +299,7 @@ export function L1Game() {
     setModal(null);
     setExternalChange(false);
     setStarted(true);
-    setMessage("河水静静流淌。先看看岸边，寻找过河的方式。");
+    setMessage("河水静静流淌。");
     save(next, {});
   }
   const restartFromExit = useRef(false);
@@ -325,17 +329,24 @@ export function L1Game() {
     const woodReady = positions.planks && woodAtGap(positions.planks);
     const ropeReady = positions.rope && ropeAtGap(positions.rope);
     if (woodReady && !ropeReady)
-      prompt.body = "木板已放到缺口，还需要把绳子移过来固定。";
+      prompt.body = !state.bridgeInspected ? "木板已放到缺口。" : state.ropeClicks < 5 ? "木板就位，还缺绳子。" : "木板就位，用绳子固定。";
     else if (ropeReady && !woodReady)
-      prompt.body = "绳子已放到缺口，还需要把木板移过来。";
+      prompt.body = "绳子就位，还缺木板。";
   }
   function select(subject: Subject) {
     if (blocked) return;
+    if (subject === "rope-bush") {
+      setSelected(null);
+      if (state.bridgeInspected && state.ropeClicks < 5 && !state.repaired)
+        void act({ type: "choose", choice: "take-rope", yes: true });
+      else setMessage("草叶轻轻晃动。" );
+      return;
+    }
     setSelected(subject);
+    if (subject === "bridge" && !state.bridgeInspected && !state.repaired)
+      void act({ type: "choose", choice: "inspect-bridge", yes: true });
     if (subject === "bush" && !state.oar)
       act({ type: "choose", choice: "search", yes: true });
-    if (subject === "rope" && state.ropeClicks < 5)
-      act({ type: "choose", choice: "take-rope", yes: true });
   }
   const anchor: Record<Subject, [number, number]> = {
     bridge: [33, 65],
@@ -343,6 +354,7 @@ export function L1Game() {
     boat: [71 - state.strokes * 2, 57 - state.strokes * 1.4],
     ring: [82, 65],
     bush: [88, 53],
+    "rope-bush": [90, 42],
     planks: [83, 81],
     rope: state.ropeClicks < 5 ? [83.4, 51.6] : [71.5, 83],
     person: [62.6, 60.5],
@@ -383,9 +395,7 @@ export function L1Game() {
               <span className="eyebrow">一段关于选择的旅程</span>
               <h2>光在河的另一边</h2>
               <p>
-                不必急着抵达。看看周围，
-                <br />
-                找到你想走的那条路。
+                慢慢探索，选择自己的路。
               </p>
               {loaded ? (
                 <div className="welcomeActions">
@@ -408,7 +418,7 @@ export function L1Game() {
                 </div>
               ) : assetError ? (
                 <>
-                  <p role="alert">场景素材加载失败，请检查网络后重试。</p>
+                  <p role="alert">素材加载失败，请重试。</p>
                   <button onClick={() => setLoadAttempt((n) => n + 1)}>
                     重新加载
                   </button>
@@ -424,7 +434,7 @@ export function L1Game() {
           <div className="welcome">
             <div role="alert">
               <h2>正在准备场景</h2>
-              <p>{assetError ? "场景素材加载失败，请重试。" : "加载中…"}</p>
+              <p>{assetError ? "素材加载失败，请重试。" : "加载中…"}</p>
               {assetError && (
                 <button onClick={() => setLoadAttempt((n) => n + 1)}>
                   重新加载
@@ -438,7 +448,7 @@ export function L1Game() {
             <div>
               <span className="eyebrow">第一幕 · 已走过</span>
               <h2>你来到了门前</h2>
-              <p>这段河岸上的选择，已经留在旅程里。</p>
+              <p>选择已留在旅程里。</p>
               <dl>
                 <div>
                   <dt>过河方式</dt>
@@ -464,7 +474,7 @@ export function L1Game() {
                   </dd>
                 </div>
               </dl>
-              <p className="nextNotice">第二幕可继续探索桌边、座位和钥匙。</p>
+              <p className="nextNotice">第二幕，新的房间。</p>
               <Link className="primary l2Entry" href="/l2">进入第二幕</Link>
               <button className="primary gameYes" onClick={() => setModal("restart")}>
                 再探索一次
@@ -524,21 +534,6 @@ export function L1Game() {
                           是
                         </button>
                       </>
-                    )}
-                    {prompt.action === "search" && (
-                      <button
-                        className="primary gameYes"
-                        onClick={() =>
-                          act({ type: "choose", choice: "search", yes: true })
-                        }
-                      >
-                        拨开草丛 · {state.bushClicks} / 5
-                      </button>
-                    )}
-                    {prompt.action === "take-rope" && (
-                      <button className="primary gameYes" onClick={() => act({ type: "choose", choice: "take-rope", yes: true })}>
-                        拿下绳子 · {state.ropeClicks} / 5
-                      </button>
                     )}
                     {prompt.action === "paddle" && (
                       <button
@@ -612,9 +607,9 @@ export function L1Game() {
         {started && !prompt && (
           <p className="sceneStatus" role="status">
             {effect === "repair"
-              ? "木板正在铺合，缺口渐渐连起来…"
+              ? "木板铺合，木桥修好了。"
               : effect === "oar"
-                ? "船桨从草丛中跃出，落在了小船上。"
+                ? "船桨落在了小船上。"
                 : message}
           </p>
         )}
@@ -676,15 +671,10 @@ export function L1Game() {
           <>
             <span className="eyebrow">慢慢探索，无需赶路</span>
             <h2>操作说明</h2>
-            <p>
-              点击场景中的物件，在物件上方选择“是”或“否”。关闭提示不会替你作出选择。
-            </p>
-            <p>
-              绳子挂在救生圈后方的木桩上，点击绳子或“拿下绳子”共五次后，会掉到岸边原位置。拿下后可拖动绳子；木板和救生圈也可以拖动，键盘聚焦后可用方向键移动。木板和绳子的中心都落到发光的断桥缺口内才会修桥；落在其他位置会保留摆放。修好桥后仍需确认才过河。
-            </p>
-            <p>
-              点击草丛或拨草提示共五次，船桨会跳出并安装到小船。确认上船后，按五次“划桨一次”抵达对岸。人物、拿灯、点灯和进门分别决定；可以带未点亮的灯离开。
-            </p>
+            <p>点击物件，查看详情。</p>
+            <p>关闭提示不代表选择。</p>
+            <p>可拖动物件调整位置。</p>
+            <p>方向键可微调位置。</p>
             <div className="decisions">
               <button onClick={() => setMotion((v) => !v)}>
                 {motion ? "减少场景动效" : "开启场景动效"}

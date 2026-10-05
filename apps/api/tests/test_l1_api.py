@@ -66,6 +66,7 @@ def test_boat_fifth_search_and_fifth_paddle(client):
 def test_bridge_geometry_and_completion(client):
     s, h = session(client)
     assert send(client, s, h, "collect-wood")[0].json()["code"] == "ROPE_NOT_RELEASED"
+    assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     for _ in range(5):
         assert send(client, s, h, "take-rope")[0].status_code == 200
     assert send(client, s, h, "collect-wood")[0].json()["code"] == "REPAIR_MATERIALS_NOT_AT_GAP"
@@ -97,6 +98,7 @@ def test_switch_route_while_rowing_preserves_receipts_and_scores_only_arrival(cl
     assert s["state"]["rowing"] is True
     assert s["state"]["strokes"] == strokes
     s.update(client.get(url, headers=h).json())
+    assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     for _ in range(5):
         assert send(client, s, h, "take-rope")[0].status_code == 200
     positions = {"planks": {"x": (960-2446.355)/2944, "y": (1160-1426.75)/1568},
@@ -132,7 +134,9 @@ def test_rope_fifth_click_resume_retry_and_forged_position(client):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
     assert s["state"]["ropeClicks"] == 0
-    assert s["rules_version"] == "l1-rules-v3-route-switch"
+    assert s["rules_version"] == "l1-rules-v4-hidden-rope"
+    assert send(client, s, h, "take-rope")[0].status_code == 409
+    assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     assert send(client, s, h, "take-rope", False)[0].status_code == 200
     assert s["state"]["ropeClicks"] == 0
     for count in range(1, 6):
@@ -148,7 +152,7 @@ def test_rope_fifth_click_resume_retry_and_forged_position(client):
         assert client.get(url, headers=h).json()["state"]["ropeClicks"] == count
     assert send(client, s, h, "take-rope")[0].status_code == 409
     assert s["state"]["ropeClicks"] == 5
-    accepted = [r for r in client.get(url + "/events", headers=h).json() if r["accepted"] and r["action"].get("yes")]
+    accepted = [r for r in client.get(url + "/events", headers=h).json() if r["accepted"] and r["action"].get("yes") and r["action"].get("choice") == "take-rope"]
     assert len(accepted) == 5
 
 def test_legacy_session_keeps_rope_available(client):
@@ -192,9 +196,45 @@ def test_idempotency_payload_conflict_and_version_conflict(client):
 @pytest.mark.parametrize("choice,field", [("search", "bushClicks"), ("take-rope", "ropeClicks")])
 def test_concurrent_requests_only_one_advances(client, choice, field):
     s, h = session(client)
+    if choice == "take-rope":
+        assert send(client, s, h, "inspect-bridge")[0].status_code == 200
+    version = s["version"]
     url = f"/api/v1/sessions/{s['id']}/actions"
     def post(_):
-        return client.post(url, headers=h, json=dict(action_id=str(uuid4()), expected_version=0, action=dict(type="choose",choice=choice,yes=True)))
+        return client.post(url, headers=h, json=dict(action_id=str(uuid4()), expected_version=version, action=dict(type="choose",choice=choice,yes=True)))
     with ThreadPoolExecutor(max_workers=2) as pool: results = list(pool.map(post, range(2)))
     assert sorted(r.status_code for r in results) == [200,409]
     assert client.get(f"/api/v1/sessions/{s['id']}", headers=h).json()["state"][field] == 1
+
+
+def test_rope_gate_boat_progress_and_inspection_resume(client):
+    s, h = session(client)
+    for _ in range(5):
+        assert send(client, s, h, "take-rope")[0].status_code == 409
+    for _ in range(5):
+        assert send(client, s, h, "search")[0].status_code == 200
+    assert send(client, s, h, "board")[0].status_code == 200
+    assert send(client, s, h, "take-rope")[0].status_code == 409
+    assert s["state"]["ropeClicks"] == 0
+    r, body = send(client, s, h, "inspect-bridge")
+    assert r.status_code == 200
+    url = f"/api/v1/sessions/{s['id']}"
+    assert client.post(url + "/actions", headers=h, json=body).json()["duplicate"] is True
+    s.update(client.get(url, headers=h).json())
+    assert s["state"]["bridgeInspected"] is True
+    assert send(client, s, h, "inspect-bridge")[0].status_code == 409
+    for count in range(1, 6):
+        assert send(client, s, h, "take-rope")[0].status_code == 200
+        s.update(client.get(url, headers=h).json())
+        assert s["state"]["ropeClicks"] == count
+    assert client.get(url + "/scoring", headers=h).json()["ledger"] == []
+
+
+def test_legacy_rope_progress_preserved():
+    from app.domain import initial_state, normalize_state
+    state = initial_state()
+    del state["bridgeInspected"]
+    assert normalize_state(state)["bridgeInspected"] is False
+    state["ropeClicks"] = 3
+    assert normalize_state(state)["bridgeInspected"] is True
+    assert normalize_state(state)["ropeClicks"] == 3

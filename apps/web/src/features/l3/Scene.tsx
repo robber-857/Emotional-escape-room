@@ -4,7 +4,7 @@ import {Layer} from "./SceneLayer";
 import {CarryScene} from "./CarryScene";
 import styles from "./l3.module.css";
 
-export const assets = ["entry.png","outside.png","storm.png","closed-window.png","curtain.png","curtain-mask.svg","open-curtain-window-open.png","open-curtain-mask.svg","detail.svg","scarf.png","lantern.png","umbrella.png","doll.png","key.png","journal.png","rope.png","backpack.png","tv.png","tv-screen.png"];
+export const assets = ["entry.png","outside.png","storm.png","closed-window.png","curtain.png","curtain-mask.svg","open-curtain-window-open.png","open-curtain-mask.svg","detail.svg","scarf.png","lantern.png","umbrella.png","doll.png","key.png","journal.png","rope.png","backpack.png","tv.png","tv-screen.png","waiting-sofa-front.png"];
 export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart,televisionOff}:{televisionOff:boolean;state:State;blocked:boolean;reduced:boolean;onPrompt:(d:Decision)=>void;onItem:(id:Item)=>void;onCarryStart:()=>void}) {
   if(state.segment==="carry")return <CarryScene televisionOff={televisionOff} state={state} blocked={blocked} onItem={onItem} onStart={onCarryStart}/>;
   const storm = state.choices.close === true;
@@ -27,6 +27,8 @@ export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart,televi
     {storm ? state.choices.window ? <Layer name="closed-window"/> : <Layer name="storm" crop={[-.0064,-.046,1.1262,1.0951]}/> : opened ? <Layer name="outside" crop={[-.0082,-.0501,1.1297,1.0985]}/> : <Layer name="entry" x={-15} crop={[-.0064,-.0539,1.1392,1.1077]}/>}
     {state.choices.curtain ? <g mask="url(#l3-open-curtain)"><Layer name="open-curtain-window-open" x={-129} y={-18} w={2071} h={1115}/></g> : storm && state.choices.window && <g mask="url(#l3-closed-curtain)"><Layer name="curtain" x={49.5} y={-51.5} w={2106} h={1134} crop={[-.013,.0004,1.013,.9994]}/></g>}
     <Television off={televisionOff}/>
+    {/* Keep the sofa's feet at the original waiting area; the back rises above it. */}
+    <image href="/game/l3/waiting-sofa-front.png" x="710" y="625" width="300" height="300" pointerEvents="none"/>
     <image href="/game/l3/detail.svg" x="633" y="321.49" width="10" height="10"/>
     {state.segment === "storm" && <>
       {state.choices.open === null ? hit("open",200,120,340,710,"查看半开的门","看看门") : <>
@@ -36,7 +38,7 @@ export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart,televi
       {actionsReady&&<>
       {hit("window",690,140,580,500,"查看左窗")}{hit("curtain",1480,140,430,540,"查看右窗窗帘")}
       {hit("television",1290,510,230,330,"查看电视机电源开关")}
-      {hit("wait",710,795,300,130,"坐稳等待")}
+      {hit("wait",710,625,300,300,"坐稳等待")}
 </>}
     </>}
   </svg>;

@@ -25,7 +25,7 @@ class StrictModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 class Choose(StrictModel):
     type: Literal["choose"]
-    choice: Literal["take-rope", "collect-wood", "repair", "cross-bridge", "swim", "use-ring", "search", "board", "greet", "greet-woman", "take-lamp", "light-lamp", "enter"]
+    choice: Literal["inspect-bridge", "take-rope", "collect-wood", "repair", "cross-bridge", "swim", "use-ring", "search", "board", "greet", "greet-woman", "take-lamp", "light-lamp", "enter"]
     yes: StrictBool
 class Paddle(StrictModel):
     type: Literal["paddle"]

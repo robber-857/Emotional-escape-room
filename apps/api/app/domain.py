@@ -1,17 +1,17 @@
 """L1 rules v1. UI coordinates are claims, validated here; never accept client state."""
 from copy import deepcopy
 
-RULES_VERSION = "l1-rules-v3-route-switch"
-SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", RULES_VERSION)
+RULES_VERSION = "l1-rules-v4-hidden-rope"
+SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", "l1-rules-v3-route-switch", RULES_VERSION)
 
 def initial_state(): #初始化这一关
-    return dict(scene="river", wood=False, repaired=False, ropeClicks=0, oar=False, bushClicks=0,
+    return dict(scene="river", wood=False, repaired=False, bridgeInspected=False, ropeClicks=0, oar=False, bushClicks=0,
                 rowing=False, strokes=0, route=None, greeted=False, greetedWoman=False,
                 lampTaken=False, lampLit=False, events=[])
 
 def normalize_state(state):
     # Existing sessions had a freely available rope. Preserve their progress.
-    return {"ropeClicks": 5, **state}
+    return {"ropeClicks": 5, "bridgeInspected": bool(state.get("ropeClicks", 5) or state.get("repaired")), **state}
 
 def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态，choice是要做的操作
     if s["scene"] == "complete": return False
@@ -19,7 +19,8 @@ def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态
         fields = {"greet": "greeted", "greet-woman": "greetedWoman",
                   "take-lamp": "lampTaken", "light-lamp": "lampLit"}
         return choice == "enter" or (choice in fields and not s[fields[choice]])
-    return {"take-rope": s.get("ropeClicks", 5) < 5 and not s["repaired"],
+    return {"inspect-bridge": not s.get("bridgeInspected", False) and not s["repaired"],
+            "take-rope": s.get("bridgeInspected", False) and s.get("ropeClicks", 5) < 5 and not s["repaired"],
             "collect-wood": not s["wood"] and not s["repaired"],
             "repair": s["wood"] and not s["repaired"], "cross-bridge": s["repaired"],
             "swim": True, "use-ring": True, "search": not s["oar"], "board": s["oar"] and not s["rowing"]}.get(choice, False)
@@ -48,7 +49,8 @@ def apply_action(state, action, positions):#真正执行游戏操作
         raise ValueError("ROPE_NOT_RELEASED")
     if choice in ("collect-wood", "repair") and not materials_ready(positions):
         raise ValueError("REPAIR_MATERIALS_NOT_AT_GAP")
-    if choice == "take-rope": s["ropeClicks"] += 1
+    if choice == "inspect-bridge": s["bridgeInspected"] = True
+    elif choice == "take-rope": s["ropeClicks"] += 1
     elif choice == "collect-wood": s["wood"] = True
     elif choice == "repair": s.update(repaired=True, wood=False)
     elif choice == "search":

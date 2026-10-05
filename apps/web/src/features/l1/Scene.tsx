@@ -7,6 +7,7 @@ import type { Positions } from "./save";
 
 export const assetNames = [
   "rope",
+  "rope-bush",
   "river-broken",
   "river-repaired",
   "plant-back",
@@ -42,6 +43,7 @@ const slots: Record<string, Rect> = {
   "plant-left": { x: 2136.88, y: 805.97, w: 274, h: 364 },
   "plant-low": { x: 2088.12, y: 848.32, w: 274, h: 276.32 },
   rope: { x: 1999, y: 1312, w: 211, h: 203 },
+  "rope-bush": { x: 2500, y: 390, w: 350, h: 525 },
   boat: { x: 1852.89, y: 889.09, w: 524.59, h: 429.02 },
   post: { x: 2376.55, y: 925.76, w: 36.54, h: 249.52 },
   ring: { x: 2333.08, y: 1045.01, w: 175, h: 157.04 },
@@ -151,9 +153,7 @@ export function Scene({
   }
   function layer(id: string, subject?: Subject, movable = false) {
     const r = slots[id],
-      delta = id === "rope" && state.ropeClicks < 5
-        ? { x: 350 / W, y: -490 / H }
-        : draft[id] || positions[id] || { x: 0, y: 0 };
+      delta = draft[id] || positions[id] || { x: 0, y: 0 };
     const isBoat = (id === "boat" || id === "oar") && state.rowing;
     const dx = delta.x * W + (isBoat ? -state.strokes * 60 : 0);
     const dy = delta.y * H + (isBoat ? -state.strokes * 22 : 0);
@@ -242,7 +242,9 @@ export function Scene({
           onAnimationEnd={() => setShake(null)}
         >
           <g transform={id === "rope" ? "translate(2104.5 1413.5) scale(0.75) translate(-2104.5 -1413.5)" : undefined}>
-          <Sprite id={id} />
+          {id === "rope-bush"
+            ? <image href={asset(id)} x={r.x} y={r.y} width={r.w} height={r.h}/>
+            : <Sprite id={id} />}
           {subject && (
             <rect
               className={`objectOutline ${selected === subject ? "selected" : ""}`}
@@ -380,8 +382,9 @@ export function Scene({
             {hotspot("bridge", 740, 1010, 490, 260)}
           </g>
           <g data-layer="props">
+            {layer("rope-bush", "rope-bush")}
             {layer("boat", "boat")}
-            {!state.repaired && layer("rope", "rope", state.ropeClicks === 5)}
+            {!state.repaired && state.ropeClicks === 5 && layer("rope", "rope", true)}
             {layer("ring", "ring", true)}
             {state.oar && (
               <g

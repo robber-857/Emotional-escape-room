@@ -5,6 +5,7 @@ export type Subject =
   | "boat"
   | "ring"
   | "bush"
+  | "rope-bush"
   | "rope"
   | "planks"
   | "woman"
@@ -12,6 +13,7 @@ export type Subject =
   | "lamp"
   | "door";
 export type Choice =
+  | "inspect-bridge"
   | "take-rope"
   | "collect-wood"
   | "repair"
@@ -34,6 +36,7 @@ export type L1State = {
   scene: "river" | "shore" | "complete";
   wood: boolean;
   repaired: boolean;
+  bridgeInspected: boolean;
   ropeClicks: number;
   oar: boolean;
   bushClicks: number;
@@ -50,6 +53,7 @@ export const initialState = (): L1State => ({
   scene: "river",
   wood: false,
   repaired: false,
+  bridgeInspected: false,
   ropeClicks: 0,
   oar: false,
   bushClicks: 0,
@@ -75,8 +79,10 @@ export function canChoose(s: L1State, choice: Choice): boolean {
     );
   }
   switch (choice) {
+    case "inspect-bridge":
+      return !s.bridgeInspected && !s.repaired;
     case "take-rope":
-      return s.ropeClicks < 5 && !s.repaired;
+      return s.bridgeInspected && s.ropeClicks < 5 && !s.repaired;
     case "collect-wood":
       return s.ropeClicks === 5 && !s.wood && !s.repaired;
     case "repair":
@@ -116,6 +122,8 @@ export function transition(s: L1State, event: GameEvent): L1State {
   // An explicit no is evidence; closing a prompt is not a refusal.
   if (!a.yes) return next;
   switch (a.choice) {
+    case "inspect-bridge":
+      return { ...next, bridgeInspected: true };
     case "take-rope":
       return { ...next, ropeClicks: s.ropeClicks + 1 };
     case "collect-wood":
@@ -154,13 +162,13 @@ export type Prompt = {
   body: string;
   choice?: Choice;
   yes?: string;
-  action?: "paddle" | "search" | "take-rope";
+  action?: "paddle";
   next?: Subject;
 };
 export function promptFor(s: L1State, subject: Subject): Prompt {
   if (s.rowing && subject === "boat")
     return {
-      title: `划向对岸 · ${s.strokes} / 5`,
+      title: "划向对岸",
       body: "点击一次，划桨一次。",
       action: "paddle",
       yes: "划桨一次",
@@ -177,33 +185,29 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
         : s.wood
           ? {
               title: "把木板和绳子移到缺口",
-              body: "拖动到缺口；方向键也可移动。",
+              body: "将材料拖到缺口。",
               next: "planks",
               yes: "查看木板",
             }
           : {
               title: "桥面缺了一段",
-              body: "修桥需要木板和绳子。",
+              body: "先将木板拖到缺口。",
               next: "planks",
               yes: "查看木板",
             };
+    case "rope-bush":
+      return { title: "草叶轻轻晃动", body: "" };
     case "rope":
-      if (s.ropeClicks < 5 && !s.repaired) return {
-        title: "拿下绳子",
-        body: `还需点击${5 - s.ropeClicks}次。`,
-        action: "take-rope",
-        yes: "拿下绳子",
-      };
       return {
         title: s.repaired ? "绳子已用于修桥" : "用绳子固定木板",
-        body: "拖动木板和绳子到缺口。",
+        body: s.repaired ? "木桥已连接两岸。" : "将绳子拖到缺口。",
       };
     case "planks":
       return {
-        title: s.repaired ? "木板已经用来修桥" : "拾起绳子和木板修桥",
+        title: s.repaired ? "木板已用于修桥" : "拾起木板",
         body: s.repaired
           ? "木桥已连接两岸。"
-          : "拖动木板和绳子到缺口。",
+          : "将木板拖到缺口。",
       };
     case "water":
       return {
@@ -229,23 +233,19 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
           }
         : {
             title: "要拨开草丛吗？",
-            body: `还需点击${5 - s.bushClicks}次。`,
-            action: "search",
-            yes: "拨开草丛",
+            body: "草叶轻轻晃动。",
           };
     case "boat":
       return s.oar
         ? {
             title: "要划船过去吗？",
-            body: "上船后需划桨五次。",
+            body: "船桨已装好。",
             choice: "board",
             yes: "是，上船",
           }
         : {
             title: "小船还缺一支船桨",
-            body: "船桨在附近的草丛中。",
-            next: "bush",
-            yes: "查看草丛",
+            body: "在岸边找找看。",
           };
     case "woman":
       return s.greetedWoman
@@ -305,6 +305,7 @@ export const labels: Record<Subject, string> = {
   boat: "小船",
   ring: "救生圈",
   bush: "草丛",
+  "rope-bush": "上方草丛",
   planks: "木板",
   rope: "绳子",
   person: "右侧岸边的男子",
@@ -313,7 +314,8 @@ export const labels: Record<Subject, string> = {
   door: "房门",
 };
 export const choiceLabels: Record<Choice, string> = {
-  "take-rope": "拿下绳子",
+  "inspect-bridge": "查看木桥",
+  "take-rope": "拨动上方草丛",
   "collect-wood": "拾起木板",
   repair: "拾起绳子和木板修桥",
   "cross-bridge": "从桥过河",

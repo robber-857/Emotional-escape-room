@@ -32,6 +32,7 @@ test("bridge requires wood and repair; repairing alone does not cross", () => {
   assert.equal(choose(s, "cross-bridge"), s);
   assert.equal(choose(s, "repair"), s);
   assert.equal(choose(s, "collect-wood"), s);
+  s = choose(s, "inspect-bridge");
   for (let i = 0; i < 5; i++) s = choose(s, "take-rope");
   s = choose(s, "collect-wood");
   assert.equal(s.wood, true);
@@ -57,9 +58,10 @@ test("explicit no records refusal without locking subsequent yes", () => {
 
 test("rope releases on fifth unique click and survives resume", () => {
   let s = initialState();
-  assert.equal(promptFor(s, "rope").title, "拿下绳子");
+  assert.equal(choose(s, "take-rope"), s);
+  s = choose(s, "inspect-bridge");
   for (let i = 1; i <= 5; i++) {
-    assert.equal(promptFor(s, "rope").body, `还需点击${6 - i}次。`);
+    assert.equal(promptFor(s, "rope-bush").body, "");
     const e = event({ type: "choose", choice: "take-rope", yes: true });
     s = transition(s, e);
     assert.equal(s.ropeClicks, i);
@@ -113,11 +115,12 @@ test("rowing permits exploring and changing route before arrival, including afte
     s = restore(saved(s)).state;
     assert.equal(promptFor(s, "water").choice, "swim");
     assert.equal(promptFor(s, "ring").choice, "use-ring");
-    assert.equal(promptFor(s, "rope").action, "take-rope");
+    assert.equal(choose(s, "take-rope"), s);
     assert.equal(promptFor(s, "boat").action, "paddle");
     const declined = choose(s, "swim", false);
     assert.equal(declined.rowing, true);
     assert.equal(paddle(declined).strokes, strokes + 1);
+    s = choose(s, "inspect-bridge");
     for (let i = 0; i < 5; i++) s = choose(s, "take-rope");
     s = choose(choose(s, "collect-wood"), "repair");
     for (const [choice, route] of [["swim", "swim"], ["use-ring", "ring"], ["cross-bridge", "bridge"]] as const) {
@@ -167,7 +170,7 @@ test("prompts follow actual prerequisites instead of offering impossible yes act
   const s = initialState();
   assert.equal(promptFor(s, "bridge").choice, undefined);
   assert.equal(promptFor(s, "bridge").next, "planks");
-  assert.equal(promptFor(s, "boat").next, "bush");
+  assert.equal(promptFor(s, "boat").next, undefined);
   assert.equal(
     promptFor(choose(s, "collect-wood"), "bridge").choice,
     undefined,
@@ -299,4 +302,31 @@ test("L1-02 direct entry records no invented greetings; shore actions blocked at
   assert.equal(s.greetedWoman, false);
   assert.equal(s.lampTaken, false);
   assert.equal(s.events.length, 2);
+});
+
+
+test("boat exploration never unlocks rope; bridge inspection survives resume", () => {
+  let s = initialState();
+  for (let i = 0; i < 5; i++) s = choose(s, "search");
+  s = choose(s, "board");
+  assert.equal(choose(s, "take-rope"), s);
+  s = choose(s, "inspect-bridge");
+  assert.equal(choose(s, "inspect-bridge"), s);
+  s = restore(saved(s)).state;
+  assert.equal(s.bridgeInspected, true);
+  assert.equal(choose(s, "take-rope").ropeClicks, 1);
+});
+
+test("all scene prompts stay below fifteen characters and hide search solutions", () => {
+  for (const state of [initialState(), {...initialState(), bridgeInspected:true, ropeClicks:5},
+    {...initialState(), repaired:true}, {...initialState(), wood:true},
+    {...initialState(), oar:true, rowing:true, strokes:4},
+    {...initialState(), lampTaken:true, lampLit:true, greeted:true, greetedWoman:true}]) {
+    for (const subject of ["bridge","planks","rope","rope-bush","boat","bush","water","ring","woman","person","lamp","door"] as const) {
+      const prompt = promptFor(state, subject);
+      for (const text of [prompt.title,prompt.body,prompt.yes ?? ""])
+        assert.ok([...text].length < 15, `${subject}: ${text}`);
+      assert.doesNotMatch(prompt.body, /还需点击|五次|草丛中/);
+    }
+  }
 });
