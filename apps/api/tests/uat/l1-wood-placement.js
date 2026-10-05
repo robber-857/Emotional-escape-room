@@ -7,6 +7,18 @@ async original => {
     const check=(ok,message)=>{if(!ok)throw new Error(message);};
     const button=name=>page.getByRole('button',{name,exact:true});
     const click=async name=>mobile ? button(name).tap() : button(name).click();
+    const enterCover = async () => {
+      const cover = page.locator('[data-game-cover]');
+      await page.waitForFunction(() => {
+        const cover = document.querySelector('[data-game-cover]');
+        return !cover || cover.getAttribute('data-stage') === '3';
+      });
+      await page.locator('body').ariaSnapshot();
+      if (await cover.count() && await cover.getAttribute('data-mobile') === 'false')
+        await page.getByRole('button', { name: '进入你的故事', exact: true }).click();
+      await cover.waitFor({ state: 'hidden' });
+      await page.locator('body').ariaSnapshot();
+    };
     const idle=()=>page.waitForFunction(()=>document.querySelector('[data-layer="rope-bush"]')?.getAttribute('aria-disabled')==='false');
     const state=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('emotional:l1:server:v1')).state);
     const step=async name=>{
@@ -15,7 +27,7 @@ async original => {
       check(result.accepted,result.code); await idle(); return result.session;
     };
     try {
-      await page.goto('http://127.0.0.1:3003/'); await click('开始探索'); await idle();
+      await page.goto('http://127.0.0.1:3003/'); await enterCover(); await click('开始探索'); await idle();
       const rope=page.locator('[data-layer="rope"]');
       check(await rope.count()===0,'rope visible initially');
       await click('小船');
@@ -62,7 +74,7 @@ async original => {
         check((await step('上方草丛')).state.ropeClicks===n,'wrong click count');
         check(await rope.count()===0,'rope released early');
       }
-      await page.reload();await click('继续上次旅程');await idle();
+      await page.reload();await enterCover();await click('继续上次旅程');await idle();
       check((await state()).woodPlaced&&!(await state()).bridgeInspected,'wood placement lost after refresh');
       check((await step('上方草丛')).state.ropeClicks===4,'fourth click incorrect');
       check(await rope.count()===0,'rope visible on fourth click');
@@ -70,7 +82,7 @@ async original => {
       check(await rope.getAttribute('transform')==='translate(0 0)','rope not on bank');
       check(await button('绳子，可拖动；方向键微调位置').count()===1,'rope not draggable');
       await page.screenshot({path:`output/playwright/l1-wood-placement-${mobile?'touch':'desktop'}-released.png`});
-      await page.reload();await click('继续上次旅程');await idle();
+      await page.reload();await enterCover();await click('继续上次旅程');await idle();
       check(await rope.count()===1,'rope hidden after refresh');
       if(!mobile){
         const repaired=page.waitForResponse(r=>r.url().endsWith('/actions')&&r.request().postDataJSON()?.action?.choice==='repair');
