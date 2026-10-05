@@ -10,7 +10,7 @@ import {useServerL3} from "./useServerL3";
 import {ServerTrace} from "./ServerTrace";
 
 const questions:Record<Decision,string> = {
-  open:"门半开着，要完全打开看看外面吗？",close:"要把门关上吗？",
+  open:"要完全打开门吗？",close:"要把门关上吗？",
   wait:"要坐稳等待吗？",curtain:"要拉开右窗的窗帘吗？",window:"要关闭左边的窗户吗？",television:"要关掉电视机电源吗？",
 };
 type Prompt = Decision | "carry" | "confirm" | null;
@@ -31,12 +31,12 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const [televisionOff,setTelevisionOff] = useState(false);
   const [catalog,setCatalog] = useState(false);
   const [portrait,setPortrait] = useState(false),[reduced,setReduced] = useState(false);
-  const [message,setMessage] = useState(segment === "storm" ? "门半开着，走近看看。" : "离开前，看看房间里有什么可以带走。");
+  const [message,setMessage] = useState("");
   const dialog = useRef<HTMLDialogElement>(null),rotation = useRef<HTMLDialogElement>(null),heading = useRef<HTMLHeadingElement>(null);
   const full = state.events.length >= MAX_EVENTS;
   const blocked = !loaded || !ready || !!storageError || conflict || portrait || !!modal || full || (!preview&&(server.busy||!!server.error));
   function load() {
-    if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setCatalog(false);setMessage("已恢复原旅程的服务器进度。");}});return;}
+    if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setCatalog(false);setMessage("进度已恢复。");}});return;}
     try {
       const raw = localStorage.getItem(key); const saved = raw === null ? initialState(segment) : restore(raw,segment);
       if(segment==="carry"){
@@ -44,7 +44,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
         setTelevisionOff(stormRaw!==null && restore(stormRaw,"storm").choices.television===true);
       }
       current.current=saved;lastRaw.current=raw;setState(saved);setConflict(false);setStorageError("");setPrompt(null);setCatalog(false);
-      if(raw!==null)setMessage("已恢复本浏览器中的 L3 预览记录。");
+      if(raw!==null)setMessage("进度已恢复。");
     } catch {setStorageError("本地预览存档无法读取。原数据已保留，可重试或明确重新开始。");}
     setLoaded(true);
   }
@@ -88,7 +88,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   async function decide(slot:Decision,yes:boolean) {
     if(await act({type:"decision",slot,yes})){
       setPrompt(null);
-      setMessage(slot==="open"&&!yes?"先不完全打开门，接下来可以决定是否关上它。":slot==="close"&&!yes?"门保持原状。看看窗边和电源，或先坐稳等待。":slot==="close"?"门刚关上，雷声响起。看看窗边和电源，或先坐稳等待。":slot==="wait"&&yes?"你坐稳了，外面的风雨还在继续。":slot==="open"?"门打开了，外面风雨欲来。要关上门吗？":!yes?"先不动它，再看看房间里的其他地方。":slot==="curtain"?"窗帘拉开了。":slot==="window"?"左边的窗户关好了。":"电视机电源关闭了。");
+      setMessage(slot==="open"&&!yes?"门保持半开。":slot==="close"&&!yes?"门保持原状。":slot==="close"?"门已关上。":slot==="wait"&&yes?"已坐下等待。":slot==="open"?"门已打开。":!yes?"已保留原状。":slot==="curtain"?"窗帘拉开了。":slot==="window"?"左边的窗户关好了。":"电视机电源关闭了。");
     }
   }
   function resetAll() {
@@ -126,28 +126,28 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
       <LevelHeading className={styles.heading} ready={ready&&loaded&&!portrait}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1></LevelHeading>
       <button className={styles.menu} aria-label={preview?"打开预览菜单":"打开第三幕菜单"} onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
-      {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} aria-label="物品近景选择">
-        <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>也可以收起清单，直接点击房间里的物品。指南针图像待补，保留文字选择。</p>
+      {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
+        <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>
         <div className={styles.items}>{(Object.keys(items) as Item[]).map(id=><button key={id} disabled={blocked||!!prompt} aria-label={`${items[id]}${selected===id?" · 已预选":""}`} aria-pressed={selected===id} onClick={()=>chooseItem(id)}>
-          {id!=="compass"?<img src={`/game/l3/${id}.png`} alt=""/>:<span className={styles.missing}>素材待补</span>}<span>{items[id]}{selected===id?" · 已预选":""}</span>
+          {id!=="compass"?<img src={`/game/l3/${id}.png`} alt=""/>:<span className={styles.missing}>指南针</span>}<span>{items[id]}{selected===id?" · 已预选":""}</span>
         </button>)}</div>
-        <button className={styles.primary} disabled={blocked||!selected||!!prompt} onClick={()=>setPrompt("confirm")}>{selected?`确认携带${items[selected]}`:"请先预选一件物品"}</button>
+        <button className={`${styles.primary} gameYes`} disabled={blocked||!selected||!!prompt} onClick={()=>setPrompt("confirm")}>{selected?`确认携带${items[selected]}`:"请先预选一件物品"}</button>
       </section>}
-      {segment==="carry"&&state.carry===true&&!done&&!catalog&&!prompt&&<section className={styles.carryChoice} aria-label="携带物品选择">
-        <p>{selected?`已预选 · ${items[selected]}`:"只带一件 · 点击房间里的物品"}</p>
-        {selected&&<div className={styles.itemPreview}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<span>指南针 · 图像待补</span>}</div>}
-        <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={styles.primary} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
+      {segment==="carry"&&state.carry===true&&!done&&!catalog&&!prompt&&<section className={styles.carryChoice} data-game-prompt aria-label="携带物品选择">
+        <h2>{selected?`要携带${items[selected]}吗？`:"要携带哪件物品？"}</h2>
+        {selected&&<div className={styles.itemPreview}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<span>指南针</span>}</div>}
+        <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={`${styles.primary} gameYes`} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
       </section>}
-      {done&&<section className={styles.result} aria-label="走出密室提示"><h2>是时候走出密室了</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}门外，四条不同的路正在等待你。</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本地记录":"查看服务器记录"}</button><button className={styles.primary} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
+      {done&&<section className={styles.result} data-game-prompt aria-label="走出密室提示"><h2>要走出密室吗？</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本地记录":"查看服务器记录"}</button><button className={`${styles.primary} gameYes`} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
       <aside className={styles.inventory} aria-label="随身物品"><span>物品</span>{state.item?<><span className={segment==="carry"?styles.inventoryName:undefined}>{items[state.item]}</span>{state.item!=="compass"&&<img src={`/game/l3/${state.item}.png`} alt={items[state.item]}/>}</>:<small>{segment==="carry"?"空":"尚未携带"}</small>}</aside>
-      {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} aria-label="场景提示">
-        <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"你可以带走一件东西以备不时之需，要带吗？":prompt==="confirm"?`确定只携带${selected?items[selected]:"这一件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-        {prompt==="confirm"&&selected&&<div className={styles.confirmImage}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<p>指南针 · 图像待补</p>}</div>}
+      {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
+        <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"要带走一件物品吗？":prompt==="confirm"?`要携带${selected?items[selected]:"这件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
+        {prompt==="confirm"&&selected&&<div className={styles.confirmImage}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<p>指南针</p>}</div>}
         <div className={styles.actions}>
-          {prompt==="confirm"?<><button disabled={blocked} onClick={()=>setPrompt(null)}>返回挑选</button><button disabled={blocked} className={styles.primary} onClick={async()=>{if(await act({type:"confirm"})){setPrompt(null);setMessage(preview?"已确认一件物品，仅保存于本地预览。":"服务器已确认携带一件物品。");}}}>是，确认携带</button></>:<><button disabled={blocked} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:false})){setPrompt(null);setMessage("已确认不带物品。");}}else decide(prompt,false);}}>否</button><button disabled={blocked} className={styles.primary} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:true})){setPrompt(null);setMessage("挑选一件物品。点击查看近景，确认前可以更换。");}}else decide(prompt,true);}}>是</button></>}
+          {prompt==="confirm"?<><button disabled={blocked} onClick={()=>setPrompt(null)}>返回挑选</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(await act({type:"confirm"})){setPrompt(null);setMessage(preview?"已确认一件物品，仅保存于本地预览。":"服务器已确认携带一件物品。");}}}>是</button></>:<><button disabled={blocked} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:false})){setPrompt(null);setMessage("已确认不带物品。");}}else decide(prompt,false);}}>否</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:true})){setPrompt(null);setMessage("请选择一件物品。");}}else decide(prompt,true);}}>是</button></>}
         </div>
       </section>}
-      {!prompt&&<p className={styles.status} role="status">{!preview&&server.busy?"正在等待服务器确认…":message}</p>}
+      {!prompt&&message&&<p className={styles.status} role="status">{!preview&&server.busy?"正在等待服务器确认…":message}</p>}
       {(!ready||(!loaded&&!server.error))&&<div className={styles.loading}>{assetError?<><p>场景素材加载失败。</p><button onClick={()=>setAttempt(v=>v+1)}>重新加载素材</button></>:<p>正在载入风暴大厅…</p>}</div>}
       {preview&&(storageError||conflict||full)&&<div className={styles.notice} role="alert"><p>{storageError|| (conflict?"另一个页面修改了本地记录，请读取最新预览。":"本地记录已满，请查看记录或重新开始此片段。")}</p><button onClick={load}>读取最新预览</button><button onClick={()=>setModal("trace")}>查看记录</button><button onClick={()=>setModal("reset")}>重新开始此片段</button></div>}
       {!preview&&(server.error||conflict||full)&&<div className={styles.notice} role="alert"><p>{conflict?"其他页面更新了旅程，请同步最新服务器进度。":server.error||"本关记录已满，服务器历史仍保留。"}</p><button disabled={server.busy} onClick={load}>重试同步</button><button onClick={()=>setModal("trace")}>查看服务器记录</button><Link href="/l2">返回第二幕</Link></div>}
@@ -157,7 +157,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
       {modal==="menu"&&!preview&&<><h2>L3 服务器旅程</h2><p>沿用第一、二幕的原会话。只有服务器接受的动作才推进场景；正式评分与报告尚未启用。</p><p>重新体验请进入独立本地预览，服务器原始历史会保留。</p><div className={styles.menuActions}><button onClick={()=>setModal(null)}>继续旅程</button><button onClick={()=>setModal("trace")}>查看服务器记录</button><button aria-pressed={reduced} onClick={()=>setReduced(v=>!v)}>减少动态效果：{reduced?"开":"关"}</button><Link href="/l3?preview=1">进入独立本地预览</Link><Link href="/l2">返回第二幕</Link></div></>}
       {modal==="trace"&&!preview&&<ServerTrace sessionId={server.sessionId}/>}
       {modal==="menu"&&preview&&<><h2>L3 前端预览</h2><p>当前记录只在本浏览器，未上传服务器。不读取或改变 L1/L2 会话；正式评分待配置。</p><p>L3-01 六项选择都回答后进入物品选择，是或否都算完成。菜单中的独立预览入口可直接体验物品段。</p>
-        <p>沙发素材待补，“坐稳等待”标记暂用于体验相应选择。电视从进入第三幕起显示，关闭电源后黑屏，选择否则保持原画面。</p><div className={styles.menuActions}><button onClick={()=>setModal(null)}>继续预览</button><button onClick={()=>setModal("trace")}>本地选择记录</button><button aria-pressed={reduced} onClick={()=>setReduced(v=>!v)}>减少动态效果：{reduced?"开":"关"}</button><button onClick={()=>setModal("reset")}>重新开始此片段</button>
+        <p>点击场景物件显示对应问题。下方地面区域可选择等待，关闭电源后电视黑屏。</p><div className={styles.menuActions}><button onClick={()=>setModal(null)}>继续预览</button><button onClick={()=>setModal("trace")}>本地选择记录</button><button aria-pressed={reduced} onClick={()=>setReduced(v=>!v)}>减少动态效果：{reduced?"开":"关"}</button><button onClick={()=>setModal("reset")}>重新开始此片段</button>
         <button onClick={()=>setModal("reset-all")}>重新开始整个 L3</button>
         {segment==="storm"&&<Link href="/l3?preview=1&segment=carry">独立预览物品选择</Link>}<Link href="/l2">返回 L2（服务器存档）</Link></div></>}
       {modal==="trace"&&preview&&<><h2>本地选择记录</h2><p>来源：浏览器 localStorage。以下不是服务器回执；A/V/T/F 待配置，贡献为 null。同一动作的“是”和“否”各保留首次记录，重复选择不叠加。</p><p>{state.events.length} 条记录 · {segment==="storm"?"风暴片段":"物品片段（独立预览入口）"}</p>{!state.events.length?<p>尚无选择记录。</p>:<ol>{state.events.map(e=><li key={e.id}><strong>{describe(e.action)}</strong><small>{e.at} · {e.id}</small></li>)}</ol>}<button onClick={()=>setModal("menu")}>返回菜单</button></>}

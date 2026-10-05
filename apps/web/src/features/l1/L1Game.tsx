@@ -390,7 +390,7 @@ export function L1Game() {
               {loaded ? (
                 <div className="welcomeActions">
                   <button
-                    className="primary"
+                    className="primary gameYes"
                     disabled={syncing || externalChange}
                     onClick={() => hasSave ? continueGame() : fresh()}
                   >
@@ -466,7 +466,7 @@ export function L1Game() {
               </dl>
               <p className="nextNotice">第二幕可继续探索桌边、座位和钥匙。</p>
               <Link className="primary l2Entry" href="/l2">进入第二幕</Link>
-              <button className="primary" onClick={() => setModal("restart")}>
+              <button className="primary gameYes" onClick={() => setModal("restart")}>
                 再探索一次
               </button>
               <button className="quiet" onClick={() => setModal("trace")}>
@@ -481,7 +481,7 @@ export function L1Game() {
             style={{ left: `${bubbleX}%`, top: `${bubbleY}%` }}
             inert={blocked}
           >
-            <div className="prompt" aria-live="polite">
+            <div className="prompt" data-game-prompt aria-live="polite">
               {prompt ? (
                 <>
                   <div className="promptTitle">
@@ -496,7 +496,7 @@ export function L1Game() {
                       ×
                     </button>
                   </div>
-                  <p>{prompt.body}</p>
+                  {prompt.body && <p>{prompt.body}</p>}
                   <div className="decisions">
                     {prompt.choice && (
                       <>
@@ -512,7 +512,7 @@ export function L1Game() {
                           否
                         </button>
                         <button
-                          className="primary"
+                          className="primary gameYes"
                           onClick={() =>
                             act({
                               type: "choose",
@@ -527,7 +527,7 @@ export function L1Game() {
                     )}
                     {prompt.action === "search" && (
                       <button
-                        className="primary"
+                        className="primary gameYes"
                         onClick={() =>
                           act({ type: "choose", choice: "search", yes: true })
                         }
@@ -536,13 +536,13 @@ export function L1Game() {
                       </button>
                     )}
                     {prompt.action === "take-rope" && (
-                      <button className="primary" onClick={() => act({ type: "choose", choice: "take-rope", yes: true })}>
+                      <button className="primary gameYes" onClick={() => act({ type: "choose", choice: "take-rope", yes: true })}>
                         拿下绳子 · {state.ropeClicks} / 5
                       </button>
                     )}
                     {prompt.action === "paddle" && (
                       <button
-                        className="primary"
+                        className="primary gameYes"
                         disabled={strokeBusy}
                         onClick={() => act({ type: "paddle" })}
                       >
@@ -552,7 +552,7 @@ export function L1Game() {
                     )}
                     {prompt.next && (
                       <button
-                        className="primary"
+                        className="primary gameYes"
                         onClick={() => setSelected(prompt.next!)}
                       >
                         {prompt.yes}
@@ -565,7 +565,7 @@ export function L1Game() {
                           className="lampLightChoice"
                           aria-label="是否点亮灯"
                         >
-                          <h3>是否点亮？</h3>
+                          <h3>要点亮灯吗？</h3>
                           <div className="decisions">
                             <button
                               onClick={() =>
@@ -579,7 +579,7 @@ export function L1Game() {
                               否
                             </button>
                             <button
-                              className="primary"
+                              className="primary gameYes"
                               onClick={() =>
                                 act({
                                   type: "choose",
@@ -727,7 +727,7 @@ export function L1Game() {
             <p>将创建新的服务器会话，旧会话记录保留。</p>
             <div className="decisions">
               <button onClick={() => setModal(null)}>保留当前旅程</button>
-              <button className="primary" disabled={syncing || pendingSync} onClick={fresh}>
+              <button className="primary gameYes" disabled={syncing || pendingSync} onClick={fresh}>
                 确认重新开始
               </button>
             </div>

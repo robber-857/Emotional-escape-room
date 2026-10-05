@@ -1,4 +1,5 @@
 @import url("./tokens.css");
+@import url("./game-prompts.css");
 * {
   box-sizing: border-box;
 }

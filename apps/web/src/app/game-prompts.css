@@ -1,0 +1,48 @@
+/* One prompt hierarchy for all four acts, including portalled dialogs. */
+:root {
+  --game-prompt-title: clamp(18px, 1.4vw, 22px);
+  --game-prompt-body: clamp(12px, 1vw, 14px);
+  --game-prompt-control: clamp(14px, 1.1vw, 16px);
+}
+
+:root [data-game-prompt] :is(h2, h3) {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-size: var(--game-prompt-title);
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--cream);
+}
+
+:root [data-game-prompt] p,
+:root [data-game-prompt] small {
+  font-size: var(--game-prompt-body);
+  font-weight: 400;
+  line-height: 1.65;
+  color: #d4d8cd;
+}
+
+:root [data-game-prompt] :is(button, a) {
+  font-size: var(--game-prompt-control);
+  line-height: 1.4;
+  min-height: 44px;
+}
+
+:root [data-game-prompt] button[aria-label^="关闭提示"] {
+  font-size: 23px;
+  min-width: 32px;
+  min-height: 32px;
+}
+
+:root .gameYes,
+:root [data-game-prompt] .gameYes {
+  background: #4baa8b;
+  border-color: #8dcfb4;
+  color: #fff;
+  font-weight: 600;
+}
+
+:root .gameYes:hover:not(:disabled),
+:root [data-game-prompt] .gameYes:hover:not(:disabled) {
+  background: #6bbd9f;
+  border-color: #a4ddc4;
+}

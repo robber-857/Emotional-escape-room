@@ -161,7 +161,7 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
   if (s.rowing && subject === "boat")
     return {
       title: `划向对岸 · ${s.strokes} / 5`,
-      body: "每按一次完成一次划桨。到岸前，也可以点击其他物品，换一种过河方式。",
+      body: "点击一次，划桨一次。",
       action: "paddle",
       yes: "划桨一次",
     };
@@ -169,67 +169,67 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
     case "bridge":
       return s.repaired
         ? {
-            title: "从桥上走过去？",
-            body: "木板已经铺好，通向对岸的路连起来了。",
+            title: "要从桥上走过去吗？",
+            body: "木桥已修好。",
             choice: "cross-bridge",
             yes: "是，走过木桥",
           }
         : s.wood
           ? {
               title: "把木板和绳子移到缺口",
-              body: "将木板和绳子都放到发光的断桥缺口，才会修补。键盘也可用方向键移动。",
+              body: "拖动到缺口；方向键也可移动。",
               next: "planks",
               yes: "查看木板",
             }
           : {
               title: "桥面缺了一段",
-              body: "桥边有木板和绳子，把两样都搬到缺口就能修桥。也可以看看其他过河方式。",
+              body: "修桥需要木板和绳子。",
               next: "planks",
               yes: "查看木板",
             };
     case "rope":
       if (s.ropeClicks < 5 && !s.repaired) return {
         title: "拿下绳子",
-        body: `再点击${5 - s.ropeClicks}次就可以拿下来了。`,
+        body: `还需点击${5 - s.ropeClicks}次。`,
         action: "take-rope",
         yes: "拿下绳子",
       };
       return {
         title: s.repaired ? "绳子已用于修桥" : "用绳子固定木板",
-        body: "把绳子和木板都移到断桥缺口，才能修好木桥。可以先搬任意一件。",
+        body: "拖动木板和绳子到缺口。",
       };
     case "planks":
       return {
         title: s.repaired ? "木板已经用来修桥" : "拾起绳子和木板修桥",
         body: s.repaired
           ? "木桥已连接两岸。"
-          : "将木板和绳子都移到断桥缺口，才能修好木桥。可以先搬任意一件。",
+          : "拖动木板和绳子到缺口。",
       };
     case "water":
       return {
-        title: "直接游泳过去？",
-        body: "对岸就在前方。你也可以先探索岸边，寻找其他方式。",
+        title: "要直接游泳过去吗？",
+        body: "",
         choice: "swim",
         yes: "是，游向对岸",
       };
     case "ring":
       return {
-        title: "使用救生圈游过去？",
-        body: "救生圈就在岸边，可以带着它渡河。",
+        title: "要用救生圈过河吗？",
+        body: "",
         choice: "use-ring",
         yes: "是，使用救生圈",
       };
     case "bush":
       return s.oar
         ? {
-            title: "草丛里找到了一支船桨",
-            body: "船桨已安装在小船上，可以准备出发。",
+            title: "已找到船桨",
+            body: "船桨已装好。",
             next: "boat",
             yes: "查看小船",
           }
         : {
-            title: "草里好像有什么东西",
-            body: `再点击草丛或这条提示 ${5 - s.bushClicks} 次，看看里面藏着什么。`,
+            title: "要拨开草丛吗？",
+            body: `还需点击${5 - s.bushClicks}次。`,
             action: "search",
             yes: "拨开草丛",
           };
@@ -237,13 +237,13 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
       return s.oar
         ? {
             title: "要划船过去吗？",
-            body: "你已找到船桨。上船后，完成五次划桨即可到达对岸。",
+            body: "上船后需划桨五次。",
             choice: "board",
             yes: "是，上船",
           }
         : {
             title: "小船还缺一支船桨",
-            body: "先看看附近的草丛，或选择另一种过河方式。",
+            body: "船桨在附近的草丛中。",
             next: "bush",
             yes: "查看草丛",
           };
@@ -251,11 +251,11 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
       return s.greetedWoman
         ? {
             title: "你已经向她打过招呼",
-            body: "你向她打了招呼。可以继续看看那盏灯，或走向门口。",
+            body: "已打过招呼。",
           }
         : {
             title: "要和她打招呼吗？",
-            body: "她静静站在左侧草地上。你可以打个招呼，也可以继续探索。",
+            body: "",
             choice: "greet-woman",
             yes: "是，打个招呼",
           };
@@ -263,36 +263,36 @@ export function promptFor(s: L1State, subject: Subject): Prompt {
       return s.greeted
         ? {
             title: "你已经向他打过招呼",
-            body: "你向他打了招呼。你可以继续看看那盏灯，或走向门口。",
+            body: "已打过招呼。",
           }
         : {
             title: "要和他打招呼吗？",
-            body: "他静静站在右侧岸边。你可以向他打招呼，也可以继续自己的探索。",
+            body: "",
             choice: "greet",
             yes: "是，打个招呼",
           };
     case "lamp":
       return s.lampTaken
         ? s.lampLit
-          ? { title: "灯已点亮", body: "这盏灯在你的物品栏里，发出柔和的光。" }
+          ? { title: "灯已点亮", body: "灯在物品栏中。" }
           : {
-              title: "是否点亮手中的灯？",
-              body: "你可以点亮它，也可以带着未点亮的灯继续走。",
+              title: "要点亮灯吗？",
+              body: "",
               choice: "light-lamp",
               yes: "是，点亮灯",
             }
         : {
             title: "要拿起灯吗？",
             body: s.lampLit
-              ? "灯已经亮着。你可以把它带在身边。"
-              : "一盏未点亮的灯放在路边。你可以拿起它，也可以留在原处。",
+              ? "灯已点亮。"
+              : "灯尚未点亮。",
             choice: "take-lamp",
             yes: "是，拿起灯",
           };
     case "door":
       return {
-        title: "进入房间？",
-        body: "确认后将结束第一幕。你也可以留在这里，继续看看人物和灯。",
+        title: "要进入房间吗？",
+        body: "进入后结束本幕。",
         choice: "enter",
         yes: "是，进入房间",
       };

@@ -10,6 +10,11 @@
 .hotspot > rect {fill:transparent;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;}
 .hotspot:not([aria-disabled=true]):hover > rect,.hotspot:focus-visible > rect {fill:#fff2d90a;stroke:#edc7a1bb;}
 .hotspot[aria-disabled=true] {cursor:default;}
+.marker {pointer-events:none;}
+.marker rect {fill:#29242be8;stroke:#ddc5ab88;stroke-width:1;}
+.marker text {fill:#fff;font:600 30px 'Microsoft YaHei',sans-serif;}
+.marker .markerDetail {font-size:24px;font-weight:400;}
+.hotspot[aria-disabled=true] .marker {opacity:.45;}
 .bubble {align-self:center;justify-self:center;width:min(350px,44vw);max-height:74dvh;overflow:auto;padding:16px;background:#302c35ef;border:1px solid #dbc6b36b;border-radius:14px;z-index:4;box-shadow:0 10px 40px #0005;animation:appear .2s ease-out;}
 .doorBubble {grid-area:5/7/12/17;}.rightBubble {grid-area:5/14/12/24;}.centerBubble {grid-area:5/8/13/20;}
 .bubbleTitle {display:flex;align-items:start;gap:10px;justify-content:space-between;}
@@ -53,17 +58,9 @@
 }
 @media(prefers-reduced-motion:reduce){.game *{animation:none;transition:none;}}
 
-.marker {pointer-events:none;}
-.marker rect {fill:#29242be8;stroke:#ddc5ab88;stroke-width:1;}
-.marker text {fill:#fff5e7;font:30px 'Microsoft YaHei',sans-serif;}
-.hotspot[aria-disabled=true] .marker {opacity:.45;}
 .windowBubble {grid-area:5/8/12/18;}
 .waitBubble {grid-area:9/7/16/18;}
 .pickable {cursor:pointer;outline:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.carryHint {cursor:pointer;outline:none;touch-action:manipulation;-webkit-tap-highlight-color:transparent;}
-.carryHint text {fill:#fff;font:25px 'Microsoft YaHei',sans-serif;}
-.carryHint:focus-visible {filter:drop-shadow(0 0 5px #e9d7bc);}
-.carryHint[aria-disabled=true] {opacity:.5;cursor:default;}
 .pickable > rect {fill:transparent;stroke:transparent;stroke-width:2;vector-effect:non-scaling-stroke;}
 .pickable:not([aria-disabled=true]):hover > rect,.pickable:focus-visible > rect,.picked > rect {fill:#fff1c410;stroke:#ead6b4;}
 .itemLabel {opacity:0;pointer-events:none;}

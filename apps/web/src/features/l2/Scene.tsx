@@ -2,7 +2,7 @@ import {FurniturePiece} from "./FurniturePiece";
 import {furnitureIds,type FurnitureId,type Point} from "./layout";
 import { seatNames, type KeyId, type Seat, type State } from "./model";
 import styles from "./l2.module.css";
-export const assets=["cabinet.png","cabinet-mask.svg","earring.png","door-panel.png","bedroom-single-clue.png","table-view.png","room.png","chair.png","sofa.png","armchair.png","table-chair.png","keys.png","detail.svg"];
+export const assets=["cabinet.png","cabinet-mask.svg","earring.png","door-panel.png","bedroom-single-clue.png","table-view.png","room.png","room-exit-open.png","chair.png","sofa.png","armchair.png","table-chair.png","keys.png","detail.svg"];
 export function KeySprite({id}:{id:KeyId}) {
  return <svg viewBox="0 0 51 44" width="51" height="44" overflow="hidden" aria-hidden="true"><image href="/game/l2/keys.png" x={id==="key-1"?0:-59.9454} y="0" width="111.0015" height="44" preserveAspectRatio="none" /></svg>;
 }
@@ -36,15 +36,15 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
   <defs><mask id="l2-cabinet-mask" maskUnits="userSpaceOnUse" x="-46.501" y="286.393" width="288.908" height="870.419" style={{maskType:"alpha"}}><image href="/game/l2/cabinet-mask.svg" x="-46.501" y="286.393" width="288.908" height="870.419" /></mask></defs>
   <ImageLayer id="room" x={0} y={0} w={1919.008} h={1048.989}/>
   {state.exitDoorOpen&&<g data-layer="l2-exit-door">
-   <defs><clipPath id="l2-exit-leaf"><path d="M444 223 L579 242 L579 787 L444 799 Z"/></clipPath><linearGradient id="l2-exit-depth"><stop stopColor="#161218"/><stop offset="1" stopColor="#332932"/></linearGradient></defs>
-   <path d="M444 223 L579 242 L579 787 L444 799 Z" fill="url(#l2-exit-depth)"/>
-   <g transform="translate(579 0) scale(.23 1) translate(-579 0)"><image clipPath="url(#l2-exit-leaf)" href="/game/l2/room.png" width="1919.008" height="1048.989" preserveAspectRatio="none"/></g>
+   {/* Register the supplied open-door scene to the existing door sill and furniture plane. */}
+   <defs><linearGradient id="l2-exit-blend" x1="0" y1="0" x2="0" y2="1"><stop stopColor="white" stopOpacity="0"/><stop offset=".06" stopColor="white"/></linearGradient><mask id="l2-exit-room-mask"><rect width="1920" height="1049" fill="url(#l2-exit-blend)"/></mask></defs>
+   <image href="/game/l2/room-exit-open.png" x="0" y="28" width="1919.008" height="1249" preserveAspectRatio="none" mask="url(#l2-exit-room-mask)"/>
   </g>}
   {state.doorOpen&&<g data-layer="half-open-door">
    <svg x="761" y="271" width="156" height="505" overflow="hidden"><image href="/game/l2/door-panel.png" x={-763-1919.008*.0153} y={-267+1048.989*.0014} width={1919.008*1.0755} height={1048.989*1.0589} preserveAspectRatio="none"/></svg>
    <rect x="917" y="269" width="17" height="507" fill="#050505" style={{filter:"blur(3.6px)"}}/>
   </g>}
-  <image data-layer="detail" href="/game/l2/detail.svg" x="633" y="321.49" width="10" height="10"/>
+  {!state.exitDoorOpen&&<image data-layer="detail" href="/game/l2/detail.svg" x="633" y="321.49" width="10" height="10"/>}
   {[...furnitureIds].sort((a,b)=>state.furniture.layout[a].v-state.furniture.layout[b].v).map(id=><FurniturePiece key={id} id={id} point={state.furniture.layout[id]} editing={state.furniture.editing} disabled={disabled} onMove={onMove}>
    {id==="chair"&&<><g style={{filter:"blur(.65px) drop-shadow(-2px 4px 7.6px #0005)"}}><ImageLayer id="chair" x={1059} y={574} w={173} h={247} opacity={.84} crop={[-.3095,-.1535,1.571,1.2876]}/></g>{!state.furniture.editing&&hit(`坐在${seatNames.chair}`,1060,577,170,240,()=>onSeat("chair"))}</>}
    {id==="sofa"&&<ImageLayer id="sofa" x={1176} y={581} w={768} h={370} crop={[-.0548,-.2011,1.099,1.3554]}/>}
@@ -59,7 +59,7 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
   {!state.furniture.editing&&<g mask="url(#l2-cabinet-mask)"><ImageLayer id="cabinet" x={-46} y={166.77} w={302.458} h={1076.751}/></g>}
   {!state.furniture.editing&&hit(state.doorOpen?"查看半开的门":"查看门锁",745,285,180,480,onDoor)}
 
-  {state.exitDoorOpen&&!state.furniture.editing&&hit("查看通往第三幕的门",444,242,135,390,onExit)}
+  {state.exitDoorOpen&&!state.furniture.editing&&hit("查看通往第三幕的门",270,225,310,580,onExit)}
   {state.keys.length<2&&<title>{`桌上有${2-state.keys.length}把尚未拿起的钥匙`}</title>}
  </svg>;
 }

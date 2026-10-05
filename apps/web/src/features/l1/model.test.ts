@@ -59,7 +59,7 @@ test("rope releases on fifth unique click and survives resume", () => {
   let s = initialState();
   assert.equal(promptFor(s, "rope").title, "拿下绳子");
   for (let i = 1; i <= 5; i++) {
-    assert.equal(promptFor(s, "rope").body, `再点击${6 - i}次就可以拿下来了。`);
+    assert.equal(promptFor(s, "rope").body, `还需点击${6 - i}次。`);
     const e = event({ type: "choose", choice: "take-rope", yes: true });
     s = transition(s, e);
     assert.equal(s.ropeClicks, i);
