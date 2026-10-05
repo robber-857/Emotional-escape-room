@@ -15,7 +15,7 @@ import {
   type Subject,
 } from "./model";
 import { type Positions } from "./save";
-import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, createSession, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
+import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, hasJourneyProgress, createSession, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
 
 export function L1Game() {
   const sessionRef = useRef<Session | null>(null);
@@ -58,8 +58,11 @@ export function L1Game() {
   useEffect(() => {
     try {
       const saved = readSession();
-      if (saved) { sessionRef.current = saved; setHasSave(true); }
-      setPendingSync(!!readPending());
+      sessionRef.current = saved;
+      setHasSave(hasJourneyProgress(saved, null));
+      const pending = readPending();
+      setHasSave(hasJourneyProgress(saved, pending));
+      setPendingSync(!!pending);
     } catch { setSyncError("浏览器存储无法读取，请检查站点存储权限。"); }
     const changed = (e: StorageEvent) => {
       if (e.key === SESSION_KEY || e.key === PENDING_KEY) setExternalChange(true);
@@ -136,7 +139,7 @@ export function L1Game() {
     sessionRef.current = session;
     stateRef.current = session.state;
     setState(session.state);
-    setHasSave(true);
+    setHasSave(hasJourneyProgress(session, readPending()));
     setSaveStatus(`服务器已保存 · 版本 ${session.version}`);
   }
   async function continueGame() {
@@ -157,7 +160,7 @@ export function L1Game() {
       }
       setPendingSync(false);
       setReceipts(await getReceipts(session));
-      setSelected(null); setStarted(true); setMessage("进度已恢复。");
+      setSelected(null); setStarted(true); setMessage(hasSave ? "进度已恢复。" : "河水静静流淌。");
     } catch (error) {
       if (error instanceof RejectedAction) {
         applySession(error.session); setSelected(null); setReceipts((r) => [...r, error.receipt]);
@@ -414,7 +417,7 @@ export function L1Game() {
                   <button
                     className="primary gameYes"
                     disabled={syncing || externalChange}
-                    onClick={() => hasSave ? continueGame() : fresh()}
+                    onClick={() => sessionRef.current ? continueGame() : fresh()}
                   >
                     {hasSave ? "继续上次旅程" : "开始探索"}{" "}
                     <span aria-hidden="true">→</span>

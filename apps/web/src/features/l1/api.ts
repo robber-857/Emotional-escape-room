@@ -37,6 +37,13 @@ export function readPending(): Pending | null {
   const raw = localStorage.getItem(PENDING_KEY);
   return raw ? JSON.parse(raw) as Pending : null;
 }
+export function hasJourneyProgress(session: Session | null, pending: Pending | null): boolean {
+  if (!session) return false;
+  // Creating a session alone is not gameplay; keep real actions and cosmetic drafts resumable.
+  return session.version > 0 || session.state.events.length > 0 || session.state.scene !== "river" ||
+    pending?.sessionId === session.id ||
+    Object.values(readDraft(session)).some((position) => position.x !== 0 || position.y !== 0);
+}
 export function prepare(session: Session, action: Action, positions: Positions): Pending {
   if (readPending()) throw new Error("仍有未确认事件，请先重试同步");
   const pending = { sessionId: session.id, action_id: crypto.randomUUID(), expected_version: session.version, action, positions };
