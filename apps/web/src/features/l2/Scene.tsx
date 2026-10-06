@@ -49,10 +49,10 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
    {id==="chair"&&<><g style={{filter:"blur(.65px) drop-shadow(-2px 4px 7.6px #0005)"}}><ImageLayer id="chair" x={1059} y={574} w={173} h={247} opacity={.84} crop={[-.3095,-.1535,1.571,1.2876]}/></g>{!state.furniture.editing&&hit(`坐在${seatNames.chair}`,1060,577,170,240,()=>onSeat("chair"))}</>}
    {id==="sofa"&&<ImageLayer id="sofa" x={1176} y={581} w={768} h={370} crop={[-.0548,-.2011,1.099,1.3554]}/>}
    {id==="armchair"&&<g style={{filter:"blur(.65px) drop-shadow(-16px 22px 28.8px #0005)"}}><ImageLayer id="armchair" x={42} y={585} w={470} h={422} opacity={.88}/></g>}
-   {id==="table-chair"&&<><ImageLayer id="table-chair" x={941} y={739} w={979} h={310} crop={[-.0014,0,1.2286,1]}/>
-    {!state.keys.includes("key-1")&&<g data-layer="key-1" transform="translate(1329.024 938.01)" opacity=".56"><KeySprite id="key-1"/></g>}
-    {!state.keys.includes("key-2")&&<g data-layer="key-2" transform="translate(1398.912 938.01)" opacity=".70"><KeySprite id="key-2"/></g>}
-    {!state.furniture.editing&&<>{hit(`坐在${seatNames["table-seat"]}`,1145,741,350,166,()=>onSeat("table-seat"))}{hit("走到桌边",1040,920,510,129,onTable)}</>}
+   {id==="table-chair"&&<><ImageLayer id="table-chair" x={637} y={594} w={850*.76} h={850*2/3*.8}/>
+    {!state.keys.includes("key-1")&&<g data-layer="key-1" transform="translate(900 754) scale(.55)" opacity=".56"><KeySprite id="key-1"/></g>}
+    {!state.keys.includes("key-2")&&<g data-layer="key-2" transform="translate(940 754) scale(.55)" opacity=".70"><KeySprite id="key-2"/></g>}
+    {!state.furniture.editing&&<>{hit(`坐在${seatNames["table-seat"]}`,735,635,205,105,()=>onSeat("table-seat"))}{hit("走到桌边",670,735,585,53,onTable)}</>}
    </>}
   </FurniturePiece>)}
   {/* The foreground cabinet occludes the armchair in exploration mode. */}

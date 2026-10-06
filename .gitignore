@@ -9,6 +9,8 @@ __pycache__/
 .env.local
 !.env.example
 output/
+# Local screenshots and intermediate verification artifacts (tracked files remain tracked).
+outputs/
 .playwright-cli/
 *.tsbuildinfo
 

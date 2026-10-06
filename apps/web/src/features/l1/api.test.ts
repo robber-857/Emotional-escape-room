@@ -1,12 +1,53 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { initialState } from "./model";
-import { prepare, submit, readPending, RejectedAction, readDraft, hasJourneyProgress, type Session } from "./api";
+import { prepare, submit, readPending, RejectedAction, readDraft, hasJourneyProgress, restartJourney, SESSION_KEY, type Session } from "./api";
 const session: Session = { id:"test", token:"test-token", version:0, rules_version:"l1-rules-v1", state:initialState(), positions:{} };
 function storage() {
   const values = new Map<string,string>();
-  Object.defineProperty(globalThis, "localStorage", { configurable:true, value:{ getItem:(k:string)=>values.get(k) ?? null, setItem:(k:string,v:string)=>values.set(k,v), removeItem:(k:string)=>values.delete(k) } });
+  Object.defineProperty(globalThis, "localStorage", { configurable:true, value:{ get length(){return values.size;}, key:(i:number)=>[...values.keys()][i]??null, getItem:(k:string)=>values.get(k) ?? null, setItem:(k:string,v:string)=>values.set(k,v), removeItem:(k:string)=>values.delete(k) } });
 }
+
+test("restart clears all four acts and drafts while retaining unrelated preferences", async () => {
+  storage();
+  const keys=["emotional:l1:preview:v2","emotional:l1:draft:old","emotional:l1:pending:v1","emotional:l2:preview:v2","emotional:l2:pending:old","emotional:l3:preview:v1:storm","emotional:l3:preview:v1:carry","emotional:l3:revision:old","emotional:l4:preview:v1:preview","emotional:l4:pending:old"];
+  keys.forEach(key=>localStorage.setItem(key,"old progress"));
+  localStorage.setItem(SESSION_KEY,JSON.stringify(session));
+  localStorage.setItem("unrelated:preference","keep");
+  const original=globalThis.fetch;
+  try {
+    globalThis.fetch=async()=>Response.json({...session,id:"new"});
+    assert.equal((await restartJourney()).id,"new");
+    keys.forEach(key=>assert.equal(localStorage.getItem(key),null));
+    assert.equal(JSON.parse(localStorage.getItem(SESSION_KEY)!).id,"new");
+    assert.equal(localStorage.getItem("unrelated:preference"),"keep");
+  } finally {globalThis.fetch=original;}
+});
+
+test("failed restart keeps the current journey and later-act progress", async () => {
+  storage();localStorage.setItem(SESSION_KEY,JSON.stringify(session));
+  localStorage.setItem("emotional:l2:preview:v2","old progress");
+  const original=globalThis.fetch;
+  try {
+    globalThis.fetch=async()=>{throw new Error("offline");};
+    await assert.rejects(restartJourney(),/offline/);
+    assert.equal(JSON.parse(localStorage.getItem(SESSION_KEY)!).id,session.id);
+    assert.equal(localStorage.getItem("emotional:l2:preview:v2"),"old progress");
+  } finally {globalThis.fetch=original;}
+});
+
+test("late first-act response cannot restore the journey replaced by restart", async () => {
+  storage();const pending=prepare(session,{type:"choose",choice:"swim",yes:false},{});
+  const original=globalThis.fetch;
+  try {
+    globalThis.fetch=async()=>{
+      localStorage.setItem(SESSION_KEY,JSON.stringify({...session,id:"new"}));
+      return Response.json({session,accepted:true,version:1});
+    };
+    await assert.rejects(submit(session,pending),/旅程已切换/);
+    assert.equal(JSON.parse(localStorage.getItem(SESSION_KEY)!).id,"new");
+  } finally {globalThis.fetch=original;}
+});
 test("first visit and unused sessions do not offer a previous journey", () => {
   storage();
   assert.equal(hasJourneyProgress(null, null), false);

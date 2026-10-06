@@ -160,3 +160,24 @@
 @media (prefers-reduced-motion: reduce) {
   .cover, .cover *, .sceneEntrance { animation: none !important; transition-duration: 150ms !important; }
 }
+/* Larger cover typography, with a separate budget for short phone screens. */
+.cover {overflow-y:auto;}
+.center {width:min(100%,860px);}
+.prologue p {font-size:clamp(18px,1.8vw,26px);letter-spacing:.22em;}
+.prologue span {font-size:clamp(10px,.9vw,13px);letter-spacing:.4em;}
+.identity h1 {font-size:clamp(48px,5.4vw,78px);}
+.englishTitle {font-size:clamp(12px,1.1vw,16px);}
+.entry {width:min(420px,90%);}
+.enterButton,.landscapeMessage {font-size:clamp(20px,2vw,28px);}
+.invitation p {font-size:18px;}
+.orientation p {font-size:22px;}
+.orientationNote {font-size:14px;line-height:1.6;}
+.cover[data-portrait="true"] .identity h1 {font-size:clamp(40px,11vw,54px);}
+.cover[data-portrait="true"] .englishTitle {font-size:11px;}
+@media (orientation:landscape) and (max-height:600px) {
+  .prologue p {font-size:16px;}.prologue span {font-size:9px;}
+  .artwork {width:clamp(85px,27dvh,145px);margin-bottom:-15px;}
+  .identity h1 {font-size:clamp(32px,9dvh,48px);}
+  .englishTitle {font-size:10px;}.entry {margin-top:12px;}
+  .enterButton,.landscapeMessage {font-size:20px;}
+}

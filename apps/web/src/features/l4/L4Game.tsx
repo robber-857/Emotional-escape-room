@@ -2,6 +2,7 @@
 import {useEffect,useRef,useState,type CSSProperties} from "react";
 import Link from "next/link";
 import {RestartJourney} from "../shared/RestartJourney";
+import {ActOpening} from "../shared/ActOpening";
 import {LevelHeading} from "../shared/LevelHeading";
 import {SAVE_KEY,restore,items,type Item} from "../l3/model";
 import {useServerL4} from "./useServerL4";
@@ -18,6 +19,7 @@ type Door=typeof doors[number];
 type RecordEntry={source:"local_preview";door:string;at:string};
 
 export function L4Game({preview}:{preview:boolean}) {
+  const [entered,setEntered]=useState(false);
   const server=useServerL4(!preview);
   const [localLoaded,setLoaded]=useState(false),[ready,setReady]=useState(false),[assetError,setAssetError]=useState(false);
   const [attempt,setAttempt]=useState(0),[localError,setError]=useState("");
@@ -79,13 +81,14 @@ export function L4Game({preview}:{preview:boolean}) {
   }
   return <main className={styles.game}>
     <aside className={styles.rotation}><h2>请翻转手机</h2><p>横屏后，选择你想走向的那扇门。</p></aside>
+    {!entered&&<ActOpening act="第四幕" title="远方之门" prompt="选择一扇门走向远方。" ready={ready&&loaded&&!error&&!confirmed} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第四幕：远方之门">
       <div className={styles.art}>
         <img key={attempt} className={styles.scene} src="/game/l4/doors-reference.png" alt="玫瑰环绕的金色拱廊，四扇门从左到右通向田园小屋、海岸灯塔、森林小径与花园宫殿" onLoad={()=>{setReady(true);setAssetError(false);}} onError={()=>{setReady(false);setAssetError(true);}}/>
       </div>
-      <LevelHeading className={styles.heading} ready={ready&&loaded}><p>第四幕 · 出口</p><h1>远方之门</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded}><p>第四幕 · 出口</p><h1>远方之门</h1></LevelHeading>
       <nav className={styles.back}><RestartJourney/><Link href={back}>← 返回密室</Link>{!preview&&<button aria-label="查看第四幕记录" onClick={()=>setTraceOpen(true)}>☰</button>}</nav>
-      {doors.map((door,index)=><button key={door.id} data-door={door.id} data-door-state={confirmed?(confirmed.id===door.id?"chosen":"dimmed"):"available"} style={{"--left":`${door.left}%`,"--width":`${door.width}%`,"--delay":`${index*90}ms`} as CSSProperties} className={`${styles.door} ${confirmed?.id===door.id?styles.chosen:confirmed?styles.dimmed:""}`} aria-label={`${door.name}，${door.view}`} aria-pressed={confirmed?.id===door.id} disabled={!ready||!loaded||!!error||!!confirmed||busy} onClick={()=>setSelected(door)}/>)}
+      {doors.map((door,index)=><button key={door.id} data-door={door.id} data-door-state={confirmed?(confirmed.id===door.id?"chosen":"dimmed"):"available"} style={{"--left":`${door.left}%`,"--width":`${door.width}%`,"--delay":`${index*90}ms`} as CSSProperties} className={`${styles.door} ${confirmed?.id===door.id?styles.chosen:confirmed?styles.dimmed:""}`} aria-label={`${door.name}，${door.view}`} aria-pressed={confirmed?.id===door.id} disabled={!entered||!ready||!loaded||!!error||!!confirmed||busy} onClick={()=>setSelected(door)}/>)}
       <footer className={styles.footer}><p role="status">{busy?"正在确认选择…":confirmed?`你选择了${confirmed.name}`:""}</p><span>{item?`随身携带 · ${items[item]}`:"随身物品 · 无"}</span></footer>
       {(!ready||!loaded||error)&&<div className={styles.loading} role={error||assetError?"alert":"status"}><p>{error|| (assetError?"场景图片加载失败。":"正在走出密室…")}</p>{error?<><button disabled={busy} onClick={()=>preview?window.location.reload():void server.sync()}>{preview?"重新载入":"重试同步"}</button><Link href={back}>返回第三幕</Link></>:assetError?<button onClick={()=>{setAssetError(false);setAttempt(v=>v+1);}}>重新加载图片</button>:null}</div>}
     </section>
@@ -93,7 +96,7 @@ export function L4Game({preview}:{preview:boolean}) {
       {selected&&<><p className={styles.eyebrow}>出口 · {selected.view}</p><h2 id="door-title">要走进{selected.name}吗？</h2><div className={styles.actions}><button autoFocus disabled={busy} onClick={()=>setSelected(null)}>否</button><button className={`${styles.primary} gameYes`} disabled={busy||!!error} onClick={confirm}>{busy?"正在确认…":"是"}</button></div></>}
     </dialog>
     {confirmed&&<button className={styles.resultEntry} onClick={()=>resultDialog.current?.showModal()}>查看恋爱性格</button>}
-    <dialog ref={resultDialog} className={styles.dialog} data-game-prompt aria-labelledby="result-title"><p className={styles.eyebrow}>旅程的终点</p><h2 id="result-title">要查看恋爱性格吗？</h2><p>已保存本次选择。</p><div className={styles.actions}><button onClick={()=>resultDialog.current?.close()}>稍后再看</button><Link className={`${styles.primary} gameYes`} href={preview?"/results?preview=1":"/results"}>查看结果 →</Link></div></dialog>
+    <dialog ref={resultDialog} className={`${styles.dialog} ${styles.ending}`} data-game-prompt aria-labelledby="result-title"><p className={styles.endingMessage}><span>你已经走出情感密室，</span><span>走向远方之门</span></p><h2 id="result-title">要查看恋爱性格吗？</h2><div className={styles.actions}><button onClick={()=>resultDialog.current?.close()}>稍后再看</button><Link className={`${styles.primary} gameYes`} href={preview?"/results?preview=1":"/results"}>查看结果 →</Link></div></dialog>
     <dialog ref={trace} className={styles.dialog} onCancel={()=>setTraceOpen(false)} aria-label="第四幕服务器记录"><button onClick={()=>setTraceOpen(false)}>关闭记录</button>{traceOpen&&<ServerTrace sessionId={server.session?.id}/>}</dialog>
   </main>;
 }

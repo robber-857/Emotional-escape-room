@@ -2,9 +2,9 @@
 from copy import deepcopy
 from math import isfinite
 
-VERSION = "l2-placement-v7"
+VERSION = "l2-placement-v8"
 FURNITURE = {"armchair": (285, 990, .19, .20), "chair": (1145, 810, .085, .13),
-             "sofa": (1510, 925, .31, .23), "table-chair": (1510, 1013, .41, .10)}
+             "sofa": (1510, 925, .31, .23), "table-chair": (960, 1013, .41, .10)}
 
 def initial_layout():
     return {key: dict(u=.5+(x-960)/(1100+820*((y-760)/270)), v=(y-760)/270)

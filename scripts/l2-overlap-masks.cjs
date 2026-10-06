@@ -2,9 +2,9 @@
 const sharp=require('sharp');
 const fs=require('node:fs');
 const crypto=require('node:crypto');
-const specs={armchair:[42,585,470,422,0,0,1,1],chair:[1059,574,173,247,-.3095,-.1535,1.571,1.2876],sofa:[1176,581,768,370,-.0548,-.2011,1.099,1.3554],'table-chair':[941,739,979,310,-.0014,0,1.2286,1]};
+const specs={armchair:[42,585,470,422,0,0,1,1],chair:[1059,574,173,247,-.3095,-.1535,1.571,1.2876],sofa:[1176,581,768,370,-.0548,-.2011,1.099,1.3554],'table-chair':[637,594,850*.76,850*2/3*.8,0,0,1,1]};
 (async()=>{
- const result={method:'scene-alpha-strips-v1',step:4,alphaThreshold:128,pieces:{}};
+ const result={method:'scene-alpha-strips-v4-resized-table',step:4,alphaThreshold:128,pieces:{}};
  for(const [id,[x,y,w,h,cx,cy,cw,ch]] of Object.entries(specs)){
   const file=fs.readFileSync(`apps/web/public/game/l2/${id}.png`);
   const {data,info}=await sharp(file).ensureAlpha().raw().toBuffer({resolveWithObject:true});

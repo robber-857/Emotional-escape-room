@@ -11,7 +11,12 @@
 .door{position:absolute;left:var(--left);width:var(--width);top:25%;height:54%;border-radius:48% 48% 4px 4px;border:2px solid transparent;padding:0;background:transparent!important;transition:box-shadow .25s,border-color .25s,background .25s;animation:reveal .65s var(--delay) both}
 .door:hover:not(:disabled),.door:focus-visible,.door.chosen{border-color:#fff2bf;box-shadow:inset 0 0 30px #fff3a942,0 0 22px #ffe5aa70;outline:none}
 .door:disabled{opacity:1}
-.door.dimmed::before{content:"";position:absolute;inset:0;border-radius:50% 50% 3px 3px / 26% 26% 3px 3px;background:#101810cf;box-shadow:inset 0 0 24px #0b110ce6;pointer-events:none}
+/* The two right arches start higher in the artwork. Extend past the transparent
+   button border so it cannot leave a bright seam around the dimmed opening. */
+.door.dimmed::before{content:"";position:absolute;inset:-2px;border-radius:50% 50% 3px 3px / 24% 24% 3px 3px;background:#101810cf;box-shadow:inset 0 0 24px #0b110ce6;pointer-events:none}
+.door.dimmed[data-door="forest"]::before{top:calc(-2px - 2.25%);left:calc(-2px - 2%);border-top-left-radius:50% 25%;border-top-right-radius:50% 25%}
+/* The castle opening includes a sunlit strip along its right jamb. */
+.door.dimmed[data-door="castle"]::before{top:calc(-2px - 2.25%);right:calc(-2px - 6%)}
 .footer{position:absolute;bottom:3%;left:4%;right:4%;display:grid;grid-template-columns:1fr auto;gap:7px;font-size:clamp(11px,1.2vw,16px);text-shadow:0 2px 8px #000}.footer>span{font-size:12px;align-self:center}.footer small{grid-column:1/-1;color:#ddd9c9;font-size:10px}
 .loading{position:absolute;inset:0;background:#20251bf2;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:20px;padding:25px;text-align:center;z-index:4}
 .dialog{color:#f9f1e0;background:#242c22;border:1px solid #cdbf9566;border-radius:12px;width:min(460px,90vw);max-height:90dvh;padding:28px;box-shadow:0 20px 80px #0006}.dialog::backdrop{background:#0b150cbc;backdrop-filter:blur(4px)}.dialog h2{font:500 25px/1.4 'Songti SC','SimSun',serif;margin:12px 0 18px}.dialog p{line-height:1.8;font-size:14px}.dialog .eyebrow{color:#d8c394;font-size:11px}.actions{display:flex;justify-content:flex-end;gap:12px;margin-top:26px}.primary{background:#e4d2a7;color:#263124;border-color:#e4d2a7}.primary:hover:not(:disabled){background:#f2dfb1}
@@ -20,3 +25,19 @@
 @media(max-height:500px) and (orientation:landscape){.heading h1{font-size:23px}.heading p{display:none}.footer{bottom:2%;gap:3px}.footer>span{font-size:10px}.back{padding:8px 12px}.dialog{padding:18px}.dialog h2{font-size:22px;margin:8px 0}.actions{margin-top:15px}}
 @media(prefers-reduced-motion:reduce){.stage,.door{animation:none}.door{transition:none}}
 .resultEntry{position:fixed;bottom:10%;left:50%;transform:translateX(-50%);background:#242c22;color:#f9f1e0;z-index:2}.actions a{display:flex;align-items:center;padding:10px 16px;border-radius:7px}
+.dialog {width:min(520px,90vw);}
+.actions {flex-wrap:wrap;}
+.back,.resultEntry {font-size:var(--game-prompt-control);}
+.footer,.footer>span {font-size:var(--game-caption);}
+
+/* Two highlighted lines on the original scene dialog surface. */
+:root .ending[data-game-prompt] {width:min(820px,calc(100vw - 32px));padding:clamp(24px,4vw,52px);border:1px solid #cdbf9566;border-radius:22px;background:#242c22;box-shadow:0 20px 80px #0006;}
+:root .ending[data-game-prompt] .endingMessage {font-family:"STKaiti","KaiTi",serif;font-size:clamp(24px,3vw,42px);font-weight:600;line-height:1.65;margin:0 0 22px;}
+.endingMessage span {display:block;}
+.endingMessage span:first-child {color:#dfc99e;text-shadow:0 0 12px #dfc99e18;}
+.endingMessage span:last-child {color:#e5b1b5;text-shadow:0 0 12px #e5b1b518;}
+:root .ending[data-game-prompt] h2 {font-size:clamp(24px,2.2vw,32px);}
+@media(max-height:540px) and (orientation:landscape) {
+  :root .ending[data-game-prompt] {padding:22px 30px;}
+  :root .ending[data-game-prompt] .endingMessage {font-size:28px;line-height:1.4;margin-bottom:12px;}
+}

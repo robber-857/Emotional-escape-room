@@ -1,8 +1,37 @@
 /* One prompt hierarchy for all four acts, including portalled dialogs. */
 :root {
-  --game-prompt-title: clamp(18px, 1.4vw, 22px);
-  --game-prompt-body: clamp(12px, 1vw, 14px);
-  --game-prompt-control: clamp(14px, 1.1vw, 16px);
+  --game-level-title: clamp(26px, 2.8vw, 44px);
+  --game-prompt-title: clamp(22px, 1.8vw, 28px);
+  --game-prompt-body: clamp(15px, 1.2vw, 18px);
+  --game-prompt-control: clamp(16px, 1.4vw, 20px);
+  --game-caption: clamp(14px, 1.1vw, 16px);
+}
+
+:root [data-level-heading] h1 {
+  font: 600 var(--game-level-title) / 1.25 "Microsoft YaHei", "PingFang SC", sans-serif;
+  letter-spacing: .12em;
+  white-space: nowrap;
+}
+
+:root [data-game-prompt] {
+  min-width: 0;
+  max-width: calc(100vw - 32px);
+  overflow-wrap: anywhere;
+}
+
+:root [data-game-prompt] :is(h2, h3, p) {
+  min-width: 0;
+  white-space: normal;
+}
+
+@media (max-height: 540px) and (orientation: landscape) {
+  :root {
+    --game-level-title: 26px;
+    --game-prompt-title: 22px;
+    --game-prompt-body: 15px;
+    --game-prompt-control: 16px;
+    --game-caption: 14px;
+  }
 }
 
 :root [data-game-prompt] :is(h2, h3) {
@@ -25,6 +54,8 @@
   font-size: var(--game-prompt-control);
   line-height: 1.4;
   min-height: 44px;
+  flex-shrink: 0;
+  white-space: normal;
 }
 
 :root [data-game-prompt] button[aria-label^="关闭提示"] {

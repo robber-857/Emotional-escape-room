@@ -86,10 +86,27 @@
 .carryGame .inventory img {position:absolute;left:12%;top:33%;width:76%;height:56%;z-index:1;}
 .carryGame .inventory small {position:absolute;top:56%;font-size:clamp(9px,.7vw,13px);}
 .carryGame .inventoryName {position:absolute;bottom:104%;white-space:nowrap;padding:3px 7px;border-radius:5px;background:#211d26d9;font-size:11px;}
+.bubble {width:min(440px,54vw);}
+.status,.inventory,.inventory small,.carryGame .inventoryName {font-size:var(--game-caption);}
+.carryGame .carryStart {font-size:var(--game-prompt-control);}
 @media(max-height:500px) and (orientation:landscape) {
  .carryChoice {grid-area:4/13/10/24;padding:9px;max-width:300px;}
  .carryChoice p{font-size:11px;}.carryChoice .actions{margin-top:5px;}.carryChoice button{padding:5px 8px;}
  .itemPreview,.confirmImage {height:65px;}.itemPreview img,.confirmImage img{height:65px;width:100px;}
  .carryGame .inventory{padding:3px;}.carryGame .inventoryName{font-size:10px;}
  .carryGame .result {grid-area:5/9/11/23;padding:12px;}.carryGame .result p{margin-block:8px;}
+}
+@media(max-height:540px) and (orientation:landscape){
+ .bubble {grid-area:2/3/16/23;width:min(440px,78vw);max-height:calc(100dvh - 24px);}
+ .selection {grid-area:2/3/16/23;min-height:0;max-height:calc(100dvh - 40px);}
+ .carryChoice {grid-area:3/11/15/24;max-width:400px;max-height:calc(100dvh - 32px);overflow:auto;}
+ .status,.carryGame .inventoryName {font-size:var(--game-caption);}
+}
+.carryGame .inventory,.carryGame .inventory small {font-size:var(--game-caption);}
+@media(max-height:400px) and (orientation:landscape){
+ .selection {gap:4px;}
+ .selection p {margin:0;}
+ .selection .items {grid-template-columns:repeat(5,minmax(0,1fr));gap:4px;}
+ .selection .items button {padding:3px 1px;gap:1px;}
+ .selection .items img,.selection .missing {height:18px;}
 }

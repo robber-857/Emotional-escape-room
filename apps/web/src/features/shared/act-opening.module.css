@@ -1,0 +1,12 @@
+.opening {position:fixed;inset:0;margin:0;width:100vw;max-width:none;height:100dvh;max-height:none;padding:clamp(24px,6vw,100px);border:0;border-radius:0;background:linear-gradient(90deg,#102019f2,#102019b3 48%,#10201924);color:#f1efde;overflow:auto;}
+.opening[open] {display:flex;align-items:center;animation:arrive .6s ease both;}
+.opening::backdrop {background:#10201918;}
+.content {width:min(100%,800px);margin-left:max(0px,calc((100vw - 1600px)/2));}
+.eyebrow {font-size:clamp(16px,1.6vw,23px);letter-spacing:.12em;color:#d1ddbf;}
+.content h2 {font:400 clamp(36px,4.6vw,68px)/1.35 "STKaiti","KaiTi",serif;letter-spacing:.08em;margin:20px 0;}
+.prompt {font-size:clamp(22px,2.3vw,32px);line-height:1.65;text-wrap:balance;}
+.content button {margin-top:30px;font-size:clamp(20px,1.8vw,26px);padding:14px 24px;min-height:48px;}
+.content button span {margin-left:28px;}
+@media(max-height:540px) and (orientation:landscape) {.opening{padding:24px 6vw;}.content h2{font-size:36px;margin:12px 0;}.prompt{font-size:22px;}.content button{margin-top:18px;padding:10px 20px;}.eyebrow{font-size:16px;}}
+@keyframes arrive {from{opacity:0}to{opacity:1}}
+@media(prefers-reduced-motion:reduce){.opening[open]{animation:none;}}

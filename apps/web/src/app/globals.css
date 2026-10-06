@@ -643,7 +643,7 @@ body {
 .sceneBubble {
   position: absolute;
   transform: translate(-50%, -100%);
-  width: clamp(230px, 25vw, 340px);
+  width: min(420px, 58vw);
   z-index: 4;
   color: white;
   filter: drop-shadow(0 6px 14px #0003);
@@ -802,7 +802,12 @@ body {
 }
 @media (max-height: 540px) and (orientation: landscape) {
   .sceneBubble {
-    width: 240px;
+    width: min(420px, 78vw);
+    left: 50% !important;
+    top: 50% !important;
+    transform: translate(-50%, -50%);
+    max-height: calc(100dvh - 24px);
+    overflow-y: auto;
   }
   .sceneBubble .prompt {
     padding: 8px 10px;
@@ -895,3 +900,20 @@ body {
 .trace small { overflow-wrap: anywhere; font-size: .7rem; }
 
 .l2Entry { display: inline-flex; align-items: center; min-height: 44px; padding: 10px 17px; border-radius: 7px; margin-right: 10px; margin-bottom: 10px; }
+.sceneStatus,.heldLamp {font-size:var(--game-caption);}
+.l2Entry {font-size:var(--game-prompt-control);}
+
+/* Opening typography scales independently of scene coordinates. */
+.welcome > div {max-width:800px;min-width:0;}
+.welcome h2 {font-size:clamp(36px,4.6vw,68px);line-height:1.35;}
+.welcome p {font-size:clamp(22px,2.3vw,32px);line-height:1.65;}
+.welcome .eyebrow,.welcome small {font-size:clamp(16px,1.6vw,23px);}
+.welcomeActions {flex-wrap:wrap;}
+.welcomeActions button {font-size:clamp(20px,1.8vw,26px);min-height:48px;}
+@media(max-height:540px) and (orientation:landscape) {
+  .welcome {padding:24px 5vw;overflow:auto;}
+  .welcome h2 {font-size:36px;margin:12px 0;}
+  .welcome p {font-size:22px;}
+  .welcomeActions {margin:18px 0 8px;}
+  .welcome small,.welcome .eyebrow {font-size:16px;}
+}

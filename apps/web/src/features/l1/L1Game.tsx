@@ -15,7 +15,7 @@ import {
   type Subject,
 } from "./model";
 import { type Positions } from "./save";
-import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, hasJourneyProgress, createSession, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
+import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, hasJourneyProgress, createSession, restartJourney, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
 
 export function L1Game() {
   const sessionRef = useRef<Session | null>(null);
@@ -289,13 +289,13 @@ export function L1Game() {
     setModal(null);
   }
   async function fresh() {
-    if (externalChange || requestLock.current || pendingSync) return;
+    if (externalChange || requestLock.current) return;
     requestLock.current = true; setSyncing(true); setSyncError("");
     let session: Session;
-    try { session = await createSession(); }
+    try { session = await restartJourney(); }
     catch (error) { setSyncError(error instanceof Error ? error.message : "无法创建服务器会话"); return; }
     finally { requestLock.current = false; setSyncing(false); }
-    applySession(session); setReceipts([]);
+    applySession(session); setReceipts([]); setPendingSync(false); setHasSave(false);
     if (strokeTimer.current) clearTimeout(strokeTimer.current);
     strokeLock.current = false;
     setStrokeBusy(false);
@@ -410,7 +410,7 @@ export function L1Game() {
               <span className="eyebrow">一段关于选择的旅程</span>
               <h2>光在河的另一边</h2>
               <p>
-                慢慢探索，选择自己的路。
+                寻找自己的过河方式。
               </p>
               {loaded ? (
                 <div className="welcomeActions">
@@ -441,7 +441,7 @@ export function L1Game() {
               ) : (
                 <p role="status">正在准备河岸与道具…</p>
               )}
-              <small>第一幕 · 服务器校验与保存</small>
+              <small>第一幕 · 分离之河</small>
             </div>
           </div>
         )}
@@ -701,7 +701,7 @@ export function L1Game() {
                 恢复道具位置
               </button>
               <button
-                disabled={externalChange || syncing || pendingSync}
+                disabled={externalChange || syncing}
                 onClick={() => setModal("restart")}
               >
                 重新开始旅程
@@ -728,11 +728,11 @@ export function L1Game() {
         )}
         {modal === "restart" && (
           <>
-            <h2>重新开始第一幕？</h2>
-            <p>将创建新的服务器会话，旧会话记录保留。</p>
+            <h2>重新开始整个旅程？</h2>
+            <p>将清空本次旅程全部四幕的进度、选择和家具摆放，从第一幕重新开始。</p>
             <div className="decisions">
               <button onClick={() => setModal(null)}>保留当前旅程</button>
-              <button className="primary gameYes" disabled={syncing || pendingSync} onClick={fresh}>
+              <button className="primary gameYes" disabled={syncing} onClick={fresh}>
                 确认重新开始
               </button>
             </div>

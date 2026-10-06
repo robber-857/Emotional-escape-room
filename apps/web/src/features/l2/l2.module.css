@@ -70,3 +70,11 @@
 .serverTrace pre {white-space:pre-wrap;overflow-wrap:anywhere;font-size:12px;background:#24291f;padding:12px;}
 .serverTrace select {max-width:100%;color:inherit;background:#33382e;padding:6px;}
 .serverTrace summary {cursor:pointer;margin-block:12px;}
+
+.bubble {width:min(440px,54vw);}
+.navigation button,.layoutTools button {font-size:var(--game-prompt-control);}
+.status,.inventory span {font-size:var(--game-caption);}
+@media(max-height:540px) and (orientation:landscape){
+ .bubble {grid-area:2/3/16/23;align-self:center;width:min(440px,78vw);max-height:calc(100dvh - 24px);}
+ .navigation {grid-area:3/2/7/16;}
+}

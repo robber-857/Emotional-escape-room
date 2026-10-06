@@ -5,6 +5,7 @@ import {measureLayout} from "./metrics";
 import {LayoutButton} from "./LayoutButton";
 import {SearchClock} from "./searchClock";
 import Link from "next/link";
+import {ActOpening} from "../shared/ActOpening";
 import {LevelHeading} from "../shared/LevelHeading";
 import {Scene,KeySprite,assets} from "./Scene";
 import {initialState,transition,restore,keysAvailable,seatNames,keyNames,SAVE_KEY,MAX_EVENTS,type Seat,type State,type Action,type KeyId} from "./model";
@@ -14,6 +15,7 @@ import {SESSION_KEY} from "../l1/api";
 import {ServerTrace} from "./ServerTrace";
 type Prompt = {type:"exit"}|{type:"layout-confirm"}|{type:"layout-reset"}| {type:"search"}|{type:"return"}|{type:"found"}| {type:"seat";seat:Seat}|{type:"keys"}|{type:"door"}|{type:"result"}|null;
 export function L2Game({preview=false}:{preview?:boolean}){
+  const [entered,setEntered]=useState(false);
  const [state,setState]=useState(initialState);const stateRef=useRef(state);
  const [prompt,setPrompt]=useState<Prompt>(null);const [ready,setReady]=useState(false);
  const [loadError,setLoadError]=useState(false);const [attempt,setAttempt]=useState(0);
@@ -38,7 +40,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  useEffect(()=>{if(prompt)heading.current?.focus({preventScroll:true});},[prompt]);
  const flushSearch=useRef<()=>Promise<boolean>>(async()=>true);
  const saveFull=state.events.length>=MAX_EVENTS;
- const blocked=!ready||!storageReady||portrait||!!modal||conflict||!!storageError||saveFull||syncing||!!syncError;
+ const blocked=!entered||!ready||!storageReady||portrait||!!modal||conflict||!!storageError||saveFull||syncing||!!syncError;
  useEffect(()=>{
   if(state.search.status!=="searching"||state.view!=="bedroom"||blocked||prompt)return;
   const clock=new SearchClock();const base=stateRef.current.search.activeMs;
@@ -92,7 +94,8 @@ export function L2Game({preview=false}:{preview?:boolean}){
  async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
  const anchor=prompt?.type==="seat"?prompt.seat:prompt?.type==="found"?"armchair":"keys";
  return <main className={styles.game}>
-  <section className={styles.stage} aria-label="第二幕游戏舞台">
+  {!entered&&<ActOpening act="第二幕" title="失联房间" prompt="请自由探索房间。" ready={ready&&storageReady&&!portrait&&!modal&&!syncError&&!storageError&&!conflict} onEnter={()=>setEntered(true)}/>}
+    <section className={styles.stage} aria-label="第二幕游戏舞台">
    <Scene state={state} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={()=>{if(!blocked)setPrompt({type:"exit"});}} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
    {ready&&!state.furniture.editing&&<nav className={styles.navigation} aria-label="房间探索操作">
     {state.view==="bedroom"?<button disabled={blocked} onClick={requestReturn}>{state.search.status==="searching"?"放弃寻找并返回大厅":"返回大厅"}</button>:state.view==="table"?<button disabled={blocked} onClick={()=>changeView("room")}>起身回大厅</button>:keysAvailable(state)&&state.keys.length<2&&<button disabled={blocked} onClick={returnToKeys}>回到桌边拿钥匙</button>}
@@ -107,11 +110,11 @@ export function L2Game({preview=false}:{preview?:boolean}){
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>setPrompt({type:"layout-reset"})}>恢复初始摆放</LayoutButton>
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>layoutAction("layout-exit")}>返回探索</LayoutButton>
    </nav>}
-   <LevelHeading className={styles.heading} ready={ready&&storageReady&&!portrait}><h1>失联房间</h1></LevelHeading>
+   <LevelHeading className={styles.heading} ready={entered&&ready&&storageReady&&!portrait}><h1>失联房间</h1></LevelHeading>
    <button className={styles.menu} aria-label="打开第二幕菜单" onClick={()=>setModal("menu")}>☰</button>
    {(!ready||(!storageReady&&!syncError))&&<div className={styles.loading} role="status"><p>{loadError?"房间素材加载失败，请重试。":"正在准备房间…"}</p>{loadError&&<button onClick={()=>setAttempt(v=>v+1)}>重新加载</button>}</div>}
    {prompt?.type==="exit"&&<section className={`${styles.bubble} ${styles.keys}`} data-game-prompt aria-label="场景提示" inert={blocked}>
-    <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>要进入这扇门吗？</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
+    <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>你已经做了足够的探索，要离开这个房间么</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
     <p>进入后，本幕选择不可修改。</p>
     <div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><Link className={`${styles.primary} gameYes`} href={preview?"/l3?preview=1&from=l2":"/l3?from=l2"}>是</Link></div>
    </section>}

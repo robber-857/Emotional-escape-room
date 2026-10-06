@@ -28,6 +28,23 @@ export async function createSession(): Promise<Session> {
   storeSession(session);
   return session;
 }
+export async function restartJourney(): Promise<Session> {
+  // Wait for a new journey before discarding any playable progress.
+  const session = await request("/sessions", undefined, {});
+  const records = new Map<string, string>();
+  for (let i = 0; i < localStorage.length; i++) {
+    const key = localStorage.key(i);
+    if (key && /^emotional:l[1-4]:/.test(key)) records.set(key, localStorage.getItem(key)!);
+  }
+  try {
+    for (const key of records.keys()) if (key !== SESSION_KEY) localStorage.removeItem(key);
+    storeSession(session);
+  } catch (error) {
+    for (const [key, value] of records) localStorage.setItem(key, value);
+    throw error;
+  }
+  return session;
+}
 export async function resumeSession(session: Session): Promise<Session> {
   const current = { ...await request(`/sessions/${session.id}`, session), token: session.token };
   storeSession(current);
@@ -54,6 +71,8 @@ export async function submit(session: Session, pending: Pending): Promise<{ sess
   if (pending.sessionId !== session.id) throw new Error("待同步事件与当前会话不一致");
   const { sessionId: _, ...body } = pending;
   const result = await request(`/sessions/${session.id}/actions`, session, body);
+  const active = readSession();
+  if (active && active.id !== session.id) throw new Error("旅程已切换，请重新载入。");
   const current = { ...result.session, token: session.token };
   const receipt = { action_id: pending.action_id, accepted: result.accepted, code: result.code, version: result.version, duplicate: result.duplicate, action: pending.action };
   storeSession(current);

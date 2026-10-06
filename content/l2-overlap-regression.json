@@ -42,7 +42,7 @@
       ],
       "quadruples": [],
       "band": 1,
-      "method": "scene-alpha-strips-v1"
+      "method": "scene-alpha-strips-v4-resized-table"
     }
   },
   "3": {
@@ -74,7 +74,7 @@
       "triples": [],
       "quadruples": [],
       "band": 3,
-      "method": "scene-alpha-strips-v1"
+      "method": "scene-alpha-strips-v4-resized-table"
     }
   },
   "2": {
@@ -92,8 +92,8 @@
         "v": 0.6829292620511606
       },
       "table-chair": {
-        "u": 0.7050841797665899,
-        "v": 0.8764511042926452
+        "u": 0.49,
+        "v": 0.86
       }
     },
     "groups": {
@@ -103,14 +103,6 @@
           "chair"
         ],
         [
-          "armchair",
-          "table-chair"
-        ],
-        [
-          "chair",
-          "table-chair"
-        ],
-        [
           "sofa",
           "table-chair"
         ]
@@ -118,7 +110,7 @@
       "triples": [],
       "quadruples": [],
       "band": 2,
-      "method": "scene-alpha-strips-v1"
+      "method": "scene-alpha-strips-v4-resized-table"
     }
   },
   "reported": {
@@ -153,26 +145,27 @@
       ],
       "triples": [],
       "quadruples": [],
-      "band": 2
+      "band": 2,
+      "method": "scene-alpha-strips-v4-resized-table"
     }
   },
   "4": {
     "layout": {
       "armchair": {
-        "u": 0.25572771044838827,
-        "v": 0.258135956328583
+        "u": 0.573087335064205,
+        "v": 0.6451081953693072
       },
       "chair": {
-        "u": 0.5405384232486286,
-        "v": 0.185
+        "u": 0.03468581432947593,
+        "v": 0.8827722469719361
       },
       "sofa": {
         "u": 0.865,
-        "v": 0.6344471069128
+        "v": 0.7306175319157318
       },
       "table-chair": {
-        "u": 0.20248811166141967,
-        "v": 0.9464039162040295
+        "u": 0.2450623703127689,
+        "v": 0.33980560804757354
       }
     },
     "groups": {
@@ -180,7 +173,7 @@
       "triples": [],
       "quadruples": [],
       "band": 4,
-      "method": "scene-alpha-strips-v1"
+      "method": "scene-alpha-strips-v4-resized-table"
     }
   }
 }

@@ -2,14 +2,14 @@ export const furnitureIds=["armchair","chair","sofa","table-chair"] as const;
 export type FurnitureId=typeof furnitureIds[number];
 export type Point={u:number;v:number};
 export type Layout=Record<FurnitureId,Point>;
-export const layoutRuleVersion="l2-placement-v7";
+export const layoutRuleVersion="l2-placement-v8";
 // Calibrated trapezoid ground plane; parameters are prototype values, not scoring policy.
 export const project=({u,v}:Point)=>({x:960+(u-.5)*(1100+820*Math.max(0,v)),y:760+270*v});
 export const unproject=(x:number,y:number):Point=>{const v=(y-760)/270;return {u:.5+(x-960)/(1100+820*Math.max(0,v)),v};};
 export const furniture={
  armchair:{name:"单人沙发",anchor:{x:285,y:990},w:.19,d:.20},
  chair:{name:"窗边椅",anchor:{x:1145,y:810},w:.085,d:.13},
- "table-chair":{name:"桌椅组合",anchor:{x:1510,y:1013},w:.41,d:.10},
+ "table-chair":{name:"桌椅组合",anchor:{x:960,y:1013},w:.41,d:.10},
  sofa:{name:"双人沙发",anchor:{x:1510,y:925},w:.31,d:.23}
 };
 export const initialLayout=():Layout=>Object.fromEntries(furnitureIds.map(id=>[id,unproject(furniture[id].anchor.x,furniture[id].anchor.y)])) as Layout;

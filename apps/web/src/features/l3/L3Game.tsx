@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
+import {ActOpening} from "../shared/ActOpening";
 import {LevelHeading} from "../shared/LevelHeading";
 import {useRouter} from "next/navigation";
 import {assets,Scene} from "./Scene";
@@ -15,6 +16,7 @@ const questions:Record<Decision,string> = {
 };
 type Prompt = Decision | "carry" | "confirm" | null;
 export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;preview?:boolean}) {
+  const [entered,setEntered]=useState(initialSegment==="carry");
   const router=useRouter();
   const key = `${SAVE_KEY}:${initialSegment}`;
   const server=useServerL3(!preview);
@@ -34,7 +36,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const [message,setMessage] = useState("");
   const dialog = useRef<HTMLDialogElement>(null),rotation = useRef<HTMLDialogElement>(null),heading = useRef<HTMLHeadingElement>(null);
   const full = state.events.length >= MAX_EVENTS;
-  const blocked = !loaded || !ready || !!storageError || conflict || portrait || !!modal || full || (!preview&&(server.busy||!!server.error));
+  const blocked = !entered || !loaded || !ready || !!storageError || conflict || portrait || !!modal || full || (!preview&&(server.busy||!!server.error));
   function load() {
     if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setCatalog(false);setMessage("进度已恢复。");}});return;}
     try {
@@ -122,9 +124,10 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const done=state.carry===false||state.item!==null;
   const selected=state.draft;
   return <main className={`${styles.game} ${segment==="carry"?styles.carryGame:""} ${reduced?styles.reduced:""}`} data-segment={segment}>
+    {!entered&&<ActOpening act="第三幕" title="风暴大厅" prompt="风暴来临，你会如何选择？" ready={ready&&loaded&&!portrait&&!modal&&!storageError&&!conflict&&!server.error} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label={preview?"第三幕本地预览舞台":"第三幕服务器旅程舞台"}>
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <LevelHeading className={styles.heading} ready={ready&&loaded&&!portrait}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1></LevelHeading>
       <button className={styles.menu} aria-label={preview?"打开预览菜单":"打开第三幕菜单"} onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
       {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
         <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>
@@ -139,7 +142,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
         <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={`${styles.primary} gameYes`} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
       </section>}
       {done&&<section className={styles.result} data-game-prompt aria-label="走出密室提示"><h2>要走出密室吗？</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本地记录":"查看服务器记录"}</button><button className={`${styles.primary} gameYes`} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
-      {segment==="carry"&&<aside className={styles.inventory} aria-label="随身物品"><span>物品</span>{state.item?<><span className={styles.inventoryName}>{items[state.item]}</span>{state.item!=="compass"&&<img src={`/game/l3/${state.item}.png`} alt={items[state.item]}/>}</>:<small>空</small>}</aside>}
+      <aside className={styles.inventory} aria-label="随身物品"><span>物品</span>{state.item?<><span className={segment==="carry"?styles.inventoryName:undefined}>{items[state.item]}</span>{state.item!=="compass"&&<img src={`/game/l3/${state.item}.png`} alt={items[state.item]}/>}</>:<small>{segment==="carry"?"空":"尚未携带"}</small>}</aside>
       {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
         <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"要带走一件物品吗？":prompt==="confirm"?`要携带${selected?items[selected]:"这件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
         {prompt==="confirm"&&selected&&<div className={styles.confirmImage}>{selected!=="compass"?<img src={`/game/l3/${selected}.png`} alt={items[selected]}/>:<p>指南针</p>}</div>}
