@@ -2,6 +2,8 @@
 
 文档入口：[Docs 最新进度与开发交接](docs/README.md)。
 
+AWS 部署交接：[EC2 部署与运维指南](docs/aws-ec2-deployment.md)，包含 Ubuntu 初始化、生产 Compose、一键部署、数据库备份与恢复演练。
+
 最新评分说明：[计分测试指南](docs/scoring-test-guide.md)、[最终卡牌结果](docs/final-results.md)。服务端版本化评分账本已启用，修桥+走桥、灯等按完整组合一次评分，不按操作条数累计。
 
 2026-09-30 最新交接：[数据库/前后端/Docker 启动](docs/george-start-2026-09-30.md)。每关 A/V/T/F 独立归一化，同维度按 20%/30%/30%/20% 汇总；现行临时策略把尚未配置选项明确设为 NULL，不补零。

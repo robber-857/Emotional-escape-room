@@ -8,3 +8,6 @@
 **/.env.local
 output
 .playwright-cli
+deploy/ec2/state
+deploy/ec2/backups
+deploy/ec2/.env.tmp

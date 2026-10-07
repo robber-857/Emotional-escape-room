@@ -16,3 +16,8 @@ outputs/
 
 *.backup
 *.db
+
+# EC2 server credentials, backups and deployment records.
+deploy/ec2/state/
+deploy/ec2/backups/
+deploy/ec2/.env.tmp
