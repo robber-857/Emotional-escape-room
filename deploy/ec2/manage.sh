@@ -9,13 +9,18 @@ STATE="$DIR/state"
 die() { echo "ERROR: $*" >&2; exit 1; }
 ACTION="${1:-help}"
 if [[ "$ACTION" == help ]]; then
-  echo 'Usage: manage.sh init DOMAIN | deploy | backup | status | logs | compose ARGS...'
+  echo 'Usage: manage.sh init DOMAIN | check | deploy | backup | status | logs | compose ARGS...'
   exit 0
 fi
 command -v flock >/dev/null || die 'flock is required (Ubuntu package: util-linux).'
 mkdir -p "$STATE"
-exec 9>"$STATE/operation.lock"
-flock -n 9 || die 'Another operation is running.'
+case "$ACTION" in
+  status|logs|check) ;; # Diagnostics remain available during a long deployment.
+  init|deploy|backup|compose)
+    exec 9>"$STATE/operation.lock"
+    flock -n 9 || die 'Another operation is running.' ;;
+  *) die "Unknown action: $ACTION" ;;
+esac
 if [[ "$ACTION" == init ]]; then
   [[ ! -e "$ENV_FILE" ]] || die '.env already exists; credentials were not changed.'
   domain="${2:-}"
@@ -29,11 +34,15 @@ fi
 [[ -f "$ENV_FILE" ]] || die 'Run init first.'
 # Parse a deliberately small format; never execute an env file as shell code.
 unset DOMAIN POSTGRES_USER POSTGRES_DB POSTGRES_PASSWORD RELEASE_ID
+declare -A seen=()
 while IFS= read -r line || [[ -n "$line" ]]; do
   line="${line%$'\r'}"
   [[ -z "$line" || "$line" == \#* ]] && continue
   [[ "$line" == *=* ]] || die 'Invalid env line.'
   key="${line%%=*}"; value="${line#*=}"
+  [[ -n "$key" ]] || die 'Empty env key.'
+  [[ -z "${seen[$key]:-}" ]] || die "Duplicate env key: $key"
+  seen[$key]=1
   case "$key" in DOMAIN|POSTGRES_USER|POSTGRES_DB|POSTGRES_PASSWORD|RELEASE_ID) export "$key=$value" ;; *) die "Unsupported env key: $key" ;; esac
 done < "$ENV_FILE"
 [[ "${DOMAIN:-}" =~ ^[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$ ]] || die 'Invalid DOMAIN.'
@@ -44,6 +53,17 @@ docker compose version >/dev/null
 docker info >/dev/null
 dc() { docker compose --project-name emotional-prod --env-file "$ENV_FILE" -f "$DIR/compose.yaml" "$@"; }
 dc config --quiet
+preflight() {
+  for command in curl git openssl getent; do
+    command -v "$command" >/dev/null || die "Missing command: $command. Run bootstrap-ubuntu.sh."
+  done
+  docker buildx version >/dev/null
+  getent ahosts "$DOMAIN" >/dev/null || die 'DOMAIN has no DNS result. Configure public DNS first.'
+  echo "Preflight passed for $DOMAIN. Check DNS points to this EC2 and inbound 80/443 are open."
+}
+verify_ready() {
+  dc exec -T api python -c 'import json,sys; r=json.load(sys.stdin); assert r.get("status")=="ok" and r.get("persistence_ready") is True and r.get("scoring_engine_ready") is True and r.get("schema_version"), "Unexpected readiness response"'
+}
 backup() {
   mkdir -p "$DIR/backups"
   local file="$DIR/backups/$(date -u +%Y%m%dT%H%M%SZ)-$$.dump"
@@ -58,24 +78,34 @@ backup() {
 }
 case "$ACTION" in
   deploy)
+    preflight
     # Refuse uncommitted source so a release SHA is meaningful.
     gitcmd=(git -c "safe.directory=$ROOT" -C "$ROOT")
-    [[ -z "$("${gitcmd[@]}" status --porcelain)" ]] || die 'Commit/stash intended changes before deployment; checkout must be clean.'
+    tree_status="$("${gitcmd[@]}" status --porcelain)" || die 'Cannot read Git checkout status.'
+    [[ -z "$tree_status" ]] || die 'Commit/stash intended changes before deployment; checkout must be clean.'
     revision="$("${gitcmd[@]}" rev-parse HEAD)"
     export RELEASE_ID="${revision:0:12}-$(date -u +%Y%m%dT%H%M%SZ)"
-    trap 'echo "Deployment failed. Check status/logs. Services may remain stopped; no automatic schema rollback was attempted." >&2' ERR
+    printf '%s commit=%s attempted_release=%s\n' "$(date -u +%FT%TZ)" "$revision" "$RELEASE_ID" >> "$STATE/attempts.log"
+    trap 'echo "Deployment failed. Check status/logs and state/attempts.log. Services may remain stopped; no automatic schema rollback was attempted." >&2' ERR
     # Build before downtime; retain old application images for rollback.
     dc build api web
     dc pull proxy
+    dc run --rm --no-deps proxy caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
     dc up -d --wait --wait-timeout 180 db
+    # Check configured TCP credentials, not just pg_isready/local socket trust.
+    dc run --rm --no-deps migrate python -c 'from app.db import make_engine; e=make_engine(); c=e.connect(); c.exec_driver_sql("SELECT 1"); c.close(); e.dispose()'
     dc stop proxy web api
     backup
-    dc run --rm --no-deps migrate
-    dc up -d --no-deps --wait --wait-timeout 240 api
-    dc up -d --no-deps --wait --wait-timeout 240 web
+    dc run --rm --no-deps migrate 2>&1 | tee "$STATE/migration-$RELEASE_ID.log"
+    dc up -d --no-deps --no-build --pull never --wait --wait-timeout 240 api
+    dc up -d --no-deps --no-build --pull never --wait --wait-timeout 240 web
     dc up -d --no-deps --force-recreate proxy
+    # Prove this EC2's proxy/TLS works before checking the public DNS route.
+    curl --fail --silent --show-error --noproxy '*' --resolve "$DOMAIN:443:127.0.0.1" \
+      --retry 20 --retry-delay 5 --retry-all-errors --connect-timeout 5 --max-time 10 \
+      "https://$DOMAIN/api/v1/ready" | verify_ready
     curl --fail --silent --show-error --retry 20 --retry-delay 5 --retry-all-errors \
-      --connect-timeout 5 --max-time 10 "https://$DOMAIN/api/v1/ready"
+      --connect-timeout 5 --max-time 10 "https://$DOMAIN/api/v1/ready" | verify_ready
     curl --fail --silent --show-error --connect-timeout 5 --max-time 30 "https://$DOMAIN/" >/dev/null
     cp -- "$ENV_FILE" "$STATE/previous.env"
     sed "s/^RELEASE_ID=.*/RELEASE_ID=$RELEASE_ID/" "$ENV_FILE" > "$ENV_FILE.tmp"
@@ -84,6 +114,7 @@ case "$ACTION" in
     echo; echo "Deployment checks passed: https://$DOMAIN ; run browser UAT next."
     ;;
   backup) backup ;;
+  check) preflight ;;
   status) dc ps -a ;;
   logs) dc logs --tail 100 "${2:-api}" ;;
   compose) shift; dc "$@" ;;
