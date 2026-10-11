@@ -6,10 +6,15 @@
 html {
   background: var(--ink);
   color: var(--cream);
-  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: var(--font-game);
 }
 body {
   margin: 0;
+}
+input,
+select,
+textarea {
+  font-family: inherit;
 }
 button,
 a {
@@ -63,7 +68,7 @@ p {
   min-height: 92px;
 }
 .brand {
-  font-family: "Songti SC", "SimSun", serif;
+  font-family: var(--font-game);
   font-size: 20px;
   letter-spacing: 0.2em;
   display: grid;
@@ -71,8 +76,7 @@ p {
 }
 .brand span {
   font:
-    8px/1.2 Arial,
-    sans-serif;
+    8px/1.2 var(--font-game);
   letter-spacing: 0.22em;
   color: var(--muted);
 }
@@ -91,7 +95,7 @@ p {
 }
 .chapterCount {
   color: #717d73;
-  font: 11px monospace;
+  font: 11px var(--font-game);
   letter-spacing: 0.1em;
 }
 .quiet {
@@ -131,7 +135,7 @@ p {
   color: #e5e6cf;
 }
 .sceneHeading h1 {
-  font-family: "STKaiti", "KaiTi", "Songti SC", serif;
+  font-family: var(--font-game);
   font-size: clamp(24px, 3vw, 46px);
   font-weight: 500;
   letter-spacing: 0.2em;
@@ -159,7 +163,7 @@ p {
   letter-spacing: 0.17em;
 }
 .welcome h2 {
-  font-family: "STKaiti", "KaiTi", serif;
+  font-family: var(--font-game);
   font-size: clamp(28px, 3.6vw, 52px);
   font-weight: 400;
   line-height: 1.5;
@@ -407,7 +411,7 @@ dialog::backdrop {
   backdrop-filter: blur(5px);
 }
 dialog h2 {
-  font-family: "Songti SC", serif;
+  font-family: var(--font-game);
   font-size: 27px;
   font-weight: 400;
   margin: 18px 0;
@@ -624,8 +628,7 @@ body {
 }
 .sceneHeading h1 {
   font:
-    600 clamp(20px, 2vw, 36px) / 1.2 "Microsoft YaHei",
-    sans-serif;
+    600 clamp(20px, 2vw, 36px) / 1.2 var(--font-game);
   color: white;
   text-shadow: 0 2px 10px #17251d;
 }
@@ -673,8 +676,7 @@ body {
 }
 .sceneBubble h2 {
   font:
-    600 clamp(13px, 1vw, 16px) / 1.5 "Microsoft YaHei",
-    sans-serif;
+    600 clamp(13px, 1vw, 16px) / 1.5 var(--font-game);
   margin: 0;
 }
 .sceneBubble p {

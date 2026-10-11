@@ -1,4 +1,4 @@
-.inspector{position:fixed;right:16px;bottom:16px;z-index:90;width:min(510px,calc(100vw - 32px));color:#f1eee5;font:14px/1.6 system-ui,sans-serif;pointer-events:none}
+.inspector{position:fixed;right:16px;bottom:16px;z-index:90;width:min(510px,calc(100vw - 32px));color:#f1eee5;font:14px/1.6 var(--font-game);pointer-events:none}
 .toggle,.panel{pointer-events:auto;background:#22291f;border:1px solid #8b9471;box-shadow:0 6px 30px #0005}
 .toggle{display:block;margin-left:auto;color:inherit;border-radius:8px;padding:10px 14px;cursor:pointer;text-align:left}.toggle span{margin-left:12px;color:#cfd8ae}
 .panel{margin-top:8px;border-radius:10px;padding:18px;max-height:62vh;overflow:auto;overscroll-behavior:contain}.panel h2{font-size:20px;margin:0 0 6px}.panel h3{font-size:15px;margin:16px 0 6px}.panel p{margin:8px 0}.muted{font-size:12px;color:#c3c6b8}

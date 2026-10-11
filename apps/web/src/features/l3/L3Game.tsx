@@ -127,7 +127,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
     {!entered&&<ActOpening act="第三幕" title="风暴大厅" prompt="风暴来临，你会如何选择？" ready={ready&&loaded&&!portrait&&!modal&&!storageError&&!conflict&&!server.error} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label={preview?"第三幕本地预览舞台":"第三幕服务器旅程舞台"}>
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait}><p>第三幕 · {segment==="storm"?"01":"02"}</p><h1>风暴大厅</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
       <button className={styles.menu} aria-label={preview?"打开预览菜单":"打开第三幕菜单"} onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
       {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
         <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>

@@ -13,7 +13,7 @@
   padding: max(36px, env(safe-area-inset-top)) max(36px, env(safe-area-inset-right)) max(30px, env(safe-area-inset-bottom)) max(36px, env(safe-area-inset-left));
   background: #000;
   color: var(--gold);
-  font-family: "Songti SC", "STSong", "SimSun", serif;
+  font-family: var(--font-game);
   text-align: center;
   transition: opacity 800ms ease;
 }
@@ -60,7 +60,7 @@
 .prologue { opacity: 0; transition: opacity 1500ms ease; }
 .prologue { display: grid; justify-items: center; gap: 13px; padding-top: 9px; }
 .prologue p { font-size: 13px; letter-spacing: .32em; color: #c5b9a5; }
-.prologue span { color: #8b877e; font: 7px/1.5 Arial, sans-serif; letter-spacing: .6em; }
+.prologue span { color: #8b877e; font: 7px/1.5 var(--font-game); letter-spacing: .6em; }
 .cover[data-stage="2"] .prologue, .cover[data-stage="3"] .prologue { opacity: 1; }
 
 .center {
@@ -76,7 +76,7 @@
 .artwork { position: relative; width: clamp(210px, 27vh, 290px); width: clamp(210px, 27dvh, 290px); aspect-ratio: 1; margin-bottom: -26px; }
 .artwork img { display: block; width: 100%; height: 100%; object-fit: contain; }
 .identity h1 { padding-left: .16em; font-size: clamp(38px, 4vw, 58px); font-weight: 400; line-height: 1.3; letter-spacing: .16em; text-shadow: 0 0 25px #d9a34c1c; }
-.englishTitle { margin-top: 9px; padding-left: .28em; color: #a18e6c; font: 8px/1.5 Arial, sans-serif; letter-spacing: .28em; }
+.englishTitle { margin-top: 9px; padding-left: .28em; color: #a18e6c; font: 8px/1.5 var(--font-game); letter-spacing: .28em; }
 
 .mote { position: absolute; top: 44%; left: 50%; width: 5px; height: 5px; transform: translate(-50%, -50%); pointer-events: none; opacity: 0; transition: opacity 500ms ease; }
 .mote span { display: block; width: 100%; height: 100%; border-radius: 50%; background: #fff2cf; box-shadow: 0 0 7px 3px #fff0c0bd, 0 0 24px 10px #d6a35650, 0 0 65px 28px #c0882526; }
@@ -96,7 +96,7 @@
 .cover[data-stage="2"] .invitation, .cover[data-stage="3"] .invitation { opacity: 1; transform: translateY(0); }
 .entry { display: grid; justify-items: center; width: min(260px, 80vw); margin-top: 31px; opacity: 0; transition: opacity 1000ms ease; }
 .cover[data-stage="3"] .entry { opacity: 1; }
-.enterButton { display: flex; align-items: center; justify-content: center; gap: 24px; min-height: 48px; width: 100%; padding: 9px 14px; border: 0; border-radius: 0; color: #dfcba9; font-family: inherit; font-size: 14px; letter-spacing: .2em; background: transparent; }
+.enterButton { display: flex; align-items: center; justify-content: center; gap: 24px; min-height: 48px; width: 100%; padding: 9px 14px; border: 0; border-radius: 0; color: #dfcba9; font-family: var(--font-game); font-size: 14px; letter-spacing: .2em; background: transparent; }
 .enterButton > span:last-child { color: #b49b70; font-size: 24px; line-height: 1; letter-spacing: 0; transition: transform 300ms ease; }
 .enterButton:hover:not(:disabled) { background: transparent; color: #fff0cf; text-shadow: 0 0 20px #e0b97270; }
 .enterButton:hover:not(:disabled) > span:last-child { transform: translateX(5px); }

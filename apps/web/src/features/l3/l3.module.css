@@ -3,7 +3,7 @@
 .scene {grid-area:1/1/-1/-1;width:100%;height:100%;overflow:hidden;}
 .heading {grid-area:1/2/4/16;align-self:center;pointer-events:none;z-index:1;text-shadow:0 2px 10px #000;}
 .heading p {font-size:11px;letter-spacing:.2em;margin-bottom:5px;}
-.heading h1 {font:600 clamp(20px,2.4vw,38px)/1.2 'Songti SC','SimSun',serif;letter-spacing:.12em;}
+.heading h1 {font:600 clamp(20px,2.4vw,38px)/1.2 var(--font-game);letter-spacing:.12em;}
 .heading span {display:block;font-size:11px;margin-top:8px;}
 .menu {grid-area:1/23/3/25;align-self:center;justify-self:center;background:#25212ac9;z-index:4;font-size:21px;padding:3px 12px;}
 .hotspot {cursor:pointer;outline:none;touch-action:manipulation;}
@@ -12,7 +12,7 @@
 .hotspot[aria-disabled=true] {cursor:default;}
 .marker {pointer-events:none;}
 .marker rect {fill:#29242be8;stroke:#ddc5ab88;stroke-width:1;}
-.marker text {fill:#fff;font:600 30px 'Microsoft YaHei',sans-serif;}
+.marker text {fill:#fff;font:600 30px var(--font-game);}
 .marker .markerDetail {font-size:24px;font-weight:400;}
 .hotspot[aria-disabled=true] .marker {opacity:.45;}
 .bubble {align-self:center;justify-self:center;width:min(350px,44vw);max-height:74dvh;overflow:auto;padding:16px;background:#302c35ef;border:1px solid #dbc6b36b;border-radius:14px;z-index:4;box-shadow:0 10px 40px #0005;animation:appear .2s ease-out;}
@@ -28,7 +28,7 @@
 .inventory img {width:60px;height:60px;object-fit:contain;}.inventory small {font-size:10px;}
 .carryStart {grid-area:7/9/10/18;align-self:center;justify-self:center;background:#302c35ed;z-index:2;}
 .selection {grid-area:4/7/15/21;align-self:center;display:grid;gap:9px;padding:18px;background:#28242bf2;border:1px solid #d8c4a963;border-radius:16px;z-index:3;max-height:74dvh;overflow:auto;}
-.selection h2 {font:500 clamp(16px,1.6vw,24px)/1.3 'Songti SC',serif;}.selection p {font-size:12px;}
+.selection h2 {font:500 clamp(16px,1.6vw,24px)/1.3 var(--font-game);}.selection p {font-size:12px;}
 .items {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;}
 .items button {display:grid;justify-items:center;align-content:center;gap:3px;min-width:0;padding:4px;font-size:12px;background:#ffffff08;}
 .items button[aria-pressed=true] {border-color:#e3c39d;background:#dfb88025;}
@@ -65,7 +65,7 @@
 .pickable:not([aria-disabled=true]):hover > rect,.pickable:focus-visible > rect,.picked > rect {fill:#fff1c410;stroke:#ead6b4;}
 .itemLabel {opacity:0;pointer-events:none;}
 .itemLabel rect {fill:#25222ae8;stroke:#d4bda988;stroke-width:1;}
-.itemLabel text {fill:#fff9ec;font:26px 'Microsoft YaHei',sans-serif;}
+.itemLabel text {fill:#fff9ec;font:26px var(--font-game);}
 .pickable:not([aria-disabled=true]):hover .itemLabel,.pickable:focus-visible .itemLabel,.picked .itemLabel {opacity:1;}
 .pickable[aria-disabled=true] {cursor:default;}
 .carryGame .stage {position:relative;}

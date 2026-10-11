@@ -8,7 +8,7 @@
 }
 
 :root [data-level-heading] h1 {
-  font: 600 var(--game-level-title) / 1.25 "Microsoft YaHei", "PingFang SC", sans-serif;
+  font: 600 var(--game-level-title) / 1.25 var(--font-game);
   letter-spacing: .12em;
   white-space: nowrap;
 }
@@ -35,7 +35,7 @@
 }
 
 :root [data-game-prompt] :is(h2, h3) {
-  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  font-family: var(--font-game);
   font-size: var(--game-prompt-title);
   font-weight: 700;
   line-height: 1.5;
