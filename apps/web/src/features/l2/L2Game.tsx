@@ -1,6 +1,7 @@
 "use client";
 import {furniture,moveLayout,type FurnitureId,type Point} from "./layout";
 import {useEffect,useRef,useState} from "react";
+import {useSceneAssets} from "../shared/useSceneAssets";
 import {measureLayout} from "./metrics";
 import {LayoutButton} from "./LayoutButton";
 import {SearchClock} from "./searchClock";
@@ -17,8 +18,10 @@ type Prompt = {type:"exit"}|{type:"layout-confirm"}|{type:"layout-reset"}| {type
 export function L2Game({preview=false}:{preview?:boolean}){
   const [entered,setEntered]=useState(false);
  const [state,setState]=useState(initialState);const stateRef=useRef(state);
- const [prompt,setPrompt]=useState<Prompt>(null);const [ready,setReady]=useState(false);
- const [loadError,setLoadError]=useState(false);const [attempt,setAttempt]=useState(0);
+ const [prompt,setPrompt]=useState<Prompt>(null);
+ const [attempt,setAttempt]=useState(0);
+ const sceneAssets=state.view==="bedroom"?["bedroom-single-clue.png","earring.png","keys.png"]:state.view==="table"?["table-view.png","keys.png"]:assets.filter(name=>!["bedroom-single-clue.png","earring.png","table-view.png"].includes(name));
+ const {ready,error:loadError}=useSceneAssets(sceneAssets.map(name=>`/game/l2/${name}`),attempt);
  const [storageReady,setStorageReady]=useState(false);const [storageError,setStorageError]=useState("");
  const searchConflict=useRef(false);
  const server=useRef<api.Session|null>(null);const requestLock=useRef(false);
@@ -34,7 +37,6 @@ export function L2Game({preview=false}:{preview?:boolean}){
   const query=matchMedia("(pointer: coarse) and (orientation: portrait) and (max-width: 900px)");const update=()=>setPortrait(query.matches);update();query.addEventListener("change",update);
   return()=>{window.removeEventListener("storage",change);query.removeEventListener("change",update);};
  },[preview]);
- useEffect(()=>{let active=true;setReady(false);setLoadError(false);Promise.all(assets.map(name=>new Promise<void>((resolve,reject)=>{const img=new Image();img.onload=()=>resolve();img.onerror=reject;img.src=`/game/l2/${name}`;}))).then(()=>{if(active)setReady(true);}).catch(()=>{if(active)setLoadError(true);});return()=>{active=false;};},[attempt]);
  useEffect(()=>{if(modal)dialog.current?.showModal();else dialog.current?.close();},[modal]);
  useEffect(()=>{if(portrait)rotation.current?.showModal();else rotation.current?.close();},[portrait]);
  useEffect(()=>{if(prompt)heading.current?.focus({preventScroll:true});},[prompt]);
@@ -126,11 +128,11 @@ export function L2Game({preview=false}:{preview?:boolean}){
    {!prompt&&ready&&<p className={styles.status} role="status">{syncing?"正在同步进度…":message}</p>}
   </section>
   {(conflict||storageError||saveFull||syncError)&&<section className={styles.notice} role="alert"><p>{conflict?"另一标签页更新了进度，请重新载入。":syncError||storageError||(preview?"本机记录已满，已暂停新的操作。已有进度仍保留，可从菜单查看记录，或确认重新开始 L2。":"本关记录已满，已有服务器进度保留。可查看记录或返回第一幕开始新旅程。")}</p>{conflict?<button onClick={()=>location.reload()}>载入最新进度</button>:preview?<button onClick={()=>setModal("reset")}>重新开始</button>:<><button disabled={syncing||saveFull} onClick={syncServer}>重试同步</button><Link href="/">返回第一幕</Link></>}</section>}
-  <dialog ref={dialog} className={styles.dialog} onCancel={()=>setModal(null)}><button className={styles.close} aria-label="关闭菜单" onClick={()=>setModal(null)}>×</button>
+  <dialog data-game-dialog ref={dialog} className={styles.dialog} onCancel={()=>setModal(null)}><button className={styles.close} aria-label="关闭菜单" onClick={()=>setModal(null)}>×</button>
    {modal==="menu"&&<><h2>房间里的探索</h2><p>点击桌边，或在桌前椅坐下，就会出现钥匙选择。窗边椅可以坐下休息，点击“整理家具”可以移动椅子和沙发，合理摆放并确认后，左侧另一扇门会打开。只有明确选择后，钥匙才会进入物品栏。</p><p>{preview?"当前为独立本机预览，进度不上传服务器。":"当前沿用第一幕的旅程，动作和家具摆放由服务器校验保存。评分规则待配置，当前不计算分数。"}</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本机选择":"查看服务器记录"}</button>{preview&&<button onClick={()=>setModal("reset")} disabled={conflict}>重新开始</button>}<Link href="/">返回第一幕</Link></div></>}
    {modal==="reset"&&<><h2>重新探索这个房间？</h2><p>将清除本机的全部 L2 进度，包括座位、钥匙与开门、耳环寻找、家具摆放及事件记录。L1 服务器进度不受影响。</p><div className={styles.actions}><button onClick={()=>setModal(null)}>保留当前进度</button><button onClick={reset} disabled={conflict}>确认重新开始</button></div></>}
    {modal==="trace"&&!preview&&<ServerTrace sessionId={server.current?.id}/>}{modal==="trace"&&preview&&<><h2>{preview?"本机选择记录":"服务器选择记录"}</h2><p>{preview?"这些记录尚未提交服务器，不代表正式评分。":`会话：${server.current?.id} · L2 版本 ${server.current?.version} · 第一幕已完成，原进度保留。评分待配置。`}</p><p>累计有效调整：{state.furniture.adjustmentCount??"历史记录缺失"} 次。整齐度按重叠组合分为四档：三重或四重叠 1 档，多对重叠 2 档，仅一对 3 档，无重叠 4 档。</p>{state.furniture.classification?.metrics&&<p>最近确认：靠墙／窗程度 {state.furniture.classification.metrics.wallWindowProximity.toFixed(3)}；整齐度第 {state.furniture.classification.metrics.tidinessBand}/4 档。本机预览不生成正式分数。</p>}<ol>{state.events.map(e=><li key={e.id}>{e.action.type==="layout-move"?`移动${furniture[e.action.id].name}`:e.action.type==="layout-start"?"开始整理家具":e.action.type==="layout-undo"?"撤销家具移动":e.action.type==="layout-reset"?"恢复初始家具位置":e.action.type==="layout-exit"?"保留摆放并返回探索":e.action.type==="layout-confirm"?"确认家具摆放":e.action.type==="search-choice"?(e.action.yes?"开始寻找耳环":"暂不寻找耳环"):e.action.type==="search-time"?`寻找有效时间：${e.action.activeMs}ms${e.action.activeMs>15000?"（长寻找）":""}`:e.action.type==="curtain-click"?"查看窗帘附近":e.action.type==="find-earring"?"找到耳环（旧版记录）":e.action.type==="explore"?(e.action.yes?"进入卧室探索":"暂不进入卧室"):e.action.type==="return-hall"?"从卧室返回大厅":e.action.type==="view"?(e.action.view==="table"?"查看桌面":"回到大厅"):e.action.type==="try-door"?`用${keyNames[e.action.key]}开门：${state.attempts[0]===e.action.key?"第一次失败":"第二次成功"}`:e.action.type==="arrive-table"?"走到桌边":e.action.type==="sit"?`${seatNames[e.action.seat]}：${e.action.yes?"坐下":"不坐"}`:`选择${keyNames[e.action.key]}`}</li>)}</ol>{!state.events.length&&<p>尚未作出选择。</p>}</>}
   </dialog>
-  <dialog ref={rotation} className={styles.dialog} onCancel={e=>e.preventDefault()}><h2>换一个方向，继续旅程</h2><p>为了保证用户体验请翻转手机为横屏</p></dialog>
+  <dialog data-game-dialog ref={rotation} className={styles.dialog} onCancel={e=>e.preventDefault()}><h2>换一个方向，继续旅程</h2><p>为了保证用户体验请翻转手机为横屏</p></dialog>
  </main>;
 }

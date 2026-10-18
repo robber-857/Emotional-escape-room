@@ -4,6 +4,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   devIndicators: false,
   distDir: process.env.NEXT_DIST_DIR || ".next",
+  async headers() {
+    return [{source:"/game/optimized/:path*",headers:[{key:"Cache-Control",value:"public, max-age=31536000, immutable"}]}];
+  },
   async rewrites() {
     return [
       {

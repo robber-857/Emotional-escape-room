@@ -3,6 +3,7 @@
 import { useCallback, useState, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { ScoreInspector } from "../scoring/ScoreInspector";
+import { gameDebugEnabled } from "../shared/debug";
 import { GameCover } from "./GameCover";
 import styles from "./cover.module.css";
 
@@ -17,7 +18,7 @@ function GameEntry({ children }: { children: ReactNode }) {
   return (
     <>
       <div className={styles.sceneEntrance}>{children}</div>
-      <ScoreInspector />
+      {gameDebugEnabled && <ScoreInspector />}
     </>
   );
 }
@@ -25,5 +26,5 @@ function GameEntry({ children }: { children: ReactNode }) {
 export function GameShell({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   if (pathname === "/") return <GameEntry>{children}</GameEntry>;
-  return <>{children}<ScoreInspector /></>;
+  return <>{children}{gameDebugEnabled && <ScoreInspector />}</>;
 }

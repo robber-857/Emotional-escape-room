@@ -1,4 +1,5 @@
 "use client";
+import {gameAsset} from "../shared/gameAsset";
 
 import { useRef, useState, type PointerEvent } from "react";
 import { Sprite } from "./Sprite";
@@ -32,7 +33,7 @@ export const assetNames = [
   "lamp-on",
   "sparkles-small",
 ];
-export const asset = (name: string) => `/game/l1/${name}.png`;
+export const asset = (name: string) => gameAsset(`/game/l1/${name}.png`);
 const W = 2944,
   H = 1568;
 type Rect = { x: number; y: number; w: number; h: number };

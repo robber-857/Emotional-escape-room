@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import {useSceneAssets} from "../shared/useSceneAssets";
 import Link from "next/link";
 import {LevelHeading} from "../shared/LevelHeading";
 import { woodAtGap, ropeAtGap, repairMaterialsReady } from "./geometry";
@@ -37,9 +38,10 @@ export function L1Game() {
   const [selected, setSelected] = useState<Subject | null>(null);
   const [started, setStarted] = useState(false);
   const [hasSave, setHasSave] = useState(false);
-  const [loaded, setLoaded] = useState(false);
-  const [assetError, setAssetError] = useState(false);
   const [loadAttempt, setLoadAttempt] = useState(0);
+  const shoreAssets=["shore-base","shore-middle","shore","woman","person","lamp-off","lamp-on"];
+  const sceneAssets=(state.scene==="river"?assetNames.filter(name=>!shoreAssets.includes(name)):shoreAssets).map(asset);
+  const {ready:loaded,error:assetError}=useSceneAssets(sceneAssets,loadAttempt);
   const [saveStatus, setSaveStatus] = useState("连接服务器后开始保存进度");
   const [message, setMessage] = useState(
     "河水静静流淌。",
@@ -74,31 +76,7 @@ export function L1Game() {
     };
   }, []);
 
-  useEffect(() => {
-    let active = true;
-    setAssetError(false);
-    setLoaded(false);
-    Promise.all(
-      assetNames.map(
-        (name) =>
-          new Promise<void>((resolve, reject) => {
-            const img = new Image();
-            img.onload = () => resolve();
-            img.onerror = reject;
-            img.src = asset(name);
-          }),
-      ),
-    )
-      .then(() => {
-        if (active) setLoaded(true);
-      })
-      .catch(() => {
-        if (active) setAssetError(true);
-      });
-    return () => {
-      active = false;
-    };
-  }, [loadAttempt]);
+
 
   useEffect(() => {
     const query = window.matchMedia(
@@ -668,7 +646,7 @@ export function L1Game() {
           <button onClick={() => location.reload()}>载入最新进度</button>
         </section>
       )}
-      <dialog
+      <dialog data-game-dialog
         ref={dialog}
         onCancel={() => setModal(null)}
         onClick={(e) => {
@@ -758,7 +736,7 @@ export function L1Game() {
           </>
         )}
       </dialog>
-      <dialog
+      <dialog data-game-dialog
         className="rotation"
         ref={rotationDialog}
         onCancel={(e) => e.preventDefault()}

@@ -1,4 +1,5 @@
 import {readSession,type Session as L1Session} from "../l1/api";
+import {reliableJson} from "../shared/reliableRequest";
 import type {Action,State} from "./model";
 export type Session={id:string;version:number;rules_version:string;state:State;l1:{version:number;scene:string;route:string;lampTaken:boolean;lampLit:boolean};scoring:{status:"pending_configuration";totals:null}};
 export type Pending={sessionId:string;action_id:string;expected_version:number;action:Action};
@@ -12,10 +13,13 @@ export function credentials():L1Session{
  return session;
 }
 async function request(auth:L1Session,suffix:string,body?:unknown){
- const response=await fetch(`/api/v1/sessions/${auth.id}/levels/l2${suffix}`,{method:body===undefined?"GET":"POST",cache:"no-store",headers:{"Content-Type":"application/json",Authorization:`Bearer ${auth.token}`},body:body===undefined?undefined:JSON.stringify(body),signal:AbortSignal.timeout(12000)});
- const data=await response.json();
+ const {response,data}=await reliableJson(`/api/v1/sessions/${auth.id}/levels/l2${suffix}`,{method:body===undefined?"GET":"POST",cache:"no-store",headers:{"Content-Type":"application/json",Authorization:`Bearer ${auth.token}`},body:body===undefined?undefined:JSON.stringify(body)},{beforeAttempt:()=>assertCurrent(auth)});
  if(!response.ok&&!data.session)throw new Error(data.detail==="L1_NOT_COMPLETE"?"第一幕尚未完成，请返回继续。":data.detail==="SESSION_NOT_FOUND"?"原旅程的凭据已失效，请返回第一幕。":typeof data.detail==="string"?data.detail:`HTTP ${response.status}`);
  return data;
+}
+function assertCurrent(auth:L1Session){
+ const active=readSession();
+ if(!active||active.id!==auth.id||active.token!==auth.token)throw new Error("旅程已切换或凭据已清除，请重新载入。");
 }
 export async function start(auth:L1Session):Promise<Session>{return request(auth,"",{});}
 export async function getReceipts(auth:L1Session):Promise<Receipt[]>{return request(auth,"/events");}
@@ -28,6 +32,8 @@ export function prepare(session:Session,action:Action):Pending{
 export async function submit(auth:L1Session,pending:Pending):Promise<Session>{
  if(pending.sessionId!==auth.id)throw new Error("待同步动作属于另一段旅程。");
  const {sessionId:_,...body}=pending;const result=await request(auth,"/actions",body);
+ assertCurrent(auth);
+ if(typeof result.accepted!=="boolean"||result.session?.id!==auth.id||!Number.isSafeInteger(result.session.version)||!result.session.state?.furniture||(result.action_id&&result.action_id!==pending.action_id))throw new Error("服务器回执不完整或与当前操作不一致。待同步操作已保留，请重试同步。");
  // Notify other tabs only after receiving an authoritative snapshot. Pending stays if storage fails.
  localStorage.setItem(changeKey(auth.id),JSON.stringify({version:result.session.version,action_id:pending.action_id}));
  // A response from an older request must not erase a different pending request from another tab.

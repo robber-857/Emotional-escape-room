@@ -32,14 +32,15 @@ export function ScoreInspector(){
    }catch(e){if(active){setData(null);setError(e instanceof Error?e.message:"无法读取计分");}}
    finally{busy=false;}
   }
-  void load();const timer=setInterval(()=>void load(),1000);
+  if(!open)return;
+  void load();const timer=setInterval(()=>void load(),3000);
   return()=>{active=false;controller.abort();clearInterval(timer);};
- },[path,retry]);
+ },[path,retry,open]);
  const latest=data?.actions[0];
  return <aside className={styles.inspector} aria-label="服务端计分测试">
   <button className={styles.toggle} aria-expanded={open} onClick={()=>setOpen(!open)}>服务端计分 {latest?`· ${reasons[latest.reason]||latest.reason}`:""} <span>{open?"收起":"展开"}</span></button>
   {open&&<div className={styles.panel}>
-   <h2>计分测试台</h2><p className={styles.muted}>每秒读取服务器账本。点击、动画、本机预览不会生成这里的加分。</p>
+   <h2>计分测试台</h2><p className={styles.muted}>展开时每三秒读取服务器账本，收起后停止。点击、动画、本机预览不会生成这里的加分。</p>
    {error&&<div role="alert">{error}<button onClick={()=>setRetry(n=>n+1)}>重试读取计分</button></div>}
    {empty&&<p>{empty}</p>}
    {data?.status==="legacy_normalization"&&<p>这段旅程绑定的是旧评分规则，已停止展示。请开始新旅程使用四维算法；历史回执保留。</p>}

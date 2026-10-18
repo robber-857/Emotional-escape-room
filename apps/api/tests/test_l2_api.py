@@ -166,7 +166,7 @@ def test_concurrent_l2_actions_and_starts(client):
     assert sorted(r.status_code for r in results) == [200, 409]
     assert len(client.get(url, headers=h).json()["state"]["events"]) == 1
 
-@pytest.mark.parametrize("placement,band", [("edge",2),("stacked",1),("outside",1),("at-limit",1),("over-limit",1),("high",1)])
+@pytest.mark.parametrize("placement,band", [("edge",1),("stacked",1),("outside",1),("at-limit",2),("over-limit",2),("high",2)])
 def test_table_chair_full_overlap_footprint_preserves_floor_limits(client, placement, band):
     _, h, url, s = open_l2(client)
     sofa = s["state"]["furniture"]["layout"]["sofa"]
@@ -180,6 +180,18 @@ def test_table_chair_full_overlap_footprint_preserves_floor_limits(client, place
     state = client.get(url, headers=h).json()["state"]
     assert not state["furniture"]["classification"]["evidence"]["outsideFloor"]
     assert state["furniture"]["classification"]["metrics"]["tidinessBand"] == band
+    # The resized/re-anchored table sprite (4672059, placement v8) changes
+    # visible overlap, while the full floor footprint and clamps stay the same.
+    groups = state["furniture"]["classification"]["evidence"]["overlapGroups"]
+    rear_clamped = placement in ("at-limit", "over-limit", "high")
+    assert groups["pairs"] == ([["chair", "sofa"], ["chair", "table-chair"]] if rear_clamped else
+                               [["chair", "sofa"], ["chair", "table-chair"], ["sofa", "table-chair"]])
+    assert groups["triples"] == ([] if rear_clamped else [["chair", "sofa", "table-chair"]])
+    assert groups["quadruples"] == []
+    if rear_clamped:
+        assert state["furniture"]["confirmed"]["table-chair"] == pytest.approx(dict(u=.45, v=.17))
+    elif placement == "outside":
+        assert state["furniture"]["confirmed"]["table-chair"] == pytest.approx(dict(u=.815, v=.4))
     assert state["exitDoorOpen"] is True
     assert state["furniture"]["confirmed"]["table-chair"] == move_layout(initial_layout(),"table-chair",point)["table-chair"]
     if placement == "edge": assert state["furniture"]["classification"]["metrics"]["tidiness"] == pytest.approx(1-.07/.41/2)

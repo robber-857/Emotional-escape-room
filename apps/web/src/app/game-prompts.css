@@ -1,4 +1,13 @@
 /* One prompt hierarchy for all four acts, including portalled dialogs. */
+/* Host-site resets (including Tailwind preflight) must not remove native centering.
+   Explicitly scope this rule to game dialogs; do not affect host-site dialogs. */
+dialog[data-game-dialog] {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  max-width: calc(100vw - 32px);
+  max-height: calc(100dvh - 32px);
+}
 :root {
   --game-level-title: clamp(26px, 2.8vw, 44px);
   --game-prompt-title: clamp(22px, 1.8vw, 28px);

@@ -1,14 +1,15 @@
+import {gameAsset} from "../shared/gameAsset";
 import {FurniturePiece} from "./FurniturePiece";
 import {furnitureIds,type FurnitureId,type Point} from "./layout";
 import { seatNames, type KeyId, type Seat, type State } from "./model";
 import styles from "./l2.module.css";
 export const assets=["cabinet.png","cabinet-mask.svg","earring.png","door-panel.png","bedroom-single-clue.png","table-view.png","room.png","room-exit-open.png","chair.png","sofa.png","armchair.png","table-chair.png","keys.png","detail.svg"];
 export function KeySprite({id}:{id:KeyId}) {
- return <svg viewBox="0 0 51 44" width="51" height="44" overflow="hidden" aria-hidden="true"><image href="/game/l2/keys.png" x={id==="key-1"?0:-59.9454} y="0" width="111.0015" height="44" preserveAspectRatio="none" /></svg>;
+ return <svg viewBox="0 0 51 44" width="51" height="44" overflow="hidden" aria-hidden="true"><image href={gameAsset("/game/l2/keys.png")} x={id==="key-1"?0:-59.9454} y="0" width="111.0015" height="44" preserveAspectRatio="none" /></svg>;
 }
 function ImageLayer({id,x,y,w,h,crop=[0,0,1,1],opacity=1}:{id:string;x:number;y:number;w:number;h:number;crop?:number[];opacity?:number}){
  return <svg data-layer={id} x={x} y={y} width={w} height={h} viewBox={`0 0 ${w} ${h}`} overflow="hidden" opacity={opacity}>
-  <image href={`/game/l2/${id}.png`} x={crop[0]*w} y={crop[1]*h} width={crop[2]*w} height={crop[3]*h} preserveAspectRatio="none" />
+  <image href={gameAsset(`/game/l2/${id}.png`)} x={crop[0]*w} y={crop[1]*h} width={crop[2]*w} height={crop[3]*h} preserveAspectRatio="none" />
  </svg>;
 }
 export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearch,onFind,onMove}:{state:State;disabled:boolean;onSeat:(seat:Seat)=>void;onTable:()=>void;onDoor:()=>void;onExit:()=>void;onKey:(key:KeyId)=>void;onSearch:()=>void;onFind:()=>void;onMove:(id:FurnitureId,p:Point)=>void}){
@@ -19,14 +20,14 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
   </g>;
  }
  if(state.view==="bedroom")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：卧室">
-  <image data-layer="bedroom" href="/game/l2/bedroom-single-clue.png" x="-29" y="0" width="1978" height="1113" preserveAspectRatio="xMidYMid slice"/>
-  {<svg data-layer="earring-clue" x="379" y="690" width="17" height="27" overflow="hidden"><image href="/game/l2/earring.png" x={17*-.4656} y={27*-.6732} width={17*3.6641} height={27*2.3415} preserveAspectRatio="none"/></svg>}
-  {state.search.status==="found"&&<svg data-layer="found-earring" x="1265" y="770" width="25" height="40" overflow="hidden"><image href="/game/l2/earring.png" x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>}
+  <image data-layer="bedroom" href={gameAsset("/game/l2/bedroom-single-clue.png")} x="-29" y="0" width="1978" height="1113" preserveAspectRatio="xMidYMid slice"/>
+  {<svg data-layer="earring-clue" x="379" y="690" width="17" height="27" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={17*-.4656} y={27*-.6732} width={17*3.6641} height={27*2.3415} preserveAspectRatio="none"/></svg>}
+  {state.search.status==="found"&&<svg data-layer="found-earring" x="1265" y="770" width="25" height="40" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>}
   {state.search.status==="searching"?hit("查看窗帘附近",1155,320,150,350,onFind):state.search.status!=="found"&&hit("查看床头柜上的耳环",350,658,75,85,onSearch)}
 
  </svg>;
  if(state.view==="table")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：坐在桌前">
-  <svg x="-100" y="0" width="2048" height="1088" overflow="hidden"><image data-layer="table-view" href="/game/l2/table-view.png" x="92.3648" y="-583.3856" width="2048" height="1768.4352" preserveAspectRatio="none"/></svg>
+  <svg x="-100" y="0" width="2048" height="1088" overflow="hidden"><image data-layer="table-view" href={gameAsset("/game/l2/table-view.png")} x="92.3648" y="-583.3856" width="2048" height="1768.4352" preserveAspectRatio="none"/></svg>
   {(["key-1","key-2"] as KeyId[]).map((key,i)=>!state.keys.includes(key)&&<g key={key} data-layer={key}>
    <g transform={`translate(${760+i*270} 420) scale(2.7)`}><KeySprite id={key}/></g>
    {hit(`拿起${key==="key-1"?"钥匙1":"钥匙2"}`,740+i*270,400,185,170,()=>onKey(key))}
@@ -38,10 +39,10 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
   {state.exitDoorOpen&&<g data-layer="l2-exit-door">
    {/* Register the supplied open-door scene to the existing door sill and furniture plane. */}
    <defs><linearGradient id="l2-exit-blend" x1="0" y1="0" x2="0" y2="1"><stop stopColor="white" stopOpacity="0"/><stop offset=".06" stopColor="white"/></linearGradient><mask id="l2-exit-room-mask"><rect width="1920" height="1049" fill="url(#l2-exit-blend)"/></mask></defs>
-   <image href="/game/l2/room-exit-open.png" x="0" y="28" width="1919.008" height="1249" preserveAspectRatio="none" mask="url(#l2-exit-room-mask)"/>
+   <image href={gameAsset("/game/l2/room-exit-open.png")} x="0" y="28" width="1919.008" height="1249" preserveAspectRatio="none" mask="url(#l2-exit-room-mask)"/>
   </g>}
   {state.doorOpen&&<g data-layer="half-open-door">
-   <svg x="761" y="271" width="156" height="505" overflow="hidden"><image href="/game/l2/door-panel.png" x={-763-1919.008*.0153} y={-267+1048.989*.0014} width={1919.008*1.0755} height={1048.989*1.0589} preserveAspectRatio="none"/></svg>
+   <svg x="761" y="271" width="156" height="505" overflow="hidden"><image href={gameAsset("/game/l2/door-panel.png")} x={-763-1919.008*.0153} y={-267+1048.989*.0014} width={1919.008*1.0755} height={1048.989*1.0589} preserveAspectRatio="none"/></svg>
    <rect x="917" y="269" width="17" height="507" fill="#050505" style={{filter:"blur(3.6px)"}}/>
   </g>}
   {!state.exitDoorOpen&&<image data-layer="detail" href="/game/l2/detail.svg" x="633" y="321.49" width="10" height="10"/>}

@@ -1,3 +1,4 @@
+import {gameAsset} from "../shared/gameAsset";
 import fills from "./fills.json";
 // Original transparent image fills. Crop/flip/rotation remain independent SVG transforms.
 export function Sprite({ id }: { id: string }) {
@@ -29,7 +30,7 @@ export function Sprite({ id }: { id: string }) {
         overflow="hidden"
       >
         <image
-          href={`/game/l1/${id}.png`}
+          href={gameAsset(`/game/l1/${id}.png`)}
           x={(-tx / sx) * f.w}
           y={(-ty / sy) * f.h}
           width={f.w / sx}

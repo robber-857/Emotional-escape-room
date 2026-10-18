@@ -3,9 +3,10 @@ import assert from "node:assert/strict";
 import {initialState} from "./model";
 import {prepare,submit,readPending,pendingKey,RejectedAction,type Session} from "./api";
 import {initialState as l1Initial} from "../l1/model";
+import {SESSION_KEY} from "../l1/api";
 const session:Session={id:"test",version:0,rules_version:"l2-rules-v1",state:initialState(),l1:{version:2,scene:"complete",route:"swim",lampTaken:false,lampLit:false},scoring:{status:"pending_configuration",totals:null}};
 const auth={id:"test",token:"test-token",version:2,rules_version:"l1-rules-v1",state:l1Initial(),positions:{}};
-function storage(){const values=new Map<string,string>();Object.defineProperty(globalThis,"localStorage",{configurable:true,value:{getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>values.set(k,v),removeItem:(k:string)=>values.delete(k)}});}
+function storage(){const values=new Map<string,string>([[SESSION_KEY,JSON.stringify(auth)]]);Object.defineProperty(globalThis,"localStorage",{configurable:true,value:{getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>values.set(k,v),removeItem:(k:string)=>values.delete(k)}});}
 test("L2 lost responses keep the original request, resume is scoped to the L1 session",async()=>{
  storage();const old=globalThis.fetch;
  try{const pending=prepare(session,{type:"arrive-table"});globalThis.fetch=async()=>{throw new Error("response lost");};
@@ -27,5 +28,25 @@ test("a late receipt cannot remove another tab's newer pending request",async()=
  try{const p=prepare(session,{type:"arrive-table"});const newer={...p,action_id:"another-action"};
  globalThis.fetch=async()=>{localStorage.setItem(pendingKey(session.id),JSON.stringify(newer));return Response.json({accepted:true,session:{...session,version:1}});};
  await submit(auth,p);assert.deepEqual(readPending(session.id),newer);
+ }finally{globalThis.fetch=old;}
+});
+
+test("malformed receipts cannot discard an unsynchronized furniture move",async()=>{
+ storage();const old=globalThis.fetch;
+ try{
+  const p=prepare(session,{type:"layout-move",id:"sofa",point:{u:.5,v:.6}});
+  for(const response of [{accepted:true},{accepted:true,session:{...session,id:"wrong-session"}},{session}]){
+   globalThis.fetch=async()=>Response.json(response);
+   await assert.rejects(submit(auth,p),/回执/);assert.deepEqual(readPending(session.id),p);
+  }
+ }finally{globalThis.fetch=old;}
+});
+
+test("credentials removed while awaiting a receipt cannot restore stale progress",async()=>{
+ storage();const old=globalThis.fetch;
+ try{
+  const p=prepare(session,{type:"layout-start"});
+  globalThis.fetch=async()=>{localStorage.removeItem(SESSION_KEY);return Response.json({accepted:true,session:{...session,version:1}});};
+  await assert.rejects(submit(auth,p),/凭据已清除/);assert.deepEqual(readPending(session.id),p);
  }finally{globalThis.fetch=old;}
 });

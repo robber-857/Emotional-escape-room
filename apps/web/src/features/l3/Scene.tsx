@@ -1,3 +1,4 @@
+import {gameAsset} from "../shared/gameAsset";
 import {canDecide,type Decision, type State,type Item} from "./model";
 import {Television} from "./Television";
 import {Layer} from "./SceneLayer";
@@ -28,7 +29,7 @@ export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart,televi
     {state.choices.curtain ? <g mask="url(#l3-open-curtain)"><Layer name="open-curtain-window-open" x={-129} y={-18} w={2071} h={1115}/></g> : storm && state.choices.window && <g mask="url(#l3-closed-curtain)"><Layer name="curtain" x={49.5} y={-51.5} w={2106} h={1134} crop={[-.013,.0004,1.013,.9994]}/></g>}
     <Television off={televisionOff}/>
     {/* Keep the sofa's feet at the original waiting area; the back rises above it. */}
-    <image href="/game/l3/waiting-sofa-front.png" x="710" y="625" width="300" height="300" pointerEvents="none"/>
+    <image href={gameAsset("/game/l3/waiting-sofa-front.png")} x="710" y="625" width="300" height="300" pointerEvents="none"/>
     <image href="/game/l3/detail.svg" x="633" y="321.49" width="10" height="10"/>
     {state.segment === "storm" && <>
       {state.choices.open === null ? hit("open",200,120,340,710,"查看半开的门","看看门") : <>

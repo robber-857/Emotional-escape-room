@@ -40,7 +40,7 @@ export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatc
  </div></section>}
  </article>
  <footer className={styles.footer}><p>匹配功能即将开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
- <dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
- <dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onClick={e=>{if(e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">匹配功能即将开放</h2><p>开放后，可在这里寻找与你匹配的人。</p><form method="dialog"><button autoFocus>知道了</button></form></dialog>
+ <dialog data-game-dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
+ <dialog data-game-dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onClick={e=>{if(e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">匹配功能即将开放</h2><p>开放后，可在这里寻找与你匹配的人。</p><form method="dialog"><button autoFocus>知道了</button></form></dialog>
  </main>;
 }

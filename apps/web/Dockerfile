@@ -1,4 +1,6 @@
 FROM node:22-bookworm-slim AS build
+ARG NEXT_PUBLIC_GAME_DEBUG=false
+ENV NEXT_PUBLIC_GAME_DEBUG=$NEXT_PUBLIC_GAME_DEBUG
 WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1 API_BASE_URL=http://api:8000
 COPY package.json package-lock.json ./

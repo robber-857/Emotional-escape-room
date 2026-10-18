@@ -45,6 +45,8 @@ services:
     build:
       context: .
       dockerfile: apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_GAME_DEBUG: "true"
     ports:
       - "127.0.0.1:${WEB_PORT:-3000}:3000"
     depends_on:
