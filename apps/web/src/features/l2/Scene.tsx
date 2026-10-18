@@ -12,7 +12,7 @@ function ImageLayer({id,x,y,w,h,crop=[0,0,1,1],opacity=1}:{id:string;x:number;y:
   <image href={gameAsset(`/game/l2/${id}.png`)} x={crop[0]*w} y={crop[1]*h} width={crop[2]*w} height={crop[3]*h} preserveAspectRatio="none" />
  </svg>;
 }
-export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearch,onFind,onMove}:{state:State;disabled:boolean;onSeat:(seat:Seat)=>void;onTable:()=>void;onDoor:()=>void;onExit:()=>void;onKey:(key:KeyId)=>void;onSearch:()=>void;onFind:()=>void;onMove:(id:FurnitureId,p:Point)=>void}){
+export function Scene({state,earringDropping,onEarringLanded,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearch,onFind,onMove}:{state:State;earringDropping:boolean;onEarringLanded:()=>void;disabled:boolean;onSeat:(seat:Seat)=>void;onTable:()=>void;onDoor:()=>void;onExit:()=>void;onKey:(key:KeyId)=>void;onSearch:()=>void;onFind:()=>void;onMove:(id:FurnitureId,p:Point)=>void}){
  function hit(name:string,x:number,y:number,w:number,h:number,fn:()=>void){
   return <g role="button" aria-label={name} aria-disabled={disabled} tabIndex={disabled?-1:0} className={styles.hotspot}
    onClick={()=>{if(!disabled)fn();}} onKeyDown={e=>{if(!disabled&&(e.key==="Enter"||e.key===" ")){e.preventDefault();fn();}}}>
@@ -22,7 +22,12 @@ export function Scene({state,disabled,onSeat,onTable,onDoor,onExit,onKey,onSearc
  if(state.view==="bedroom")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：卧室">
   <image data-layer="bedroom" href={gameAsset("/game/l2/bedroom-single-clue.png")} x="-29" y="0" width="1978" height="1113" preserveAspectRatio="xMidYMid slice"/>
   {<svg data-layer="earring-clue" x="379" y="690" width="17" height="27" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={17*-.4656} y={27*-.6732} width={17*3.6641} height={27*2.3415} preserveAspectRatio="none"/></svg>}
-  {state.search.status==="found"&&<svg data-layer="found-earring" x="1265" y="770" width="25" height="40" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>}
+  {state.search.status==="found"&&<g data-layer="found-earring" transform="translate(1510 625)" aria-label="落在梳妆台上的耳环" pointerEvents="none">
+   <ellipse className={`${styles.earringShadow} ${earringDropping?styles.earringShadowLanding:""}`} cx="0" cy="4" rx="18" ry="3"/>
+   <g className={`${styles.foundEarring} ${earringDropping?styles.earringDrop:""}`} onAnimationEnd={e=>{if(e.target===e.currentTarget)onEarringLanded();}}>
+    <svg x="-12.5" y="-20" width="25" height="40" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>
+   </g>
+  </g>}
   {state.search.status==="searching"?hit("查看窗帘附近",1155,320,150,350,onFind):state.search.status!=="found"&&hit("查看床头柜上的耳环",350,658,75,85,onSearch)}
 
  </svg>;

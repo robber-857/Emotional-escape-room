@@ -17,6 +17,7 @@ import {ServerTrace} from "./ServerTrace";
 type Prompt = {type:"exit"}|{type:"layout-confirm"}|{type:"layout-reset"}| {type:"search"}|{type:"return"}|{type:"found"}| {type:"seat";seat:Seat}|{type:"keys"}|{type:"door"}|{type:"result"}|null;
 export function L2Game({preview=false}:{preview?:boolean}){
   const [entered,setEntered]=useState(false);
+ const [earringDropping,setEarringDropping]=useState(false);
  const [state,setState]=useState(initialState);const stateRef=useRef(state);
  const [prompt,setPrompt]=useState<Prompt>(null);
  const [attempt,setAttempt]=useState(0);
@@ -88,9 +89,9 @@ export function L2Game({preview=false}:{preview?:boolean}){
  async function tryDoor(key:KeyId){if(blocked||stateRef.current.doorOpen||stateRef.current.attempts.includes(key)||!stateRef.current.keys.includes(key))return;if(await act({type:"try-door",key}))setPrompt({type:"result"});}
  async function explore(yes:boolean){if(blocked||!stateRef.current.doorOpen||stateRef.current.view!=="room")return;if(await act({type:"explore",yes})){setPrompt(null);setMessage(yes?"你走进了房间。":"已留在大厅。");}}
  async function searchChoice(yes:boolean){if(await act({type:"search-choice",yes})){setPrompt(null);setMessage(yes?"仔细看看房间，寻找那只耳环。":"已暂停寻找。");}}
- async function findEarring(){if(blocked||stateRef.current.search.status!=="searching")return;if(!await flushSearch.current())return;if(await act({type:"curtain-click"})){if(stateRef.current.search.curtainClicks===3){setPrompt({type:"found"});setMessage("你在窗帘附近找到了另一只耳环。");}else setMessage("你拨开窗帘，继续仔细查看。");}}
+ async function findEarring(){if(blocked||stateRef.current.search.status!=="searching")return;if(!await flushSearch.current())return;if(await act({type:"curtain-click"})){if(stateRef.current.search.curtainClicks===3){setEarringDropping(true);setPrompt({type:"found"});setMessage("你在窗帘附近找到了另一只耳环。");}else setMessage("你拨开窗帘，继续仔细查看。");}}
  async function requestReturn(){if(blocked)return;if(!await flushSearch.current())return;if(stateRef.current.search.status!=="found")setPrompt({type:"return"});else returnHall();}
- async function returnHall(){if(blocked||stateRef.current.view!=="bedroom")return;if(await act({type:"return-hall"})){setPrompt(null);setMessage("已回到大厅。");}}
+ async function returnHall(){if(blocked||stateRef.current.view!=="bedroom")return;if(await act({type:"return-hall"})){setEarringDropping(false);setPrompt(null);setMessage("已回到大厅。");}}
  async function startLayout(){if(await act({type:"layout-start"})){setPrompt(null);setMessage("拖动家具，按你觉得合适的方式摆放。");}}
  async function moveFurniture(id:FurnitureId,point:Point){if(blocked||prompt||!stateRef.current.furniture.editing)return;if(!moveLayout(stateRef.current.furniture.layout,id,point)){setMessage("未能记录这次移动，请重试。");return;}const bounded=moveLayout(stateRef.current.furniture.layout,id,point)![id];if(Math.hypot(bounded.u-stateRef.current.furniture.layout[id].u,bounded.v-stateRef.current.furniture.layout[id].v)<.002){setMessage("已到可摆放边缘，可以沿墙继续调整。");return;}if(await act({type:"layout-move",id,point:bounded}))setMessage(`${furniture[id].name}的位置已保留，可以继续调整。`);}
  async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
@@ -98,7 +99,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  return <main className={styles.game}>
   {!entered&&<ActOpening act="第二幕" title="失联房间" prompt="请自由探索房间。" ready={ready&&storageReady&&!portrait&&!modal&&!syncError&&!storageError&&!conflict} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第二幕游戏舞台">
-   <Scene state={state} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={()=>{if(!blocked)setPrompt({type:"exit"});}} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
+   <Scene state={state} earringDropping={earringDropping} onEarringLanded={()=>setEarringDropping(false)} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={()=>{if(!blocked)setPrompt({type:"exit"});}} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
    {ready&&!state.furniture.editing&&<nav className={styles.navigation} aria-label="房间探索操作">
     {state.view==="bedroom"?<button disabled={blocked} onClick={requestReturn}>{state.search.status==="searching"?"放弃寻找并返回大厅":"返回大厅"}</button>:state.view==="table"?<button disabled={blocked} onClick={()=>changeView("room")}>起身回大厅</button>:keysAvailable(state)&&state.keys.length<2&&<button disabled={blocked} onClick={returnToKeys}>回到桌边拿钥匙</button>}
     {state.view!=="bedroom"&&state.keys.length>0&&<button disabled={blocked} onClick={door}>{state.doorOpen?"查看半开的门":"去开门试试"}</button>}
