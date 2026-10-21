@@ -370,7 +370,7 @@ export function L1Game() {
         {!started && (
           <div className="welcome">
             <div>
-              <span className="eyebrow">第一幕 · 分离之河</span>
+              <span className="eyebrow">分离之河</span>
               <h2>光在河的另一边</h2>
               <p>
                 寻找自己的过河方式。
@@ -423,7 +423,7 @@ export function L1Game() {
         {started && state.scene === "complete" && (
           <div className="welcome completion">
             <div>
-              <span className="eyebrow">第一幕 · 已走过</span>
+              <span className="eyebrow">分离之河 · 已走过</span>
               <h2>你来到了门前</h2>
               <p>选择已留在旅程里。</p>
               <div className="completionActions"><Link className="primary gameYes l2Entry" href="/l2">进入第二幕 <span aria-hidden="true">→</span></Link><div className="completionSecondary">

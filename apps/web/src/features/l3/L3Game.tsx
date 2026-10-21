@@ -1,5 +1,5 @@
 "use client";
-import {gameAsset} from "../shared/gameAsset";
+import {carrySlots} from "./CarryScene";
 import {useEffect,useRef,useState} from "react";
 import {useSceneAssets} from "../shared/useSceneAssets";
 import {ActOpening} from "../shared/ActOpening";
@@ -15,7 +15,7 @@ const questions:Record<Decision,string> = {
   open:"要完全打开门吗？",close:"要把门关上吗？",
   wait:"要坐稳等待吗？",curtain:"要拉开右窗的窗帘吗？",window:"要关闭左边的窗户吗？","right-window":"要关闭右边的窗户吗？",television:"要关掉电视机电源吗？",
 };
-type Prompt = Decision | "carry" | "confirm" | null;
+type Prompt = Decision | "confirm" | null;
 export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;preview?:boolean}) {
   const [entered,setEntered]=useState(initialSegment==="carry");
   const router=useRouter();
@@ -29,29 +29,35 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const loaded=preview?localLoaded:server.loaded;
   const [attempt,setAttempt] = useState(0);
   const carryAssets=["scarf.png","lantern.png","umbrella.png","doll.png","key.png","journal.png","rope.png","backpack.png"];
-  const sceneAssets=segment==="carry"?["entry.png","tv.png","tv-screen.png","detail.svg",...carryAssets]:assets.filter(file=>!carryAssets.includes(file));
+  const sceneAssets=segment==="carry"?assets.filter(file=>file!=="waiting-sofa-front.png"):assets.filter(file=>!carryAssets.includes(file));
   if(state.item&&state.item!=="compass"&&!sceneAssets.includes(`${state.item}.png`))sceneAssets.push(`${state.item}.png`);
   const {ready,error:assetError}=useSceneAssets(sceneAssets.map(file=>`/game/l3/${file}`),attempt);
   const [storageError,setStorageError] = useState(""),[localConflict,setConflict] = useState(false);
   const conflict=preview?localConflict:server.conflict;
   const [prompt,setPrompt] = useState<Prompt>(null),[modal,setModal] = useState<"menu"|"reset"|"reset-all"|null>(null);
-  const [televisionOff,setTelevisionOff] = useState(false);
+  const [preparationChoices,setPreparationChoices] = useState<State["choices"]|null>(null);
   const [continuePreparing,setContinuePreparing] = useState(false);
-  const [catalog,setCatalog] = useState(false);
   const [portrait,setPortrait] = useState(false),[reduced,setReduced] = useState(false);
   const [message,setMessage] = useState("");
+  const [showCarryToast,setShowCarryToast] = useState(false);
+  useEffect(()=>{
+    if((!state.item&&state.carry!==false)||!loaded||!ready||!entered){setShowCarryToast(false);return;}
+    setShowCarryToast(true);
+    const timer=setTimeout(()=>setShowCarryToast(false),2500);
+    return()=>clearTimeout(timer);
+  },[state.item,state.carry,loaded,ready,entered]);
   const dialog = useRef<HTMLDialogElement>(null),rotation = useRef<HTMLDialogElement>(null),heading = useRef<HTMLHeadingElement>(null);
   const full = state.events.length >= MAX_EVENTS;
   const blocked = !entered || !loaded || !ready || !!storageError || conflict || portrait || !!modal || full || (!preview&&(server.busy||!!server.error));
   function load() {
-    if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setCatalog(false);setMessage("进度已恢复。");}});return;}
+    if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setMessage("进度已恢复。");}});return;}
     try {
       const raw = localStorage.getItem(key); const saved = raw === null ? initialState(segment) : restore(raw,initialSegment);
       if(segment==="carry"){
         const stormRaw=localStorage.getItem(`${SAVE_KEY}:storm`);
-        setTelevisionOff(stormRaw!==null && restore(stormRaw,"storm").choices.television===true);
+        setPreparationChoices(stormRaw!==null?restore(stormRaw,"storm").choices:null);
       }
-      current.current=saved;lastRaw.current=raw;setState(saved);setConflict(false);setStorageError("");setPrompt(null);setCatalog(false);
+      current.current=saved;lastRaw.current=raw;setState(saved);setConflict(false);setStorageError("");setPrompt(null);
       if(raw!==null)setMessage("进度已恢复。");
     } catch {setStorageError("本地预览存档无法读取。原数据已保留，可重试或明确重新开始。");}
     setLoaded(true);
@@ -70,7 +76,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
     if(preview && loaded && !storageError && !conflict && initialSegment==="storm" && state.segment==="carry")
       router.replace("/l3?preview=1&segment=carry&from=storm");
   },[preview,loaded,storageError,conflict,state,router]);
-  useEffect(()=>{if(!preview){setPrompt(null);setCatalog(false);}},[preview,segment,conflict]);
+  useEffect(()=>{if(!preview){setPrompt(null);}},[preview,segment,conflict]);
   useEffect(()=>{if(modal)dialog.current?.showModal();else dialog.current?.close();},[modal]);
   useEffect(()=>{if(portrait)rotation.current?.showModal();else rotation.current?.close();},[portrait]);
   useEffect(()=>{if(prompt)heading.current?.focus({preventScroll:true});},[prompt]);
@@ -114,13 +120,13 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   function reset() {
     if(!preview)return;
     // Explicit destructive confirmation applies only to this segment's preview.
-    try {const next=initialState(segment);const raw=serialize(next);localStorage.setItem(key,raw);lastRaw.current=raw;current.current=next;setState(next);setStorageError("");setConflict(false);setPrompt(null);setModal(null);setCatalog(false);setMessage("已重新开始当前片段的本地预览。");}
+    try {const next=initialState(segment);const raw=serialize(next);localStorage.setItem(key,raw);lastRaw.current=raw;current.current=next;setState(next);setStorageError("");setConflict(false);setPrompt(null);setModal(null);setMessage("已重新开始当前片段的本地预览。");}
     catch {setStorageError("无法重置本地存档，请检查浏览器存储权限。");setModal(null);}
   }
   async function chooseItem(item:Item){
-    if(blocked||prompt)return;
+    if(blocked||prompt||state.carry!==true||state.item!==null)return;
     if(state.draft===item||await act({type:"draft",item})){
-      setCatalog(false);setMessage(`已预选${items[item]}，确认前可以更换。`);
+      setPrompt("confirm");setMessage("");
     }
   }
   const done=state.carry===false||state.item!==null;
@@ -128,31 +134,26 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   return <main className={`${styles.game} ${segment==="carry"?styles.carryGame:""} ${reduced?styles.reduced:""}`} data-segment={segment}>
     {!entered&&<ActOpening journeyId={preview?"preview-l3":server.sessionId} resume={state.events.length>0} act="第三幕" title="风暴大厅" prompt="风暴来临，你会如何选择？" ready={ready&&loaded&&!portrait&&!modal&&!storageError&&!conflict&&!server.error} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第三幕游戏舞台">
-      <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait} after={segment==="storm"&&!stormComplete(state)?<><p>本关任务：</p><p>请在风暴来临之前，完成你认为重要的准备工作。</p></>:undefined}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
+      <Scene state={preview&&segment==="carry"&&preparationChoices?{...state,choices:preparationChoices}:state} blocked={blocked||!!prompt} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{}} onItem={chooseItem}/>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait} after={segment==="storm"&&!stormComplete(state)?<><p>本关任务：</p><p>请在风暴来临之前，完成你认为重要的准备工作。</p></>:undefined}><h1>风暴大厅</h1></LevelHeading>
       {segment==="storm"&&stormComplete(state)&&entered&&!prompt&&<div className={styles.preparationActions} aria-label="准备进度选择">
         <button disabled={blocked} className={styles.primary} onClick={async()=>{if(await act({type:"finish-preparation"})){setPrompt(null);setMessage("");}}}>我已完成</button>
         {!continuePreparing&&<button disabled={blocked} onClick={()=>{setContinuePreparing(true);setMessage("可以继续选择房间里的物品，准备好后点击我已完成。");}}>继续做准备</button>}
       </div>}
       <button className={styles.menu} aria-label="打开第三幕菜单" onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
-      {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
-        <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>
-        <div className={styles.items}>{(Object.keys(items) as Item[]).map(id=><button key={id} disabled={blocked||!!prompt} aria-label={`${items[id]}${selected===id?" · 已预选":""}`} aria-pressed={selected===id} onClick={()=>chooseItem(id)}>
-          {id!=="compass"?<img src={gameAsset(`/game/l3/${id}.png`)} alt=""/>:<span className={styles.missing}>指南针</span>}<span>{items[id]}{selected===id?" · 已预选":""}</span>
-        </button>)}</div>
-        <button className={`${styles.primary} gameYes`} disabled={blocked||!selected||!!prompt} onClick={()=>setPrompt("confirm")}>{selected?`确认携带${items[selected]}`:"请先预选一件物品"}</button>
-      </section>}
-      {segment==="carry"&&state.carry===true&&!done&&!catalog&&!prompt&&<section className={styles.carryChoice} data-game-prompt aria-label="携带物品选择">
-        <h2>{selected?`要携带${items[selected]}吗？`:"要携带哪件物品？"}</h2>
-        {selected&&<div className={styles.itemPreview}>{selected!=="compass"?<img src={gameAsset(`/game/l3/${selected}.png`)} alt={items[selected]}/>:<span>指南针</span>}</div>}
-        <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={`${styles.primary} gameYes`} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
-      </section>}
-      {done&&<section className={styles.result} data-game-prompt aria-label="走出密室提示"><h2>要走出密室吗？</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}</p><div className={styles.actions}><button className={`${styles.primary} gameYes`} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
-      {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="right-window"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
-        <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"要带走一件物品吗？":prompt==="confirm"?`要携带${selected?items[selected]:"这件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-        {prompt==="confirm"&&selected&&<div className={styles.confirmImage}>{selected!=="compass"?<img src={gameAsset(`/game/l3/${selected}.png`)} alt={items[selected]}/>:<p>指南针</p>}</div>}
+      {segment==="carry"&&state.carry===null&&<section className={`${styles.bubble} ${styles.centerBubble}`} data-game-prompt aria-label="携带物品选择">
+        <h2>最多只能带走一件物品</h2>
         <div className={styles.actions}>
-          {prompt==="confirm"?<><button disabled={blocked} onClick={()=>setPrompt(null)}>返回挑选</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(await act({type:"confirm"})){setPrompt(null);setMessage("你收好了这件物品。");}}}>是</button></>:<><button disabled={blocked} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:false})){setPrompt(null);setMessage("已确认不带物品。");}}else decide(prompt,false);}}>否</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(prompt==="carry"){if(await act({type:"carry",yes:true})){setPrompt(null);setMessage("请选择一件物品。");}}else decide(prompt,true);}}>是</button></>}
+          <button disabled={blocked} onClick={async()=>{if(await act({type:"carry",yes:false}))setMessage("");}}>不带走</button>
+          <button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(await act({type:"carry",yes:true}))setMessage("");}}>开始选择</button>
+        </div>
+      </section>}
+      {done&&<div className={styles.exitAction} data-game-prompt><button className={`${styles.primary} gameYes`} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div>}
+      {showCarryToast&&<div className={styles.carryToast} data-game-prompt role="status"><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}</p></div>}
+      {prompt&&<section style={prompt==="confirm"?{left:`${Math.max(19,Math.min(81,((carrySlots.find(slot=>slot.id===selected)?.x??960)+(carrySlots.find(slot=>slot.id===selected)?.w??0)/2)/1920*100))}%`,top:`${(carrySlots.find(slot=>slot.id===selected)?.y??700)/1049*100}%`}:undefined} className={`${styles.bubble} ${prompt==="confirm"?styles.itemBubble:prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="right-window"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
+        <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="confirm"?`带走${selected?items[selected]:"这件物品"}`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
+        <div className={styles.actions}>
+          {prompt==="confirm"?<><button disabled={blocked} onClick={()=>setPrompt(null)}>返回挑选</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{if(await act({type:"confirm"})){setPrompt(null);setMessage("");}}}>是</button></>:<><button disabled={blocked} onClick={async()=>{decide(prompt,false);}}>否</button><button disabled={blocked} className={`${styles.primary} gameYes`} onClick={async()=>{decide(prompt,true);}}>是</button></>}
         </div>
       </section>}
       {!prompt&&message&&<p className={styles.status} role="status">{!preview&&server.busy?"请稍候…":message}</p>}

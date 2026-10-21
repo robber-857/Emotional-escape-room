@@ -29,7 +29,6 @@ export function ActOpening({act,title,prompt,ready,onEnter,resume=false,journeyI
   },[ready,portrait]);
   return <dialog ref={dialog} className={styles.opening} aria-label={`${act}开场`} onCancel={event=>event.preventDefault()}>
     <div className={styles.content}>
-      <p className={styles.eyebrow}>{act}</p>
       <h2>{title}</h2>
       <p className={styles.prompt}>{prompt}</p>
       <button className={continuing?"gameResumeButton":"gameYes"} onClick={enter}>{continuing?"继续上次旅程":"开始探索"} <span aria-hidden="true">→</span></button>
