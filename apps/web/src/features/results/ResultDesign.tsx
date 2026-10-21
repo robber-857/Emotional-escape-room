@@ -10,22 +10,28 @@ const ratingPanels=[[62,717,932,148],[1054,717,932,148]];
 const sections=[{key:'mode',title:'恋爱模式'},{key:'strength',title:'你的优势'},{key:'caution',title:'需要留意'},{key:'advice',title:'给你的建议'}] as const;
 export type MatchRequest = {portraitId:string;source:"result"|"preview"};
 // Future matching integration belongs in a client-side caller; no service is called by default.
-export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatchRequest?:(request:MatchRequest)=>void}={}){
+export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatchRequest?:(request:MatchRequest)=>void|Promise<void>}={}){
  const [index,setIndex]=useState(0),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0);
  const dialog=useRef<HTMLDialogElement>(null);
  const matchDialog=useRef<HTMLDialogElement>(null);
+ const [matchBusy,setMatchBusy]=useState(false),[matchNotice,setMatchNotice]=useState("");
  const portrait=portraits[result?Number(result.portrait_id)-1:index];
  function select(next:number){setIndex((next+16)%16);setFailed(false);}
- function requestMatch(){
-  if(onMatchRequest)onMatchRequest({portraitId:portrait.id,source:result?"result":"preview"});
-  else matchDialog.current?.showModal();
+ function requestMatch(){setMatchNotice("");matchDialog.current?.showModal();}
+ async function confirmMatch(){
+  if(matchBusy)return;
+  if(!onMatchRequest){setMatchNotice("匹配服务尚未开放，敬请期待。");matchDialog.current?.close();return;}
+  setMatchBusy(true);
+  try{await onMatchRequest({portraitId:portrait.id,source:result?"result":"preview"});matchDialog.current?.close();}
+  catch{setMatchNotice("暂时无法提交，请稍后重试。");}
+  finally{setMatchBusy(false);}
  }
  function artwork(){return <><figure className={styles.originalPoster}>
  <img key={`${portrait.id}-${retry}`} src={portrait.image} width={2048} height={1365} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>
  {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[i];const metric=result.metrics![key]!;return <div key={key} className={styles.originalRating} style={{left:`${x/2048*100}%`,top:`${y/1365*100}%`,width:`${w/2048*100}%`,height:`${h/1365*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
  {failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(v=>v+1);}}>重新加载</button></div>}
  </figure>
- <div className={`${styles.match} ${styles.matchEntry}`}><button type="button" onClick={requestMatch}><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>找到你的另一半<span aria-hidden="true">→</span></button></div>
+
  </>;}
  return <main className={styles.page}>
  <header className={styles.header}><a href={result?'/l4':'/l4?preview=1'} className={styles.brand}>情感密室<span>恋爱性格图鉴</span></a>
@@ -38,9 +44,11 @@ export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatc
  {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><div className={`${styles.cards} ${styles.ratingCopy}`}>
  {(['authenticity','love'] as const).map(key=>{const metric=result.metrics![key]!,copy=resolveRatingCopy(portrait.id,key,metric.stars);return <section key={key} className={styles.card}><h2>{key==='authenticity'?'真我值':'恋爱脑'} · {metric.stars}/5 星</h2><p>{metric.score.toFixed(2)} / 100</p>{copy&&<><h3>{copy.title}</h3><p>{copy.body}</p></>}</section>;})}
  </div></section>}
+ <div className={`${styles.match} ${styles.matchEntry}`}><button type="button" onClick={requestMatch}><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>找到你的另一半<span aria-hidden="true">→</span></button></div>
+ {matchNotice&&<p className={styles.matchNotice} role="status">{matchNotice}</p>}
  </article>
  <footer className={styles.footer}><p>匹配功能即将开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
  <dialog data-game-dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
- <dialog data-game-dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onClick={e=>{if(e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">匹配功能即将开放</h2><p>开放后，可在这里寻找与你匹配的人。</p><form method="dialog"><button autoFocus>知道了</button></form></dialog>
+ <dialog data-game-dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onCancel={e=>{if(matchBusy)e.preventDefault();}} onClick={e=>{if(!matchBusy&&e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">您想匹配您理想的另一半吗？</h2>{matchNotice&&<p role="status">{matchNotice}</p>}<div className={styles.matchActions}><button autoFocus disabled={matchBusy} onClick={()=>matchDialog.current?.close()}>否</button><button className={styles.matchYes} disabled={matchBusy} onClick={()=>void confirmMatch()}>{matchBusy?"正在提交…":"是"}</button></div></dialog>
  </main>;
 }
