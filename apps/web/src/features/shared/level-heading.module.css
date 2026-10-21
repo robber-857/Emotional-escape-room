@@ -1,6 +1,7 @@
 .title {opacity:1;pointer-events:none;transition:opacity .7s ease-out;}
 .title[data-faded="true"] {opacity:0;}
-.task {animation:taskAppear .7s ease-out both;animation-delay:.7s;max-width:min(560px,70vw);font-size:clamp(14px,1.4vw,21px);line-height:1.7;text-shadow:0 2px 7px #000c;}
-.task p {margin:0;}
+.task {animation:taskAppear .7s ease-out both;animation-delay:.7s;max-width:min(780px,88vw);}
+.task[data-level-task] p {display:block;margin:0;font:600 clamp(20px,2vw,28px)/1.65 var(--font-game);color:#fff;letter-spacing:.08em;text-shadow:0 2px 4px #17251d,0 3px 10px #17251de6;}
+.task[data-level-task] p + p {margin-top:.2em;}
 @keyframes taskAppear {from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.title{transition:none;}}

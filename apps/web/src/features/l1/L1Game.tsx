@@ -364,7 +364,7 @@ export function L1Game() {
           effect={effect}
           disabled={blocked}
         />
-        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait} after={state.scene==="river"?<><p>本关任务：</p><p>点击屏幕上的任何物品做出你过河的选择。</p></>:undefined}>
+        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait} after={<><p>本关任务：</p><p>{state.scene==="river"?"点击屏幕上的任何物品做出你过河的选择。":"请进入房间开始下一幕。"}</p></>}>
           <h1>分离之河</h1>
         </LevelHeading>
         {!started && (
@@ -622,10 +622,9 @@ export function L1Game() {
           <>
             <span className="eyebrow">慢慢探索，无需赶路</span>
             <h2>操作说明</h2>
-            <p>点击物件，查看详情。</p>
+            <p>{state.scene==="river"?"点击物件，查看详情。":"点击场景中的人物或物件进行探索，点击房门进入下一幕。"}</p>
             <p>关闭提示不代表选择。</p>
-            <p>可拖动物件调整位置。</p>
-            <p>方向键可微调位置。</p>
+            {state.scene==="river"&&<><p>可拖动物件调整位置。</p><p>方向键可微调位置。</p></>}
             <div className="decisions">
               <button onClick={() => setMotion((v) => !v)}>
                 {motion ? "减少场景动效" : "开启场景动效"}

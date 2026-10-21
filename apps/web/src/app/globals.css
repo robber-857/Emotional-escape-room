@@ -632,19 +632,6 @@ body {
   color: white;
   text-shadow: 0 2px 10px #17251d;
 }
-.sceneHeading[data-level-task] {
-  max-width: min(780px, 88vw);
-}
-.sceneHeading[data-level-task] p {
-  display: block;
-  font: 600 clamp(20px, 2vw, 28px) / 1.65 var(--font-game);
-  color: #fff;
-  letter-spacing: 0.08em;
-  text-shadow: 0 2px 4px #17251d, 0 3px 10px #17251de6;
-}
-.sceneHeading[data-level-task] p + p {
-  margin-top: 0.2em;
-}
 .gameMenu {
   position: absolute;
   top: max(12px, env(safe-area-inset-top));
