@@ -87,11 +87,11 @@ export function canChoose(s: L1State, choice: Choice): boolean {
     case "place-wood":
       return !s.woodPlaced && !s.repaired;
     case "take-rope":
-      return (s.bridgeInspected || s.woodPlaced) && s.ropeClicks < 5 && !s.repaired;
+      return (s.bridgeInspected || s.woodPlaced) && s.ropeClicks < 3 && !s.repaired;
     case "collect-wood":
-      return s.ropeClicks === 5 && !s.wood && !s.repaired;
+      return s.ropeClicks >= 3 && !s.wood && !s.repaired;
     case "repair":
-      return s.ropeClicks === 5 && s.wood && !s.repaired;
+      return s.ropeClicks >= 3 && s.wood && !s.repaired;
     case "cross-bridge":
       return s.repaired;
     case "swim":
@@ -141,7 +141,7 @@ export function transition(s: L1State, event: GameEvent): L1State {
       return {
         ...next,
         bushClicks: s.bushClicks + 1,
-        oar: s.bushClicks + 1 === 5,
+        oar: s.bushClicks + 1 >= 3,
       };
     case "board":
       return { ...next, rowing: true };

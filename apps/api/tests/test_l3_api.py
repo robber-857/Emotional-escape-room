@@ -17,7 +17,7 @@ from app.l3_domain import SLOTS, ITEMS, initial_state, apply_action
 
 def completed_l2(client):
     parent, h, url, s = open_l2(client)
-    for a in [dict(type="layout-start"), dict(type="layout-move", id="sofa", point=dict(u=.1, v=.5)),
+    for a in [dict(type="sit", seat="chair", yes=True), dict(type="layout-start"), dict(type="layout-move", id="sofa", point=dict(u=.1, v=.5)),
               dict(type="layout-confirm")]:
         assert act(client, url, h, s, a)[0].status_code == 200
     assert s["completion"] == "complete"

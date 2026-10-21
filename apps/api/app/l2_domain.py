@@ -8,13 +8,13 @@ RULES_VERSION = "l2-rules-v1"
 MAX_EVENTS = 1000
 
 def initial_state():
-    return dict(exitDoorOpen=False, furniture=dict(baseline=initial_layout(), triggered=dict(tidy=False, openPlacement=False), editing=False,
+    return dict(choiceActions=[], exitDoorOpen=False, furniture=dict(baseline=initial_layout(), triggered=dict(tidy=False, openPlacement=False), editing=False,
                               layout=initial_layout(), history=[], confirmed=None, classification=None,
                               adjustmentCount=0, countVersion=COUNT_VERSION, assessment=None),
                 search=dict(curtainClicks=0, status="idle", activeMs=0, long=False), view="room", attempts=[], doorOpen=False,
                 atTable=False, seat=None, keys=[], selectedKey=None, events=[])
 
-COMPLETION_POLICY_VERSION = "l2-furniture-exit-v2"
+COMPLETION_POLICY_VERSION = "l2-two-choices-v3"
 
 def with_completion(state):
     s = deepcopy(state)
@@ -26,7 +26,7 @@ def with_completion(state):
     s["furniture"].setdefault("assessment", None)
     return s
 
-def apply_action(state, a):
+def _apply_action(state, a):
     s = with_completion(state); t = a["type"]; f = s["furniture"]; search = s["search"]
     def require(ok, code="ACTION_NOT_ALLOWED"):
         if not ok: raise ValueError(code)
@@ -96,3 +96,24 @@ def apply_action(state, a):
         s["attempts"].append(a["key"]); s.update(view="room", doorOpen=len(s["attempts"]) == 2)
     else: raise ValueError("ACTION_NOT_ALLOWED")
     return s
+
+
+def choice_fact(action):
+    kind = action["type"]
+    if kind == "layout-confirm": return "furniture"
+    if kind in ("select-key", "try-door"): return f"{kind}:{action['key']}"
+    if kind == "sit": return f"sit:{action['seat']}"
+    if kind in ("explore", "search-choice"): return kind
+    return None
+
+def apply_action(state, action):
+    result = _apply_action(state, action)
+    facts = set(state.get("choiceActions", []))
+    for event in state.get("events", []):
+        fact = choice_fact(event["action"])
+        if fact: facts.add(fact)
+    fact = choice_fact(action)
+    if fact: facts.add(fact)
+    result["choiceActions"] = sorted(facts)
+    result["exitDoorOpen"] = len(facts) >= 2 or with_completion(state)["exitDoorOpen"]
+    return result

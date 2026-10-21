@@ -5,14 +5,14 @@ export type Seat = typeof seats[number];
 export type KeyId = "key-1" | "key-2";
 export type Action = {type:"layout-start"}|{type:"layout-move";id:FurnitureId;point:Point}|{type:"layout-undo"}|{type:"layout-reset"}|{type:"layout-exit"}|{type:"layout-confirm"}| {type:"search-choice";yes:boolean} | {type:"search-time";activeMs:number} | {type:"curtain-click"} | {type:"find-earring"} | { type: "explore"; yes: boolean } | { type: "return-hall" } | { type: "view"; view: "room" | "table" } | { type: "try-door"; key: KeyId } | { type: "arrive-table" } | { type: "sit"; seat: Seat; yes: boolean } | { type: "select-key"; key: KeyId };
 export type Event = { id: string; at: string; action: Action };
-export type State = { exitDoorOpen:boolean; furniture:{baseline:Layout;triggered:{tidy:boolean;openPlacement:boolean};editing:boolean;layout:Layout;history:Layout[];confirmed:Layout|null;classification:ReturnType<typeof measureLayout>|null;adjustmentCount:number|null;countVersion:string}; search: {curtainClicks:number;status:"idle"|"declined"|"searching"|"returned"|"found";activeMs:number;long:boolean}; view: "room" | "table" | "bedroom"; attempts: KeyId[]; doorOpen: boolean; atTable: boolean; seat: Seat | null; keys: KeyId[]; selectedKey: KeyId | null; events: Event[] };
+export type State = { choiceActions?:string[]; exitDoorOpen:boolean; furniture:{baseline:Layout;triggered:{tidy:boolean;openPlacement:boolean};editing:boolean;layout:Layout;history:Layout[];confirmed:Layout|null;classification:ReturnType<typeof measureLayout>|null;adjustmentCount:number|null;countVersion:string}; search: {curtainClicks:number;status:"idle"|"declined"|"searching"|"returned"|"found";activeMs:number;long:boolean}; view: "room" | "table" | "bedroom"; attempts: KeyId[]; doorOpen: boolean; atTable: boolean; seat: Seat | null; keys: KeyId[]; selectedKey: KeyId | null; events: Event[] };
 export const SAVE_KEY = "emotional:l2:preview:v2";
 export const MAX_EVENTS = 1000;
-export const initialState = (): State => ({ exitDoorOpen:false, furniture:{baseline:initialLayout(),triggered:{tidy:false,openPlacement:false},editing:false,layout:initialLayout(),history:[],confirmed:null,classification:null,adjustmentCount:0,countVersion},search:{curtainClicks:0,status:"idle",activeMs:0,long:false}, view: "room", attempts: [], doorOpen: false, atTable: false, seat: null, keys: [], selectedKey: null, events: [] });
+export const initialState = (): State => ({ choiceActions:[], exitDoorOpen:false, furniture:{baseline:initialLayout(),triggered:{tidy:false,openPlacement:false},editing:false,layout:initialLayout(),history:[],confirmed:null,classification:null,adjustmentCount:0,countVersion},search:{curtainClicks:0,status:"idle",activeMs:0,long:false}, view: "room", attempts: [], doorOpen: false, atTable: false, seat: null, keys: [], selectedKey: null, events: [] });
 export const keysAvailable = (s: State) => s.atTable || s.seat === "table-seat";
 export const seatNames: Record<Seat, string> = {chair:"窗边椅","table-seat":"桌前椅"};
 export const keyNames: Record<KeyId, string> = {"key-1":"钥匙1","key-2":"钥匙2"};
-export function transition(s: State, event: Event): State {
+function applyTransition(s: State, event: Event): State {
  if (s.events.length >= MAX_EVENTS || s.events.some(e=>e.id===event.id)) return s;
  const a=event.action;
  if(a.type.startsWith("layout-")&&s.view!=="room")return s;
@@ -72,4 +72,16 @@ export function restore(raw: string): State {
   const next=transition(state,e);if(next===state)throw new Error("存档顺序无效");state=next;
  }
  return state;
+}
+
+export function choiceFact(action:Action):string|null {
+ if(action.type==="layout-confirm")return "furniture";
+ if(action.type==="select-key"||action.type==="try-door")return `${action.type}:${action.key}`;
+ if(action.type==="sit")return `sit:${action.seat}`;
+ return action.type==="explore"||action.type==="search-choice"?action.type:null;
+}
+export function transition(state:State,event:Event):State {
+ const next=applyTransition(state,event);if(next===state)return state;
+ const facts=[...new Set([...(state.choiceActions??[]),...next.events.map(e=>choiceFact(e.action)).filter((v):v is string=>v!==null)])].sort();
+ return {...next,choiceActions:facts,exitDoorOpen:facts.length>=2||state.exitDoorOpen};
 }

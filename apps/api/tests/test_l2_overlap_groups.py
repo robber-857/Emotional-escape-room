@@ -90,6 +90,7 @@ def test_saved_scene_groups(case):
 @pytest.mark.parametrize('layout,band', [(c['layout'],c['groups']['band']) for c in CASES.values()])
 def test_real_api_confirmation_settlement_and_retry(client,layout,band):
     parent,headers,url,state=open_l2(client)
+    act(client,url,headers,state,dict(type="sit",seat="chair",yes=False))
     act(client,url,headers,state,dict(type='layout-start'))
     for key,point in layout.items():
         response,_=act(client,url,headers,state,dict(type='layout-move',id=key,point=point))

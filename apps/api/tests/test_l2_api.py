@@ -192,7 +192,7 @@ def test_table_chair_full_overlap_footprint_preserves_floor_limits(client, place
         assert state["furniture"]["confirmed"]["table-chair"] == pytest.approx(dict(u=.45, v=.17))
     elif placement == "outside":
         assert state["furniture"]["confirmed"]["table-chair"] == pytest.approx(dict(u=.815, v=.4))
-    assert state["exitDoorOpen"] is True
+    assert state["exitDoorOpen"] is False
     assert state["furniture"]["confirmed"]["table-chair"] == move_layout(initial_layout(),"table-chair",point)["table-chair"]
     if placement == "edge": assert state["furniture"]["classification"]["metrics"]["tidiness"] == pytest.approx(1-.07/.41/2)
 
@@ -277,5 +277,5 @@ def test_free_placement_suspension_tolerance_persists(client, gap, tidy):
     state = client.get(url, headers=h).json()["state"]
     assert state["furniture"]["confirmed"]["chair"] == move_layout(initial_layout(),"chair",point)["chair"]
     assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is True
-    assert state["exitDoorOpen"] is True
+    assert state["exitDoorOpen"] is False
     assert ("chair" in state["furniture"]["classification"]["evidence"]["outsideFloor"]) is False

@@ -13,6 +13,7 @@ def entries(client, parent, headers):
 
 
 def leave(client, url, headers, state):
+    assert act(client, url, headers, state, dict(type="sit",seat="chair",yes=False))[0].status_code == 200
     assert act(client, url, headers, state, dict(type='layout-start'))[0].status_code == 200
     assert act(client, url, headers, state, dict(type='layout-confirm'))[0].status_code == 200
     assert client.post(url.replace('/l2', '/l3'), headers=headers, json={}).status_code == 200

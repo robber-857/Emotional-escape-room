@@ -50,11 +50,11 @@ def test_rejections_and_forged_state_do_not_advance(client):
     assert client.post(f"/api/v1/sessions/{s['id']}/actions", headers=h, json=body).status_code == 422
     assert len(client.get(f"/api/v1/sessions/{s['id']}/events", headers=h).json()) == 6
 
-def test_boat_fifth_search_and_fifth_paddle(client):
+def test_boat_third_search_and_fifth_paddle(client):
     s, h = session(client)
-    for i in range(5):
+    for i in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
-        assert s["state"]["oar"] is (i == 4)
+        assert s["state"]["oar"] is (i == 2)
     assert send(client, s, h, "board")[0].status_code == 200
     assert send(client, s, h, "board")[0].status_code == 409
     for i in range(5):
@@ -67,7 +67,7 @@ def test_bridge_geometry_and_completion(client):
     s, h = session(client)
     assert send(client, s, h, "collect-wood")[0].json()["code"] == "ROPE_NOT_RELEASED"
     assert send(client, s, h, "inspect-bridge")[0].status_code == 200
-    for _ in range(5):
+    for _ in range(3):
         assert send(client, s, h, "take-rope")[0].status_code == 200
     assert send(client, s, h, "collect-wood")[0].json()["code"] == "REPAIR_MATERIALS_NOT_AT_GAP"
     positions = {"planks":{"x":(960-2446.355)/2944,"y":(1160-1426.75)/1568}, "rope":{"x":(960-2104.5)/2944,"y":(1160-1413.5)/1568}}
@@ -89,7 +89,7 @@ def test_bridge_geometry_and_completion(client):
 def test_switch_route_while_rowing_preserves_receipts_and_scores_only_arrival(client, strokes, choice, route):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
-    for _ in range(5):
+    for _ in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
     assert send(client, s, h, "board")[0].status_code == 200
     for _ in range(strokes):
@@ -99,7 +99,7 @@ def test_switch_route_while_rowing_preserves_receipts_and_scores_only_arrival(cl
     assert s["state"]["strokes"] == strokes
     s.update(client.get(url, headers=h).json())
     assert send(client, s, h, "inspect-bridge")[0].status_code == 200
-    for _ in range(5):
+    for _ in range(3):
         assert send(client, s, h, "take-rope")[0].status_code == 200
     positions = {"planks": {"x": (960-2446.355)/2944, "y": (1160-1426.75)/1568},
                  "rope": {"x": (960-2104.5)/2944, "y": (1160-1413.5)/1568}}
@@ -130,16 +130,16 @@ def test_refusal_then_other_routes(client, choice, route):
     assert send(client, s, h, "light-lamp")[0].status_code == 200
     assert s["state"]["lampTaken"] is False
 
-def test_rope_fifth_click_resume_retry_and_forged_position(client):
+def test_rope_third_click_resume_retry_and_forged_position(client):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
     assert s["state"]["ropeClicks"] == 0
-    assert s["rules_version"] == "l1-rules-v5-wood-placement"
+    assert s["rules_version"] == "l1-rules-v6-three-clicks"
     assert send(client, s, h, "take-rope")[0].status_code == 409
     assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     assert send(client, s, h, "take-rope", False)[0].status_code == 200
     assert s["state"]["ropeClicks"] == 0
-    for count in range(1, 6):
+    for count in range(1, 4):
         assert send(client, s, h, "take-rope", positions={"rope": {"x": .1, "y": 0}})[0].json()["code"] == "ROPE_NOT_RELEASED"
         r, body = send(client, s, h, "take-rope")
         assert r.status_code == 200
@@ -151,9 +151,9 @@ def test_rope_fifth_click_resume_retry_and_forged_position(client):
         assert stale.json()["code"] == "VERSION_CONFLICT"
         assert client.get(url, headers=h).json()["state"]["ropeClicks"] == count
     assert send(client, s, h, "take-rope")[0].status_code == 409
-    assert s["state"]["ropeClicks"] == 5
+    assert s["state"]["ropeClicks"] == 3
     accepted = [r for r in client.get(url + "/events", headers=h).json() if r["accepted"] and r["action"].get("yes") and r["action"].get("choice") == "take-rope"]
-    assert len(accepted) == 5
+    assert len(accepted) == 3
 
 def test_legacy_session_keeps_rope_available(client):
     from sqlalchemy import update
@@ -209,9 +209,9 @@ def test_concurrent_requests_only_one_advances(client, choice, field):
 
 def test_rope_gate_boat_progress_and_inspection_resume(client):
     s, h = session(client)
-    for _ in range(5):
+    for _ in range(3):
         assert send(client, s, h, "take-rope")[0].status_code == 409
-    for _ in range(5):
+    for _ in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
     assert send(client, s, h, "board")[0].status_code == 200
     assert send(client, s, h, "take-rope")[0].status_code == 409
@@ -223,7 +223,7 @@ def test_rope_gate_boat_progress_and_inspection_resume(client):
     s.update(client.get(url, headers=h).json())
     assert s["state"]["bridgeInspected"] is True
     assert send(client, s, h, "inspect-bridge")[0].status_code == 409
-    for count in range(1, 6):
+    for count in range(1, 4):
         assert send(client, s, h, "take-rope")[0].status_code == 200
         s.update(client.get(url, headers=h).json())
         assert s["state"]["ropeClicks"] == count

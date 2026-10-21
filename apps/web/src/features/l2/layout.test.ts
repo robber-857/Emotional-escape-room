@@ -25,7 +25,7 @@ test("wall bounds constrain drag before confirmation",()=>{
   let s=act(initialState(),{type:"layout-start"});const point={u:.45,v:.13/2-gap/270};
   s=act(s,{type:"layout-move",id:"chair",point});s=act(s,{type:"layout-confirm"});
   assert.equal(s.furniture.classification?.eligible,true);assert.equal(s.furniture.classification?.metrics.tidiness,1);
-  assert.equal(s.exitDoorOpen,true);assert.deepEqual(s.furniture.confirmed?.chair,constrainPoint("chair",point));
+  assert.equal(s.exitDoorOpen,false);assert.deepEqual(s.furniture.confirmed?.chair,constrainPoint("chair",point));
  }
 });
 test("moves undo reset retry and reload preserve cumulative count",()=>{
@@ -39,12 +39,12 @@ test("moves undo reset retry and reload preserve cumulative count",()=>{
  assert.equal(s.furniture.classification?.metrics.adjustmentCount,4);
  assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);
 });
-test("draft does not unlock exit; confirmation does even without any movement",()=>{
+test("furniture confirmation counts once; two distinct choices unlock the exit",()=>{
  let s=act(initialState(),{type:"layout-start"});assert.equal(s.exitDoorOpen,false);
- s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,true);assert.equal(s.furniture.classification?.metrics.adjustmentCount,0);
+ s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,false);assert.equal(s.furniture.classification?.metrics.adjustmentCount,0);
  assert.equal(act(s,{type:"layout-confirm"}),s);
  s=act(s,{type:"layout-start"});s=act(s,{type:"layout-move",id:"chair",point:{u:.45,v:.35}});
- assert.equal(s.furniture.confirmed,null);s=act(s,{type:"layout-exit"});assert.equal(s.exitDoorOpen,true);
+ assert.equal(s.furniture.confirmed,null);s=act(s,{type:"layout-exit"});assert.equal(s.exitDoorOpen,false);
 });
 test("default geometry and free projection retain exact coordinates",()=>{
  assert.equal(validLayout(initialLayout()),true);

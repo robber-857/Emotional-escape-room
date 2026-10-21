@@ -101,7 +101,7 @@ def test_lamp_finalization_and_explicit_zero(client,lit,taken,expected):
 
 def test_boat_fifth_stroke_counts_once_and_retains_zero_f(client):
     s,h=session(client)
-    for _ in range(5):send(client,s,h,'search')
+    for _ in range(3):send(client,s,h,'search')
     send(client,s,h,'board')
     for _ in range(4):assert send(client,s,h)[0].json()['score_effect']['events']==[]
     r,_=send(client,s,h)
@@ -125,6 +125,7 @@ def test_environment_waits_for_all_answers_and_scores_once(client,window,tv,valu
 
 def test_latest_confirmation_settles_once_at_l3_entry(client):
     parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type="sit",seat="chair",yes=False))
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-confirm'))
     first=s['state']['furniture']['assessment']['action_id']
@@ -280,6 +281,7 @@ def test_no_seat_first_table_scores_explicit_zero(client):
 @pytest.mark.skipif(not os.getenv('TEST_DATABASE_URL'),reason='isolated PostgreSQL required')
 def test_concurrent_l3_start_finalizes_furniture_exactly_once(client):
     parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type="sit",seat="chair",yes=False))
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-confirm'))
     with ThreadPoolExecutor(max_workers=2) as pool:
@@ -293,6 +295,7 @@ def test_concurrent_l3_start_finalizes_furniture_exactly_once(client):
 def test_l3_entry_and_furniture_settlement_rollback_together(client):
     from app.db import l3_runs
     parent,h,url,s=open_l2(client)
+    act(client,url,h,s,dict(type="sit",seat="chair",yes=False))
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-confirm'))
     def fail(conn,cursor,statement,parameters,context,executemany):

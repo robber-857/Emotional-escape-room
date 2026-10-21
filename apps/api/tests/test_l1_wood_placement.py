@@ -18,7 +18,7 @@ def test_direct_wood_placement_unlocks_rope_once_and_survives_resume(client):
     assert client.post(url + "/actions", headers=h, json=body).json()["duplicate"] is True
     assert send(client, s, h, "place-wood", positions=wood_position())[0].status_code == 409
     s.update(client.get(url, headers=h).json())
-    for count in range(1, 6):
+    for count in range(1, 4):
         assert send(client, s, h, "take-rope", positions=wood_position())[0].status_code == 200
         assert s["state"]["ropeClicks"] == count
     assert client.get(url + "/scoring", headers=h).json()["ledger"] == []

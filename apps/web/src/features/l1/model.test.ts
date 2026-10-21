@@ -56,11 +56,11 @@ test("explicit no records refusal without locking subsequent yes", () => {
   assert.equal(s.route, "swim");
 });
 
-test("rope releases on fifth unique click and survives resume", () => {
+test("rope releases on third unique click and survives resume", () => {
   let s = initialState();
   assert.equal(choose(s, "take-rope"), s);
   s = choose(s, "inspect-bridge");
-  for (let i = 1; i <= 5; i++) {
+  for (let i = 1; i <= 3; i++) {
     assert.equal(promptFor(s, "rope-bush").body, "");
     const e = event({ type: "choose", choice: "take-rope", yes: true });
     s = transition(s, e);
@@ -207,11 +207,11 @@ test("restore rejects corrupt, incompatible or out-of-order journals and invalid
   assert.deepEqual(restore(saved(s)).positions.ring, { x: -0.1, y: 0.1 });
 });
 
-test("five bush clicks survive resume; no and duplicate clicks do not advance", () => {
+test("three bush clicks survive resume; no and duplicate clicks do not advance", () => {
   let s = initialState();
   s = choose(s, "search", false);
   assert.equal(s.bushClicks, 0);
-  for (let i = 1; i <= 4; i++) {
+  for (let i = 1; i <= 2; i++) {
     const e = event({ type: "choose", choice: "search", yes: true });
     s = transition(s, e);
     assert.equal(s.bushClicks, i);
@@ -221,7 +221,7 @@ test("five bush clicks survive resume; no and duplicate clicks do not advance", 
   s = restore(saved(s)).state;
   s = choose(s, "search");
   assert.equal(s.oar, true);
-  assert.equal(s.bushClicks, 5);
+  assert.equal(s.bushClicks, 3);
   assert.equal(choose(s, "search"), s);
   assert.equal(s.strokes, 0);
 });

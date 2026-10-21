@@ -1,8 +1,8 @@
 """L1 rules v1. UI coordinates are claims, validated here; never accept client state."""
 from copy import deepcopy
 
-RULES_VERSION = "l1-rules-v5-wood-placement"
-SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", "l1-rules-v3-route-switch", "l1-rules-v4-hidden-rope", RULES_VERSION)
+RULES_VERSION = "l1-rules-v6-three-clicks"
+SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", "l1-rules-v3-route-switch", "l1-rules-v4-hidden-rope", "l1-rules-v5-wood-placement", RULES_VERSION)
 
 def initial_state(): #初始化这一关
     return dict(scene="river", wood=False, woodPlaced=False, repaired=False, bridgeInspected=False, ropeClicks=0, oar=False, bushClicks=0,
@@ -21,7 +21,7 @@ def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态
         return choice == "enter" or (choice in fields and not s[fields[choice]])
     return {"inspect-bridge": not s.get("bridgeInspected", False) and not s["repaired"],
             "place-wood": not s.get("woodPlaced", False) and not s["repaired"],
-            "take-rope": (s.get("bridgeInspected", False) or s.get("woodPlaced", False)) and s.get("ropeClicks", 5) < 5 and not s["repaired"],
+            "take-rope": (s.get("bridgeInspected", False) or s.get("woodPlaced", False)) and s.get("ropeClicks", 5) < 3 and not s["repaired"],
             "collect-wood": not s["wood"] and not s["repaired"],
             "repair": s["wood"] and not s["repaired"], "cross-bridge": s["repaired"],
             "swim": True, "use-ring": True, "search": not s["oar"], "board": s["oar"] and not s["rowing"]}.get(choice, False)
@@ -36,7 +36,7 @@ def materials_ready(positions):
 
 def apply_action(state, action, positions):#真正执行游戏操作
     s = deepcopy(normalize_state(state))
-    if s["ropeClicks"] < 5 and any(positions.get("rope", {}).values()):
+    if s["ropeClicks"] < 3 and any(positions.get("rope", {}).values()):
         raise ValueError("ROPE_NOT_RELEASED")
     if action["type"] == "paddle":
         if s["scene"] != "river" or not s["rowing"] or not s["oar"] or s["strokes"] >= 5:
@@ -49,7 +49,7 @@ def apply_action(state, action, positions):#真正执行游戏操作
     if not action["yes"]: return s
     if choice == "place-wood" and not material_at_gap(positions, "planks"):
         raise ValueError("WOOD_NOT_AT_GAP")
-    if choice in ("collect-wood", "repair") and s["ropeClicks"] < 5:
+    if choice in ("collect-wood", "repair") and s["ropeClicks"] < 3:
         raise ValueError("ROPE_NOT_RELEASED")
     if choice in ("collect-wood", "repair") and not materials_ready(positions):
         raise ValueError("REPAIR_MATERIALS_NOT_AT_GAP")
@@ -60,7 +60,7 @@ def apply_action(state, action, positions):#真正执行游戏操作
     elif choice == "repair": s.update(repaired=True, wood=False)
     elif choice == "search":
         s["bushClicks"] += 1
-        s["oar"] = s["bushClicks"] == 5
+        s["oar"] = s["bushClicks"] >= 3
     elif choice == "board": s["rowing"] = True
     elif choice in ("cross-bridge", "swim", "use-ring"):
         s.update(scene="shore", rowing=False, route={"cross-bridge":"bridge", "swim":"swim", "use-ring":"ring"}[choice])
