@@ -8,12 +8,12 @@ export type Item = keyof typeof items;
 // Television is the canonical power action in both preview and server modes.
 export const decisions = {
   open: "打开半开的门", close: "关上门", wait: "坐稳等待",
-  curtain: "拉开右窗窗帘", window: "关闭左窗", television: "关掉电视机电源",
+  curtain: "拉开右窗窗帘", "right-window": "关闭右窗", window: "关闭左窗", television: "关掉电视机电源",
 } as const;
 export type Decision = keyof typeof decisions;
 export type Segment = "storm" | "carry";
 export type Action = {type: "decision"; slot: Decision; yes: boolean}
-  | {type: "carry"; yes: boolean} | {type: "draft"; item: Item} | {type: "confirm"};
+  | {type:"finish-preparation"} | {type: "carry"; yes: boolean} | {type: "draft"; item: Item} | {type: "confirm"};
 export type Event = {id: string; at: string; action: Action};
 export type State = {
   segment: Segment; choices: Record<Decision, boolean | null>;
@@ -21,14 +21,18 @@ export type State = {
   events: Event[]; scoring: {status: "pending_configuration"; contributions: null};
 };
 export function initialState(segment: Segment = "storm"): State {
-  return {segment, choices: {open:null,close:null,wait:null,curtain:null,window:null,television:null},
+  return {segment, choices: {open:null,close:null,wait:null,curtain:null,"right-window":null,window:null,television:null},
     carry:null,draft:null,item:null,events:[],scoring:{status:"pending_configuration",contributions:null}};
 }
+export function preparationCount(state: State): number {
+  return [state.choices.wait,state.choices.window,state.choices.curtain,state.choices.television].filter(choice=>choice!=null).length;
+}
 export function stormComplete(state: State): boolean {
-  return state.segment === "storm" && Object.values(state.choices).every(choice => choice !== null);
+  return state.segment === "storm" && preparationCount(state) >= 2;
 }
 export function canDecide(state: State, slot: Decision) {
   if (state.segment !== "storm" || state.choices[slot] === true) return false;
+  if (slot === "right-window") return state.choices.curtain === true;
   if (slot === "open") return true;
   if (slot === "close") return state.choices.open !== null;
   return state.choices.close !== null;
@@ -46,6 +50,8 @@ export function transition(state: State, event: Event): State {
   if (a.type === "decision") {
     if (!canDecide(state,a.slot) || state.choices[a.slot] === a.yes) return state;
     next = {...state,choices:{...state.choices,[a.slot]:a.yes}};
+  } else if (a.type === "finish-preparation" && stormComplete(state)) {
+    next = {...state,segment:"carry"};
   } else if (state.segment === "carry" && state.item === null && state.carry !== false) {
     if (a.type === "carry" && state.carry === null) next = {...state,carry:a.yes};
     if (a.type === "draft" && state.carry === true && state.draft !== a.item) next = {...state,draft:a.item};
@@ -54,7 +60,7 @@ export function transition(state: State, event: Event): State {
   return next === state ? state : {...next,events:[...state.events,event]};
 }
 export function serialize(state: State): string {
-  return JSON.stringify({version:2,source:"local_preview",segment:state.segment,events:state.events});
+  return JSON.stringify({version:2,source:"local_preview",segment:state.events.some(e=>e.action.type==="finish-preparation")?"storm":state.segment,events:state.events});
 }
 function validAction(a: unknown): a is Action {
   if (!a || typeof a !== "object") return false;
@@ -63,7 +69,7 @@ function validAction(a: unknown): a is Action {
     case "decision": return typeof v.slot === "string" && Object.hasOwn(decisions,v.slot) && typeof v.yes === "boolean";
     case "carry": return typeof v.yes === "boolean";
     case "draft": return typeof v.item === "string" && Object.hasOwn(items,v.item);
-    case "confirm": return true;
+    case "confirm": case "finish-preparation": return true;
     default: return false;
   }
 }
@@ -84,6 +90,7 @@ export function restore(raw: string, segment: Segment): State {
 }
 export function describe(action: Action): string {
   if (action.type === "decision") return `${decisions[action.slot]}：${action.yes ? "是" : "否"}`;
+  if (action.type === "finish-preparation") return "完成准备";
   if (action.type === "carry") return `携带一件物品：${action.yes ? "是" : "否"}`;
   if (action.type === "draft") return `预选${items[action.item]}（草稿）`;
   return "确认携带预选物品";

@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import {initialState,stormComplete,transition,isRepeatedDecision,restore,serialize,items,MAX_EVENTS,type Action,type State,type Item} from "./model";
+import {initialState,stormComplete,preparationCount,transition,isRepeatedDecision,restore,serialize,items,MAX_EVENTS,type Action,type State,type Item} from "./model";
 let seq=0;
 
 test("old local power events restore as television and only version 2 is written",()=>{
@@ -76,12 +76,29 @@ test("repeated refusals remain acknowledgeable without exhausting the log or dup
  assert.equal(isRepeatedDecision(initialState(),{type:"decision",slot:"television",yes:false}),false);
 });
 
-test("all 64 yes/no combinations complete only after six explicit answers",()=>{
+test("all answer combinations require explicit finish after two distinct preparation objects",()=>{
  const slots=["open","close","wait","curtain","window","television"] as const;
  for(let mask=0;mask<64;mask++){
   let s=initialState();
-  for(let i=0;i<slots.length;i++){assert.equal(stormComplete(s),false);s=act(s,{type:"decision",slot:slots[i],yes:!!(mask&(1<<i))});}
+  for(let i=0;i<slots.length;i++){assert.equal(s.segment,"storm");s=act(s,{type:"decision",slot:slots[i],yes:!!(mask&(1<<i))});}
   assert.equal(stormComplete(s),true);assert.equal(s.events.length,6);assert.equal(stormComplete(restore(serialize(s),"storm")),true);assert.equal(s.scoring.contributions,null);
+  s=act(s,{type:"finish-preparation"});assert.equal(s.segment,"carry");assert.deepEqual(restore(serialize(s),"storm"),s);
  }
  assert.equal(stormComplete(initialState("carry")),false);
+});
+
+
+test("right window preserves open curtain and counts as the same preparation object",()=>{
+ let s=act(act(initialState(),{type:"decision",slot:"open",yes:false}),{type:"decision",slot:"close",yes:false});
+ assert.equal(act(s,{type:"finish-preparation"}),s);
+ assert.equal(act(s,{type:"decision",slot:"right-window",yes:true}),s);
+ s=act(s,{type:"decision",slot:"curtain",yes:true});
+ s=act(s,{type:"decision",slot:"right-window",yes:false});
+ s=act(s,{type:"decision",slot:"right-window",yes:true});
+ assert.equal(s.choices.curtain,true);assert.equal(s.choices["right-window"],true);
+ assert.equal(preparationCount(s),1);assert.equal(act(s,{type:"finish-preparation"}),s);
+ s=act(s,{type:"decision",slot:"wait",yes:false});assert.equal(stormComplete(s),true);
+ assert.deepEqual(restore(serialize(s),"storm"),s);
+ s=act(s,{type:"finish-preparation"});assert.equal(s.segment,"carry");
+ assert.equal(act(s,{type:"decision",slot:"window",yes:true}),s);
 });

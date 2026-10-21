@@ -46,7 +46,7 @@ export async function restart(session:Session):Promise<void>{
 export async function getReceipts(auth:Auth):Promise<Receipt[]>{return request(auth,"/events");}
 export function toView(session:Session):State {
  const s=session.state;
- return {...initialState(s.segment),choices:{...s.choices},carry:s.carry,draft:s.draft,item:s.item,events:s.events};
+ return {...initialState(s.segment),choices:{...initialState().choices,...s.choices},carry:s.carry,draft:s.draft,item:s.item,events:s.events};
 }
 export function readPending(id:string):Pending|null {
  const raw=localStorage.getItem(pendingKey(id));if(!raw)return null;

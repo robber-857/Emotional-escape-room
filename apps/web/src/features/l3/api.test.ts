@@ -5,7 +5,7 @@ import {initialState as initialL1} from "../l1/model";
 import {prepare,submit,readPending,pendingKey,toView,RejectedAction,type Session} from "./api";
 
 const auth={id:"original",token:"test-token",version:4,rules_version:"l1",state:initialL1(),positions:{}};
-const session:Session={id:auth.id,version:0,source:"server_database",rules_version:"l3-flow-v1",state:{segment:"storm",choices:{open:null,close:null,wait:null,curtain:null,window:null,television:null},carry:null,draft:null,item:null,completion:"in_progress",events:[]}};
+const session:Session={id:auth.id,version:0,source:"server_database",rules_version:"l3-flow-v1",state:{segment:"storm",choices:{open:null,close:null,wait:null,curtain:null,"right-window":null,window:null,television:null},carry:null,draft:null,item:null,completion:"in_progress",events:[]}};
 function storage(){const values=new Map<string,string>();Object.defineProperty(globalThis,"localStorage",{configurable:true,value:{getItem:(k:string)=>values.get(k)??null,setItem:(k:string,v:string)=>values.set(k,v),removeItem:(k:string)=>values.delete(k)}});localStorage.setItem(SESSION_KEY,JSON.stringify(auth));}
 test("L3 response loss retains exact request; TV has only one server action",async()=>{
  storage();const fetch=globalThis.fetch;

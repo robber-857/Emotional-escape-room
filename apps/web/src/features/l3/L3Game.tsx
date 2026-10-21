@@ -13,7 +13,7 @@ import {playerMessage} from "../shared/playerMessage";
 
 const questions:Record<Decision,string> = {
   open:"要完全打开门吗？",close:"要把门关上吗？",
-  wait:"要坐稳等待吗？",curtain:"要拉开右窗的窗帘吗？",window:"要关闭左边的窗户吗？",television:"要关掉电视机电源吗？",
+  wait:"要坐稳等待吗？",curtain:"要拉开右窗的窗帘吗？",window:"要关闭左边的窗户吗？","right-window":"要关闭右边的窗户吗？",television:"要关掉电视机电源吗？",
 };
 type Prompt = Decision | "carry" | "confirm" | null;
 export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;preview?:boolean}) {
@@ -23,7 +23,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const server=useServerL3(!preview);
   const [localState,setState] = useState(()=>initialState(initialSegment));
   const state=preview?localState:server.state;
-  const segment=preview?initialSegment:state.segment;
+  const segment=state.segment;
   const current = useRef(state); const lastRaw = useRef<string|null>(null);
   const [localLoaded,setLoaded] = useState(false);
   const loaded=preview?localLoaded:server.loaded;
@@ -36,6 +36,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   const conflict=preview?localConflict:server.conflict;
   const [prompt,setPrompt] = useState<Prompt>(null),[modal,setModal] = useState<"menu"|"reset"|"reset-all"|null>(null);
   const [televisionOff,setTelevisionOff] = useState(false);
+  const [continuePreparing,setContinuePreparing] = useState(false);
   const [catalog,setCatalog] = useState(false);
   const [portrait,setPortrait] = useState(false),[reduced,setReduced] = useState(false);
   const [message,setMessage] = useState("");
@@ -45,7 +46,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   function load() {
     if(!preview){void server.sync().then(ok=>{if(ok){setPrompt(null);setCatalog(false);setMessage("进度已恢复。");}});return;}
     try {
-      const raw = localStorage.getItem(key); const saved = raw === null ? initialState(segment) : restore(raw,segment);
+      const raw = localStorage.getItem(key); const saved = raw === null ? initialState(segment) : restore(raw,initialSegment);
       if(segment==="carry"){
         const stormRaw=localStorage.getItem(`${SAVE_KEY}:storm`);
         setTelevisionOff(stormRaw!==null && restore(stormRaw,"storm").choices.television===true);
@@ -66,7 +67,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   },[key,preview]); // Only server mode reads the original journey credentials.
 
   useEffect(()=>{
-    if(preview && loaded && !storageError && !conflict && stormComplete(state))
+    if(preview && loaded && !storageError && !conflict && initialSegment==="storm" && state.segment==="carry")
       router.replace("/l3?preview=1&segment=carry&from=storm");
   },[preview,loaded,storageError,conflict,state,router]);
   useEffect(()=>{if(!preview){setPrompt(null);setCatalog(false);}},[preview,segment,conflict]);
@@ -90,8 +91,8 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
   }
   async function decide(slot:Decision,yes:boolean) {
     if(await act({type:"decision",slot,yes})){
-      setPrompt(null);
-      setMessage(slot==="open"&&!yes?"门保持半开。":slot==="close"&&!yes?"门保持原状。":slot==="close"?"门已关上。":slot==="wait"&&yes?"已坐下等待。":slot==="open"?"门已打开。":!yes?"已保留原状。":slot==="curtain"?"窗帘拉开了。":slot==="window"?"左边的窗户关好了。":"电视机电源关闭了。");
+      setPrompt(null);setContinuePreparing(false);
+      setMessage(slot==="open"&&!yes?"门保持半开。":slot==="close"&&!yes?"门保持原状。":slot==="close"?"门已关上。":slot==="wait"&&yes?"已坐下等待。":slot==="open"?"门已打开。":!yes?"已保留原状。":slot==="curtain"?"窗帘拉开了。":slot==="window"?"左边的窗户关好了。":slot==="right-window"?"右边的窗户关好了。":"电视机电源关闭了。");
     }
   }
   async function resetAll() {
@@ -128,7 +129,11 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
     {!entered&&<ActOpening journeyId={preview?"preview-l3":server.sessionId} resume={state.events.length>0} act="第三幕" title="风暴大厅" prompt="风暴来临，你会如何选择？" ready={ready&&loaded&&!portrait&&!modal&&!storageError&&!conflict&&!server.error} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第三幕游戏舞台">
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait} after={segment==="storm"?<><p>本幕任务：</p><p>请在风暴来临之前，完成你认为重要的准备工作。</p></>:undefined}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait} after={segment==="storm"&&!stormComplete(state)?<><p>本关任务：</p><p>请在风暴来临之前，完成你认为重要的准备工作。</p></>:undefined}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
+      {segment==="storm"&&stormComplete(state)&&entered&&!prompt&&<div className={styles.preparationActions} aria-label="准备进度选择">
+        <button disabled={blocked} className={styles.primary} onClick={async()=>{if(await act({type:"finish-preparation"})){setPrompt(null);setMessage("");}}}>我已完成</button>
+        {!continuePreparing&&<button disabled={blocked} onClick={()=>{setContinuePreparing(true);setMessage("可以继续选择房间里的物品，准备好后点击我已完成。");}}>继续做准备</button>}
+      </div>}
       <button className={styles.menu} aria-label="打开第三幕菜单" onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
       {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
         <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>
@@ -143,7 +148,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
         <div className={styles.actions}><button disabled={blocked||!!prompt} onClick={()=>setCatalog(true)}>查看物品清单</button>{selected&&<button disabled={blocked||!!prompt} className={`${styles.primary} gameYes`} onClick={()=>setPrompt("confirm")}>确认携带{items[selected]}</button>}</div>
       </section>}
       {done&&<section className={styles.result} data-game-prompt aria-label="走出密室提示"><h2>要走出密室吗？</h2><p>{state.item?`你收好了${items[state.item]}。`:"你决定不带走任何物品。"}</p><div className={styles.actions}><button className={`${styles.primary} gameYes`} disabled={blocked} onClick={()=>router.push(preview?"/l4?preview=1":"/l4")}>走出密室 →</button></div></section>}
-      {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
+      {prompt&&<section className={`${styles.bubble} ${prompt==="open"||prompt==="close"?styles.doorBubble:prompt==="curtain"||prompt==="right-window"||prompt==="television"?styles.rightBubble:prompt==="window"?styles.windowBubble:prompt==="wait"?styles.waitBubble:styles.centerBubble}`} data-game-prompt aria-label="场景提示">
         <div className={styles.bubbleTitle}><h2 tabIndex={-1} ref={heading}>{prompt==="carry"?"要带走一件物品吗？":prompt==="confirm"?`要携带${selected?items[selected]:"这件物品"}吗？`:questions[prompt]}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
         {prompt==="confirm"&&selected&&<div className={styles.confirmImage}>{selected!=="compass"?<img src={gameAsset(`/game/l3/${selected}.png`)} alt={items[selected]}/>:<p>指南针</p>}</div>}
         <div className={styles.actions}>
