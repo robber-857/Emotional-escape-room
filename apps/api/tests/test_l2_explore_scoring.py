@@ -53,7 +53,7 @@ def test_staying_settles_only_at_exit_and_only_if_door_opened(client, opened, re
     if opened: unlock(client,url,h,s)
     else:
         # Meet the exit gate without opening the bedroom door under test.
-        for action in [dict(type='sit',seat='sofa',yes=False),dict(type='arrive-table'),
+        for action in [dict(type='sit',seat='table-seat',yes=False),dict(type='arrive-table'),
                        dict(type='select-key',key='key-1'),dict(type='select-key',key='key-2')]:
             assert act(client,url,h,s,action)[0].status_code == 200
         assert not s['state']['doorOpen']
