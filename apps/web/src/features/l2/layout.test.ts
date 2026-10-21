@@ -39,7 +39,7 @@ test("moves undo reset retry and reload preserve cumulative count",()=>{
  assert.equal(s.furniture.classification?.metrics.adjustmentCount,4);
  assert.deepEqual(restore(JSON.stringify({version:1,events:s.events})),s);
 });
-test("furniture confirmation counts once; two distinct choices unlock the exit",()=>{
+test("furniture confirmation counts once; confirmation alone does not unlock the exit",()=>{
  let s=act(initialState(),{type:"layout-start"});assert.equal(s.exitDoorOpen,false);
  s=act(s,{type:"layout-confirm"});assert.equal(s.exitDoorOpen,false);assert.equal(s.furniture.classification?.metrics.adjustmentCount,0);
  assert.equal(act(s,{type:"layout-confirm"}),s);

@@ -83,5 +83,5 @@ export function choiceFact(action:Action):string|null {
 export function transition(state:State,event:Event):State {
  const next=applyTransition(state,event);if(next===state)return state;
  const facts=[...new Set([...(state.choiceActions??[]),...next.events.map(e=>choiceFact(e.action)).filter((v):v is string=>v!==null)])].sort();
- return {...next,choiceActions:facts,exitDoorOpen:facts.length>=2||state.exitDoorOpen};
+ return {...next,choiceActions:facts,exitDoorOpen:facts.length>=4||state.exitDoorOpen};
 }

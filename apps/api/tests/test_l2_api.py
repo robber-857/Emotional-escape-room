@@ -279,3 +279,28 @@ def test_free_placement_suspension_tolerance_persists(client, gap, tidy):
     assert (not state["furniture"]["classification"]["evidence"]["outsideFloor"] and state["furniture"]["classification"]["metrics"]["tidiness"] > .9) is True
     assert state["exitDoorOpen"] is False
     assert ("chair" in state["furniture"]["classification"]["evidence"]["outsideFloor"]) is False
+
+
+def test_four_distinct_choices_gate_l3_and_survive_reload(client):
+    _, h, url, s = open_l2(client)
+    l3_url = url.replace("/l2", "/l3")
+    for action, count in [
+        (dict(type="layout-start"), 0),
+        (dict(type="layout-confirm"), 1),
+        (dict(type="layout-start"), 1),
+        (dict(type="layout-confirm"), 1),
+        (dict(type="arrive-table"), 1),
+        (dict(type="select-key", key="key-1"), 2),
+        (dict(type="try-door", key="key-1"), 3),
+        (dict(type="select-key", key="key-2"), 4),
+    ]:
+        response, body = act(client, url, h, s, action)
+        assert response.status_code == 200
+        assert len(s["state"]["choiceActions"]) == count
+        assert s["state"]["exitDoorOpen"] is (count >= 4)
+        assert s["completion"] == ("complete" if count >= 4 else "in_progress")
+        assert client.get(url, headers=h).json() == s
+        assert client.post(url+"/actions", headers=h, json=body).json()["duplicate"]
+        if count < 4:
+            assert client.post(l3_url, headers=h, json={}).json()["detail"] == "L2_NOT_COMPLETE"
+    assert client.post(l3_url, headers=h, json={}).status_code == 200
