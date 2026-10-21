@@ -153,6 +153,9 @@ def action(sid: UUID, body: ActionRequest, authorization: str = Header(default="
 from .l2_api import register_l2
 register_l2(app, authorize)
 
+from .journey_api import register_journey
+register_journey(app, authorize, snapshot)
+
 from .l3_api import register_l3
 register_l3(app, authorize)
 

@@ -82,6 +82,13 @@ export async function submit(session: Session, pending: Pending): Promise<{ sess
 }
 export async function getReceipts(session: Session): Promise<Receipt[]> { return request(`/sessions/${session.id}/events`, session); }
 
+export async function resumePath(session:Session):Promise<string> {
+  const result=await request(`/sessions/${session.id}/journey`,session);
+  if(!["/","/l2","/l3","/l4"].includes(result.path))throw new Error("暂时无法继续旅程，请重试。");
+  if(readSession()?.id!==session.id)throw new Error("旅程已在其他页面更新，请重新载入。");
+  return result.path;
+}
+
 export function readDraft(session: Session): Positions {
   try {
     const raw = localStorage.getItem(`emotional:l1:draft:${session.id}`);
@@ -93,7 +100,7 @@ export function readDraft(session: Session): Positions {
       if (!["planks", "rope", "ring", "oar"].includes(key) || !pos || !Number.isFinite(pos.x) || !Number.isFinite(pos.y) || Math.abs(pos.x) > 1 || Math.abs(pos.y) > 1) return session.positions;
       draft[key] = pos;
     }
-    if (session.state.ropeClicks < 5) delete draft.rope;
+    if (session.state.ropeClicks < 3) delete draft.rope;
     return draft;
   } catch { return session.positions; }
 }

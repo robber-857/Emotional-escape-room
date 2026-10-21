@@ -1,4 +1,4 @@
-import {readSession,type Session as L1Session} from "../l1/api";
+import {readSession,storeSession,type Session as L1Session} from "../l1/api";
 import {reliableJson} from "../shared/reliableRequest";
 import type {Action,State} from "./model";
 export type Session={id:string;version:number;rules_version:string;state:State;l1:{version:number;scene:string;route:string;lampTaken:boolean;lampLit:boolean};scoring:{status:"pending_configuration";totals:null}};
@@ -22,6 +22,22 @@ function assertCurrent(auth:L1Session){
  if(!active||active.id!==auth.id||active.token!==auth.token)throw new Error("旅程已切换或凭据已清除，请重新载入。");
 }
 export async function start(auth:L1Session):Promise<Session>{return request(auth,"",{});}
+export async function restart(session:Session):Promise<void>{
+ const auth=credentials();assertCurrent(auth);
+ if(auth.id!==session.id)throw new Error("旅程已切换，请重新载入。");
+ const key=`emotional:l2:restart:${auth.id}`;
+ const stored=localStorage.getItem(key);
+ const body=stored?JSON.parse(stored):{action_id:crypto.randomUUID(),expected_version:session.version};
+ localStorage.setItem(key,JSON.stringify(body));
+ let next:L1Session;
+ try {next=await request(auth,"/restart",body);} catch(error){
+  if(error instanceof Error&&error.message==="VERSION_CONFLICT")localStorage.removeItem(key);
+  throw error;
+ }
+ assertCurrent(auth);
+ if(!next.id||!next.token||next.state?.scene!=="complete")throw new Error("暂时无法重新探索，请重试。");
+ storeSession(next);
+}
 export async function getReceipts(auth:L1Session):Promise<Receipt[]>{return request(auth,"/events");}
 export function readPending(id:string):Pending|null{const raw=localStorage.getItem(pendingKey(id));return raw?JSON.parse(raw):null;}
 export function prepare(session:Session,action:Action):Pending{
