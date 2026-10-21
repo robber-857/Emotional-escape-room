@@ -1,4 +1,4 @@
-import {readSession,type Session as Auth} from "../l1/api";
+import {readSession,storeSession,type Session as Auth} from "../l1/api";
 import {type Action,type State,type Decision,initialState} from "./model";
 
 export type ServerAction = Action;
@@ -27,6 +27,22 @@ async function request(auth:Auth,suffix:string,body?:unknown){
  return data;
 }
 export async function start(auth:Auth):Promise<Session>{return request(auth,"",{});}
+export async function restart(session:Session):Promise<void>{
+ const auth=credentials();assertCurrent(auth);
+ if(auth.id!==session.id)throw new Error("旅程已切换，请重新载入。");
+ const key=`emotional:l3:restart:${auth.id}`;
+ const stored=localStorage.getItem(key);
+ const body=stored?JSON.parse(stored):{action_id:crypto.randomUUID(),expected_version:session.version};
+ localStorage.setItem(key,JSON.stringify(body));
+ let next:Auth;
+ try {next=await request(auth,"/restart",body);} catch(error){
+  if(error instanceof Error&&error.message==="VERSION_CONFLICT")localStorage.removeItem(key);
+  throw error;
+ }
+ assertCurrent(auth);
+ if(!next.id||!next.token||next.state?.scene!=="complete")throw new Error("暂时无法重新探索，请重试。");
+ storeSession(next);
+}
 export async function getReceipts(auth:Auth):Promise<Receipt[]>{return request(auth,"/events");}
 export function toView(session:Session):State {
  const s=session.state;

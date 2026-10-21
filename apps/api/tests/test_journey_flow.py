@@ -72,3 +72,35 @@ def test_concurrent_restart_retry_creates_one_child(client):
         responses=list(pool.map(lambda _:client.post(url+"/restart",headers=h,json=body),range(2)))
     assert all(r.status_code==200 for r in responses)
     assert responses[0].json()==responses[1].json()
+
+
+def test_l3_restart_preserves_earlier_acts_and_scores(client):
+    from test_l3_api import open_l3, storm, old_records
+    p, h, url, s = open_l3(client)
+    before = old_records(p['id'])
+    base = f"/api/v1/sessions/{p['id']}"
+    scores = client.get(base+'/scoring', headers=h).json()
+    storm(client, url, h, s, yes=True)
+    original = deepcopy(s)
+    body = dict(action_id=str(uuid4()), expected_version=s['version'])
+    assert client.post(url+'/restart', json=body).status_code == 404
+    assert client.post(url+'/restart', headers=h, json={**body, 'expected_version':0}).status_code == 409
+    response = client.post(url+'/restart', headers=h, json=body)
+    assert response.status_code == 200
+    child = response.json()
+    assert child['state'] == p['state']
+    assert client.post(url+'/restart', headers=h, json=body).json() == child
+    assert old_records(p['id']) == before
+    assert client.get(url, headers=h).json() == original
+    ch = {'Authorization':'Bearer '+child['token']}
+    cb = f"/api/v1/sessions/{child['id']}"
+    assert client.get(cb+'/levels/l2', headers=ch).json()['state'] == before[2][0]['state']
+    assert client.get(cb+'/levels/l2/events', headers=ch).json() == client.get(base+'/levels/l2/events', headers=h).json()
+    fresh = client.post(cb+'/levels/l3', headers=ch, json={}).json()
+    assert fresh['version'] == 0 and fresh['state']['segment'] == 'storm'
+    assert fresh['state']['events'] == [] and fresh['state']['item'] is None
+    assert client.get(cb+'/journey', headers=ch).json() == dict(path='/l3')
+    after = client.get(cb+'/scoring', headers=ch).json()
+    retained = lambda entries: [(e['level'], e['group_id'], e['vector']) for e in entries if e['level'] in ('l1','l2')]
+    assert retained(after['ledger']) == retained(scores['ledger'])
+    assert all(e['level'] in ('l1','l2') for e in after['ledger'])

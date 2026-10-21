@@ -2,7 +2,6 @@
 import {gameAsset} from "../shared/gameAsset";
 import {useEffect,useRef,useState} from "react";
 import {useSceneAssets} from "../shared/useSceneAssets";
-import Link from "next/link";
 import {ActOpening} from "../shared/ActOpening";
 import {LevelHeading} from "../shared/LevelHeading";
 import {useRouter} from "next/navigation";
@@ -10,7 +9,6 @@ import {assets,Scene} from "./Scene";
 import {SAVE_KEY,MAX_EVENTS,items,initialState,stormComplete,transition,isRepeatedDecision,serialize,restore,type State,type Segment,type Decision,type Item,type Action} from "./model";
 import styles from "./l3.module.css";
 import {useServerL3} from "./useServerL3";
-import {RestartJourney} from "../shared/RestartJourney";
 import {playerMessage} from "../shared/playerMessage";
 
 const questions:Record<Decision,string> = {
@@ -96,8 +94,8 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
       setMessage(slot==="open"&&!yes?"门保持半开。":slot==="close"&&!yes?"门保持原状。":slot==="close"?"门已关上。":slot==="wait"&&yes?"已坐下等待。":slot==="open"?"门已打开。":!yes?"已保留原状。":slot==="curtain"?"窗帘拉开了。":slot==="window"?"左边的窗户关好了。":"电视机电源关闭了。");
     }
   }
-  function resetAll() {
-    if(!preview)return;
+  async function resetAll() {
+    if(!preview){if(!await server.restart())setModal(null);return;}
     const stormKey=`${SAVE_KEY}:storm`,carryKey=`${SAVE_KEY}:carry`;
     let previousCarry:string|null=null,carryWritten=false;
     try {
@@ -130,7 +128,7 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
     {!entered&&<ActOpening journeyId={preview?"preview-l3":server.sessionId} resume={state.events.length>0} act="第三幕" title="风暴大厅" prompt="风暴来临，你会如何选择？" ready={ready&&loaded&&!portrait&&!modal&&!storageError&&!conflict&&!server.error} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第三幕游戏舞台">
       <Scene televisionOff={!preview||segment==="storm"?state.choices.television===true:televisionOff} state={state} blocked={blocked||!!prompt||catalog} reduced={reduced} onPrompt={setPrompt} onCarryStart={()=>{if(!blocked)setPrompt("carry");}} onItem={chooseItem}/>
-      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
+      <LevelHeading className={styles.heading} ready={entered&&ready&&loaded&&!portrait} after={segment==="storm"?<><p>本幕任务：</p><p>请在风暴来临之前，完成你认为重要的准备工作。</p></>:undefined}><p>第三幕</p><h1>风暴大厅</h1></LevelHeading>
       <button className={styles.menu} aria-label="打开第三幕菜单" onClick={()=>{setPrompt(null);setModal("menu");}}>☰</button>
       {segment==="carry"&&state.carry===true&&!done&&catalog&&!prompt&&<section className={styles.selection} data-game-prompt aria-label="物品近景选择">
         <div className={styles.bubbleTitle}><h2>选择一件随身物品</h2><button aria-label="收起物品清单" onClick={()=>setCatalog(false)}>×</button></div><p>点击物品进行选择。</p>
@@ -155,12 +153,12 @@ export function L3Game({segment:initialSegment,preview=true}:{segment:Segment;pr
       {!prompt&&message&&<p className={styles.status} role="status">{!preview&&server.busy?"请稍候…":message}</p>}
       {(!ready||(!loaded&&!server.error))&&<div className={styles.loading}>{assetError?<><p>场景素材加载失败。</p><button onClick={()=>setAttempt(v=>v+1)}>重新加载素材</button></>:<p>正在载入风暴大厅…</p>}</div>}
       {preview&&(storageError||conflict||full)&&<div className={styles.notice} role="alert"><p>{playerMessage(storageError|| (conflict?"另一个页面更新了旅程，请重新载入。":"暂时无法继续，请重试或重新开始。"))}</p><button onClick={load}>重新载入</button><button onClick={()=>setModal("reset")}>重新开始此片段</button></div>}
-      {!preview&&(server.error||conflict||full)&&<div className={styles.notice} role="alert"><p>{conflict?"其他页面更新了旅程，请重新载入后继续。":playerMessage(server.error,"暂时无法继续，请重试，或返回第一幕重新开始。")}</p><button disabled={server.busy} onClick={load}>重试</button><Link href="/l2">返回第二幕</Link></div>}
+      {!preview&&(server.error||conflict||full)&&<div className={styles.notice} role="alert"><p>{conflict?"其他页面更新了旅程，请重新载入后继续。":playerMessage(server.error,"暂时无法继续，请重试或重新开始本幕。")}</p><button disabled={server.busy} onClick={load}>重试</button><button disabled={server.busy||conflict||!loaded} onClick={()=>setModal("reset-all")}>重新开始本幕</button></div>}
     </section>
-    <dialog data-game-dialog ref={dialog} className={styles.dialog} onCancel={()=>setModal(null)}>
-      <button className={styles.close} aria-label="关闭菜单" onClick={()=>setModal(null)}>×</button>
-      {modal==="menu"&&<><h2>风暴中的探索</h2><p>点击房间里的物件，作出你的选择。风暴平息后，可以挑选一件物品陪你继续旅程。</p><div className={styles.menuActions}><button onClick={()=>setModal(null)}>继续探索</button><button aria-pressed={reduced} onClick={()=>setReduced(v=>!v)}>减少场景动效：{reduced?"开":"关"}</button><RestartJourney/>{preview&&<button onClick={()=>setModal("reset-all")}>重新探索第三幕</button>}<Link href={preview?"/l2?preview=1":"/l2"}>返回第二幕</Link></div></>}
-      {modal==="reset-all"&&preview&&<><h2>从头重新探索第三幕？</h2><p>将从半开的门重新开始第三幕，并重新选择要带走的物品。</p><div className={styles.actions}><button onClick={()=>setModal("menu")}>取消</button><button onClick={resetAll}>确认重新开始第三幕</button></div></>}
+    <dialog data-game-dialog ref={dialog} className={styles.dialog} onCancel={e=>{if(server.busy)e.preventDefault();else setModal(null);}}>
+      <button className={styles.close} disabled={server.busy} aria-label="关闭菜单" onClick={()=>setModal(null)}>×</button>
+      {modal==="menu"&&<><h2>风暴中的探索</h2><p>点击房间里的物件，作出你的选择。风暴平息后，可以挑选一件物品陪你继续旅程。</p><div className={styles.menuActions}><button onClick={()=>setModal(null)}>继续探索</button><button aria-pressed={reduced} onClick={()=>setReduced(v=>!v)}>减少场景动效：{reduced?"开":"关"}</button><button disabled={server.busy||conflict||!loaded} onClick={()=>setModal("reset-all")}>重新开始本幕</button></div></>}
+      {modal==="reset-all"&&<><h2>重新开始本幕？</h2><p>将重新开始第三幕的准备工作和携带物品选择，保留第一幕和第二幕的进度。</p><div className={styles.actions}><button disabled={server.busy} onClick={()=>setModal("menu")}>取消</button><button disabled={server.busy||conflict||!loaded} onClick={resetAll}>{server.busy?"正在重新开始…":"确认重新开始本幕"}</button></div></>}
       {modal==="reset"&&preview&&<><h2>重新探索当前场景？</h2><p>将重新开始当前场景的探索。</p><div className={styles.actions}><button onClick={()=>setModal("menu")}>取消</button><button onClick={reset}>确认重新开始</button></div></>}
     </dialog>
     <dialog data-game-dialog ref={rotation} className={styles.dialog} onCancel={e=>e.preventDefault()}><h2>请翻转手机</h2><p>为了保证用户体验请翻转手机为横屏</p></dialog>

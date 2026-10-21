@@ -9,7 +9,7 @@ export function useServerL3(enabled:boolean){
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[conflict,setConflict]=useState(false);
  const session=useRef<api.Session|null>(null),locked=useRef(false),epoch=useRef(0);
  function apply(s:api.Session){session.current=s;setState(api.toView(s));setLoaded(true);}
- async function run(action?:Action):Promise<boolean>{
+ async function run(action?:Action,restart=false):Promise<boolean>{
   if(!enabled||locked.current)return false;
   locked.current=true;const ticket=++epoch.current;setBusy(true);setError("");
   try{
@@ -17,6 +17,12 @@ export function useServerL3(enabled:boolean){
    const next=await api.withSessionLock(auth.id,async()=>{
     if(ticket!==epoch.current)throw Error("页面进度已改变，请重新同步。");
     api.assertCurrent(auth);
+    if(restart){
+     if(!session.current||session.current.id!==auth.id)throw Error("旅程已切换，请重新载入。");
+     await api.restart(session.current);
+     window.location.assign("/l3");
+     return null;
+    }
     if(action){
      if(!session.current||session.current.id!==auth.id)throw Error("旅程已切换，请重新载入。");
      return api.submit(auth,api.prepare(session.current,action));
@@ -25,6 +31,7 @@ export function useServerL3(enabled:boolean){
     return pending?api.submit(auth,pending):saved;
    });
    if(ticket!==epoch.current)return false;
+   if(!next)return true;
    apply(next);setConflict(false);return true;
   }catch(e){
    if(ticket===epoch.current){
@@ -46,5 +53,5 @@ export function useServerL3(enabled:boolean){
   window.addEventListener("storage",changed);
   return()=>{epoch.current++;locked.current=false;window.removeEventListener("storage",changed);};
  },[enabled]);
- return {state,loaded,busy,error,conflict,sessionId:session.current?.id,sync:()=>run(),act:(a:Action)=>run(a)};
+ return {state,loaded,busy,error,conflict,sessionId:session.current?.id,restart:()=>run(undefined,true),sync:()=>run(),act:(a:Action)=>run(a)};
 }
