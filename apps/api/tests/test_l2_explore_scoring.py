@@ -51,6 +51,12 @@ def test_first_entry_settles_once_after_resume_and_reentry(client, refusals, opt
 def test_staying_settles_only_at_exit_and_only_if_door_opened(client, opened, refused):
     parent,h,url,s = open_l2(client)
     if opened: unlock(client,url,h,s)
+    else:
+        # Meet the exit gate without opening the bedroom door under test.
+        for action in [dict(type='sit',seat='sofa',yes=False),dict(type='arrive-table'),
+                       dict(type='select-key',key='key-1'),dict(type='select-key',key='key-2')]:
+            assert act(client,url,h,s,action)[0].status_code == 200
+        assert not s['state']['doorOpen']
     if refused: act(client,url,h,s,dict(type='explore',yes=False))
     assert entries(client,parent,h) == []
     leave(client,url,h,s)

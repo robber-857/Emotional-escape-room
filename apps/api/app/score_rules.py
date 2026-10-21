@@ -74,7 +74,8 @@ def candidates(level, before, state, action, policy=None):
                 add("l3.storm-door", "opened" if c["open"] else "unopened_closed" if c["close"] else "unopened")
             add("l3.wait", "yes" if c["wait"] else "no")
             add("l3.curtain", "yes" if c["curtain"] else "no")
-            add("l3.environment", "both" if c["window"] and c["television"] else "window" if c["window"] else "television" if c["television"] else "neither")
+            windows_closed = c["window"] is True and c.get("right-window") is True
+            add("l3.environment", "both" if windows_closed and c["television"] else "window" if windows_closed else "television" if c["television"] else "neither")
         if state["completion"] == "complete" and before["completion"] != "complete":
             add("l3.item", state["item"] or "none")
     elif level == "l4" and state["completion"] == "complete" and before["completion"] != "complete":

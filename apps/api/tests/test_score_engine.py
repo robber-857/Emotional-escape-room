@@ -1,12 +1,13 @@
 from copy import deepcopy
 from concurrent.futures import ThreadPoolExecutor
 import os
+from itertools import product
 from uuid import uuid4
 import pytest
 from sqlalchemy import select,delete,event
 from sqlalchemy.exc import SQLAlchemyError
 from test_l1_api import client,session,send
-from test_l2_api import open_l2,act
+from test_l2_api import open_l2,act,unlock
 from test_l3_api import open_l3
 from test_l4_api import open_l4
 from app.main import app
@@ -110,12 +111,14 @@ def test_boat_fifth_stroke_counts_once_and_retains_zero_f(client):
 
 
 @pytest.mark.parametrize('window,tv,value',[(True,True,2),(True,False,0),(False,True,0),(False,False,-2)])
-def test_environment_waits_for_all_answers_and_scores_once(client,window,tv,value):
+def test_environment_waits_for_explicit_finish_and_both_windows(client,window,tv,value):
     parent,h,url,s=open_l3(client)
     for slot,yes in [('open',False),('close',False),('window',window),('television',tv),('wait',False)]:
         r,_=act(client,url,h,s,dict(type='decision',slot=slot,yes=yes))
         assert not r.json()['score_effect']['events']
-    r,body=act(client,url,h,s,dict(type='decision',slot='curtain',yes=False))
+    act(client,url,h,s,dict(type='decision',slot='curtain',yes=True))
+    act(client,url,h,s,dict(type='decision',slot='right-window',yes=window))
+    r,body=act(client,url,h,s,dict(type='finish-preparation'))
     groups=r.json()['score_effect']['events']
     assert len(groups)==4
     assert next(e for e in groups if e['group_id']=='l3.environment')['vector']==dict(A=None,V=None,T=None,F=value)
@@ -136,6 +139,7 @@ def test_latest_confirmation_settles_once_at_l3_entry(client):
     assert latest['action_id']!=first and latest['placement']['metrics']['adjustmentCount']==1
     assert r.json()['score_effect']['reason']=='AWAITING_L3_ENTRY'
     assert not [e for e in scores(client,parent,h)['ledger'] if e['level']=='l2']
+    unlock(client,url,h,s)
     # Unconfirmed changes after the last confirmation must not leak into scoring.
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-move',id='chair',point=dict(u=.7,v=.6)))
@@ -284,6 +288,7 @@ def test_concurrent_l3_start_finalizes_furniture_exactly_once(client):
     act(client,url,h,s,dict(type="sit",seat="chair",yes=False))
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-confirm'))
+    unlock(client,url,h,s)
     with ThreadPoolExecutor(max_workers=2) as pool:
         responses=list(pool.map(lambda _:client.post(url.replace('/l2','/l3'),headers=h,json={}),range(2)))
     assert all(r.status_code==200 for r in responses)
@@ -298,6 +303,7 @@ def test_l3_entry_and_furniture_settlement_rollback_together(client):
     act(client,url,h,s,dict(type="sit",seat="chair",yes=False))
     act(client,url,h,s,dict(type='layout-start'))
     act(client,url,h,s,dict(type='layout-confirm'))
+    unlock(client,url,h,s)
     def fail(conn,cursor,statement,parameters,context,executemany):
         if 'INSERT INTO l3_runs' in statement:raise SQLAlchemyError('injected transition failure')
     event.listen(app.state.engine,'before_cursor_execute',fail)
@@ -307,3 +313,22 @@ def test_l3_entry_and_furniture_settlement_rollback_together(client):
         assert not conn.execute(select(l3_runs).where(l3_runs.c.session_id==parent['id'])).all()
     assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id'].startswith('l2.furniture.')]
     assert client.post(url.replace('/l2','/l3'),headers=h,json={}).status_code==200
+
+
+@pytest.mark.parametrize("left,right,tv", list(product((False,True),repeat=3)))
+def test_final_window_state_requires_both_windows_and_preserves_curtain(client,left,right,tv):
+    parent,h,url,s=open_l3(client)
+    for slot,yes in [("open",False),("close",False),("curtain",True),("right-window",False),("window",left),("television",tv)]:
+        assert act(client,url,h,s,dict(type="decision",slot=slot,yes=yes))[0].status_code == 200
+    assert not [e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l3.environment']
+    if right:
+        assert act(client,url,h,s,dict(type="decision",slot="right-window",yes=True))[0].status_code == 200
+    assert s['state']['choices']['curtain'] is True
+    assert client.get(url,headers=h).json() == s
+    response,body=act(client,url,h,s,dict(type="finish-preparation"))
+    groups=response.json()['score_effect']['events']
+    expected='both' if left and right and tv else 'window' if left and right else 'television' if tv else 'neither'
+    assert next(e for e in groups if e['group_id']=='l3.environment')['option_id']==expected
+    assert next(e for e in groups if e['group_id']=='l3.curtain')['option_id']=='yes'
+    assert client.post(url+'/actions',headers=h,json=body).json()['duplicate']
+    assert len([e for e in scores(client,parent,h)['ledger'] if e['group_id']=='l3.environment'])==1

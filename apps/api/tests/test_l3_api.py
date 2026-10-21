@@ -34,6 +34,7 @@ def open_l3(client):
 def storm(client, url, h, s, yes=False):
     for slot in SLOTS:
         assert act(client, url, h, s, dict(type="decision", slot=slot, yes=yes))[0].status_code == 200
+    assert act(client, url, h, s, dict(type="finish-preparation"))[0].status_code == 200
     assert s["state"]["segment"] == "carry"
 
 
@@ -73,8 +74,10 @@ def test_all_answer_combinations(answers):
     for index, (slot, yes) in enumerate(zip(SLOTS, answers)):
         s, changed = apply_action(s, dict(type="decision", slot=slot, yes=yes))
         assert changed
-        assert s["segment"] == ("carry" if index == 5 else "storm")
-    assert list(s["choices"].values()) == list(answers)
+        assert s["segment"] == "storm"
+    assert [s["choices"][slot] for slot in SLOTS] == list(answers)
+    s, changed = apply_action(s, dict(type="finish-preparation"))
+    assert changed and s["segment"] == "carry"
 
 
 @pytest.mark.parametrize("item", ITEMS)
@@ -248,3 +251,22 @@ def test_concurrent_starts_actions_and_same_id(client):
         results = list(pool.map(post, range(2)))
     assert sorted(r.status_code for r in results) == [200, 409]
     assert client.get(url, headers=h).json()["version"] == 2
+
+
+def test_preparation_two_objects_explicit_finish_and_right_window(client):
+    _, h, url, s = open_l3(client)
+    for slot in ("open", "close"):
+        assert act(client,url,h,s,dict(type="decision",slot=slot,yes=False))[0].status_code == 200
+    assert act(client,url,h,s,dict(type="finish-preparation"))[0].json()["code"] == "PREPARATION_NOT_READY"
+    assert act(client,url,h,s,dict(type="decision",slot="right-window",yes=True))[0].json()["code"] == "CURTAIN_NOT_OPEN"
+    for slot in ("curtain", "right-window"):
+        assert act(client,url,h,s,dict(type="decision",slot=slot,yes=True))[0].status_code == 200
+    assert s["state"]["choices"]["curtain"] is True
+    assert act(client,url,h,s,dict(type="finish-preparation"))[0].status_code == 409
+    assert act(client,url,h,s,dict(type="decision",slot="wait",yes=False))[0].status_code == 200
+    assert s["state"]["segment"] == "storm"
+    assert client.get(url,headers=h).json() == s
+    response, body = act(client,url,h,s,dict(type="finish-preparation"))
+    assert response.status_code == 200 and s["state"]["segment"] == "carry"
+    assert client.post(url+"/actions",headers=h,json=body).json()["duplicate"]
+    assert act(client,url,h,s,dict(type="decision",slot="window",yes=True))[0].status_code == 409

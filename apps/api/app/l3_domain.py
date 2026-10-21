@@ -2,15 +2,19 @@
 from copy import deepcopy
 
 RULES_VERSION = "l3-flow-v1"
-COMPLETION_POLICY_VERSION = "l3-answers-item-v1"
+COMPLETION_POLICY_VERSION = "l3-two-objects-explicit-finish-v2"
 MAX_EVENTS = 400
 SLOTS = ("open", "close", "wait", "curtain", "window", "television")
 ITEMS = ("scarf", "lantern", "umbrella", "compass", "doll", "key", "journal", "rope", "backpack")
 
 
 def initial_state():
-    return dict(segment="storm", choices=dict.fromkeys(SLOTS), carry=None, draft=None,
+    return dict(segment="storm", choices=dict.fromkeys((*SLOTS, "right-window")), carry=None, draft=None,
                 item=None, completion="in_progress", events=[])
+
+
+def preparation_count(state):
+    return sum(state["choices"].get(slot) is not None for slot in ("wait", "window", "curtain", "television"))
 
 
 def apply_action(state, action):
@@ -23,19 +27,25 @@ def apply_action(state, action):
         if s["segment"] != "storm":
             raise ValueError("STORM_COMPLETE")
         slot, yes = action["slot"], action["yes"]
-        if slot not in SLOTS or type(yes) is not bool:
+        if slot not in (*SLOTS, "right-window") or type(yes) is not bool:
             raise ValueError("INVALID_DECISION")
         if slot != "open" and s["choices"]["open"] is None:
             raise ValueError("OPEN_NOT_ANSWERED")
         if slot not in ("open", "close") and s["choices"]["close"] is None:
             raise ValueError("CLOSE_NOT_ANSWERED")
-        if s["choices"][slot] is True:
+        if slot == "right-window" and s["choices"]["curtain"] is not True:
+            raise ValueError("CURTAIN_NOT_OPEN")
+        if s["choices"].get(slot) is True:
             raise ValueError("ACTION_ALREADY_EXECUTED")
-        if s["choices"][slot] is yes:
+        if s["choices"].get(slot) is yes:
             return s, False
         s["choices"][slot] = yes
-        if all(value is not None for value in s["choices"].values()):
-            s["segment"] = "carry"
+    elif kind == "finish-preparation":
+        if s["segment"] != "storm":
+            raise ValueError("STORM_COMPLETE")
+        if preparation_count(s) < 2:
+            raise ValueError("PREPARATION_NOT_READY")
+        s["segment"] = "carry"
     else:
         if s["segment"] != "carry":
             raise ValueError("STORM_NOT_COMPLETE")

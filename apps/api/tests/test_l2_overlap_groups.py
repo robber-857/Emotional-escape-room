@@ -5,7 +5,7 @@ from app.l2_metrics import overlap_groups, measure
 from app.l2_layout import initial_layout
 from app.l2_scoring import evaluate, metric_band, load_policy
 from test_l1_api import client
-from test_l2_api import open_l2, act
+from test_l2_api import open_l2, act, unlock
 
 
 def box(x, width=1):
@@ -102,6 +102,7 @@ def test_real_api_confirmation_settlement_and_retry(client,layout,band):
     assert response.json()['score_effect']['reason']=='AWAITING_L3_ENTRY'
     duplicate=client.post(url+'/actions',headers=headers,json=request).json()
     assert duplicate['duplicate'] and duplicate['outcome']==response.json()['outcome']
+    unlock(client,url,headers,state)
     start=url.replace('/l2','/l3')
     assert client.post(start,headers=headers,json={}).status_code==200
     score_url=f"/api/v1/sessions/{parent['id']}/scoring"

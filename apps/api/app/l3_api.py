@@ -20,7 +20,7 @@ class StrictModel(BaseModel):
 
 class Decision(StrictModel):
     type: Literal["decision"]
-    slot: Literal["open", "close", "wait", "curtain", "window", "television"]
+    slot: Literal["open", "close", "wait", "curtain", "window", "television", "right-window"]
     yes: StrictBool
 
 
@@ -38,10 +38,14 @@ class Confirm(StrictModel):
     type: Literal["confirm"]
 
 
+class FinishPreparation(StrictModel):
+    type: Literal["finish-preparation"]
+
+
 class ActionRequest(StrictModel):
     action_id: UUID
     expected_version: int = Field(ge=0, strict=True)
-    action: Annotated[Decision | Carry | Draft | Confirm, Field(discriminator="type")]
+    action: Annotated[Decision | Carry | Draft | Confirm | FinishPreparation, Field(discriminator="type")]
 
 
 def snapshot(row):

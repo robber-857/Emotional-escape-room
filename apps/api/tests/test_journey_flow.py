@@ -6,7 +6,7 @@ from concurrent.futures import ThreadPoolExecutor
 from test_l1_api import client, session, send
 from test_l2_api import open_l2, act
 
-def test_two_choices_gate_repeated_furniture_and_transport_do_not_count(client):
+def test_five_choices_gate_repeated_furniture_and_transport_do_not_count(client):
     parent, h, url, s = open_l2(client)
     for _ in range(2):
         for action in [dict(type="layout-start"), dict(type="layout-confirm")]:
@@ -17,18 +17,26 @@ def test_two_choices_gate_repeated_furniture_and_transport_do_not_count(client):
     act(client, url, h, s, dict(type="arrive-table"))
     assert not s["state"]["exitDoorOpen"]
     response, body = act(client, url, h, s, dict(type="select-key", key="key-1"))
-    assert response.status_code == 200 and s["state"]["exitDoorOpen"]
+    assert response.status_code == 200 and not s["state"]["exitDoorOpen"]
+    for action in [dict(type="try-door",key="key-1"),dict(type="select-key",key="key-2"),dict(type="try-door",key="key-2")]:
+        assert act(client,url,h,s,action)[0].status_code == 200
+    assert s["state"]["exitDoorOpen"]
     assert client.post(url+"/actions", headers=h, json=body).json()["duplicate"]
     assert client.get(url, headers=h).json()["state"] == s["state"]
     assert client.post(url.replace("/l2", "/l3"), headers=h, json={}).status_code == 200
 
-def test_key_pick_and_door_attempt_are_enough_without_tidy(client):
+def test_keys_and_attempts_need_fifth_choice_without_tidy(client):
     _, h, url, s = open_l2(client)
     for action in [dict(type="arrive-table"), dict(type="select-key",key="key-1")]:
         act(client,url,h,s,action)
     assert not s["state"]["exitDoorOpen"]
     act(client,url,h,s,dict(type="try-door",key="key-1"))
-    assert s["state"]["exitDoorOpen"] and not s["state"]["doorOpen"]
+    assert not s["state"]["exitDoorOpen"] and not s["state"]["doorOpen"]
+    for action in [dict(type="select-key",key="key-2"),dict(type="try-door",key="key-2")]:
+        assert act(client,url,h,s,action)[0].status_code == 200
+    assert not s["state"]["exitDoorOpen"]
+    assert act(client,url,h,s,dict(type="sit",seat="chair",yes=True))[0].status_code == 200
+    assert s["state"]["exitDoorOpen"]
 
 def test_resume_uses_last_started_act_and_is_authorized(client):
     p,h=session(client);base=f"/api/v1/sessions/{p['id']}"
@@ -37,10 +45,11 @@ def test_resume_uses_last_started_act_and_is_authorized(client):
     for c in ("swim","enter"):send(client,p,h,c)
     s=client.post(base+"/levels/l2",headers=h,json={}).json()
     assert client.get(base+"/journey",headers=h).json()==dict(path="/l2")
-    for a in [dict(type="arrive-table"),dict(type="select-key",key="key-1"),dict(type="select-key",key="key-2")]:act(client,base+"/levels/l2",h,s,a)
+    for a in [dict(type="arrive-table"),dict(type="select-key",key="key-1"),dict(type="select-key",key="key-2"),dict(type="try-door",key="key-1"),dict(type="try-door",key="key-2"),dict(type="sit",seat="chair",yes=True)]:act(client,base+"/levels/l2",h,s,a)
     s=client.post(base+"/levels/l3",headers=h,json={}).json()
     assert client.get(base+"/journey",headers=h).json()==dict(path="/l3")
     for slot in ("open","close","wait","curtain","window","television"):act(client,base+"/levels/l3",h,s,dict(type="decision",slot=slot,yes=False))
+    assert act(client,base+"/levels/l3",h,s,dict(type="finish-preparation"))[0].status_code == 200
     act(client,base+"/levels/l3",h,s,dict(type="carry",yes=False))
     assert client.post(base+"/levels/l4",headers=h,json={}).status_code==200
     assert client.get(base+"/journey",headers=h).json()==dict(path="/l4")
