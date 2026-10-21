@@ -35,7 +35,7 @@ export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatc
  <article key={portrait.id} className={styles.article} aria-labelledby="portrait-heading">
  <div className={styles.screenReader}><h1 id="portrait-heading">{portrait.name} · {portrait.type}</h1><p>{portrait.quote}</p>{sections.map(s=><section key={s.key}><h2>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div>
  {artwork()}
- {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><p className={styles.finalScores}>最终评分：{(['A','V','T','F'] as const).map(axis=>`${axis} ${result.vector?.[axis]?.toFixed(2)??'—'}`).join(' · ')}（满分 100）</p><div className={`${styles.cards} ${styles.ratingCopy}`}>
+ {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><div className={`${styles.cards} ${styles.ratingCopy}`}>
  {(['authenticity','love'] as const).map(key=>{const metric=result.metrics![key]!,copy=resolveRatingCopy(portrait.id,key,metric.stars);return <section key={key} className={styles.card}><h2>{key==='authenticity'?'真我值':'恋爱脑'} · {metric.stars}/5 星</h2><p>{metric.score.toFixed(2)} / 100</p>{copy&&<><h3>{copy.title}</h3><p>{copy.body}</p></>}</section>;})}
  </div></section>}
  </article>

@@ -6,6 +6,7 @@ import {measureLayout} from "./metrics";
 import {LayoutButton} from "./LayoutButton";
 import {SearchClock} from "./searchClock";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
 import {ActOpening} from "../shared/ActOpening";
 import {LevelHeading} from "../shared/LevelHeading";
 import {Scene,KeySprite,assets} from "./Scene";
@@ -13,22 +14,24 @@ import {initialState,transition,restore,keysAvailable,seatNames,keyNames,SAVE_KE
 import styles from "./l2.module.css";
 import * as api from "./api";
 import {SESSION_KEY} from "../l1/api";
-import {ServerTrace} from "./ServerTrace";
-type Prompt = {type:"exit"}|{type:"layout-confirm"}|{type:"layout-reset"}| {type:"search"}|{type:"return"}|{type:"found"}| {type:"seat";seat:Seat}|{type:"keys"}|{type:"door"}|{type:"result"}|null;
+import {playerMessage} from "../shared/playerMessage";
+type Prompt = {type:"use-key";key:KeyId}|{type:"layout-confirm"}|{type:"layout-reset"}| {type:"search"}|{type:"return"}|{type:"found"}| {type:"seat";seat:Seat}|{type:"keys"}|{type:"door"}|{type:"result"}|null;
 export function L2Game({preview=false}:{preview?:boolean}){
+ const router=useRouter();
+ function enterThird(){if(!blocked&&stateRef.current.exitDoorOpen)router.push(preview?"/l3?preview=1&from=l2":"/l3?from=l2");}
   const [entered,setEntered]=useState(false);
  const [earringDropping,setEarringDropping]=useState(false);
  const [state,setState]=useState(initialState);const stateRef=useRef(state);
  const [prompt,setPrompt]=useState<Prompt>(null);
  const [attempt,setAttempt]=useState(0);
- const sceneAssets=state.view==="bedroom"?["bedroom-single-clue.png","earring.png","keys.png"]:state.view==="table"?["table-view.png","keys.png"]:assets.filter(name=>!["bedroom-single-clue.png","earring.png","table-view.png"].includes(name));
+ const sceneAssets=state.view==="bedroom"?["bedroom-single-clue.png","earring-green.png","keys.png"]:state.view==="table"?["table-view.png","keys.png"]:assets.filter(name=>!["bedroom-single-clue.png","earring-green.png","table-view.png"].includes(name));
  const {ready,error:loadError}=useSceneAssets(sceneAssets.map(name=>`/game/l2/${name}`),attempt);
  const [storageReady,setStorageReady]=useState(false);const [storageError,setStorageError]=useState("");
  const searchConflict=useRef(false);
  const server=useRef<api.Session|null>(null);const requestLock=useRef(false);
  const [syncing,setSyncing]=useState(false);const [syncError,setSyncError]=useState("");
  const [conflict,setConflict]=useState(false);const [portrait,setPortrait]=useState(false);
- const [modal,setModal]=useState<"menu"|"reset"|"trace"|null>(null);
+ const [modal,setModal]=useState<"menu"|"reset"|null>(null);
  const [message,setMessage]=useState("走近桌边，或找个位置坐一会儿。");
  const dialog=useRef<HTMLDialogElement>(null);const rotation=useRef<HTMLDialogElement>(null);const heading=useRef<HTMLHeadingElement>(null);
  useEffect(()=>{
@@ -59,7 +62,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  function applyServer(current:api.Session){server.current=current;stateRef.current=current.state;setState(current.state);}
  async function syncServer(){
   if(requestLock.current)return;requestLock.current=true;setSyncing(true);setSyncError("");
-  try{const auth=api.credentials();let current=await api.start(auth);const pending=api.readPending(auth.id);if(pending)current=await api.submit(auth,pending);applyServer(current);setStorageReady(true);setPrompt(null);setMessage("已连接原旅程，第二幕进度由服务器保存。");}
+  try{const auth=api.credentials();let current=await api.start(auth);const pending=api.readPending(auth.id);if(pending)current=await api.submit(auth,pending);applyServer(current);setStorageReady(true);setPrompt(null);setMessage("新的房间，等待你慢慢探索。");}
   catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);setStorageReady(true);}setSyncError(error instanceof Error?error.message:"无法连接服务器，请重试。");}
   finally{requestLock.current=false;setSyncing(false);}
  }
@@ -71,7 +74,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
   if(!server.current||syncError)return false;
   requestLock.current=true;setSyncing(true);
   try{const auth=api.credentials();if(auth.id!==server.current.id)throw new Error("旅程已切换，请重新载入。");const pending=api.prepare(server.current,action);applyServer(await api.submit(auth,pending));return true;}
-  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="L2_FINALIZED"){setPrompt(null);setMessage("已进入第三幕，第二幕评分已经结算，不能再修改。");return false;}if(error.code==="LAYOUT_OUTSIDE_FLOOR"){const outside=measureLayout(error.session.state.furniture.layout,error.session.state.furniture.adjustmentCount).evidence.outsideFloor;setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回地面后再次确认；本次未结算。`);return false;}if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"未能记录这次移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
+  catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);if(error.code==="L2_FINALIZED"){setPrompt(null);setMessage("你已经走进第三幕，这间房间的选择已成为过去。");return false;}if(error.code==="LAYOUT_OUTSIDE_FLOOR"){const outside=measureLayout(error.session.state.furniture.layout,error.session.state.furniture.adjustmentCount).evidence.outsideFloor;setPrompt(null);setMessage(`${outside.map(id=>furniture[id].name).join("、")}超出地面范围，请移回地面后再次确认。`);return false;}if(error.code==="INVALID_PLACEMENT"||error.code==="NO_CHANGE"){setPrompt(null);setMessage(error.code==="INVALID_PLACEMENT"?"这件家具暂时无法移动，请重试。":"位置没有变化，继续探索即可。");return false;}setPrompt(null);}setSyncError(error instanceof Error?error.message:"同步失败，请重试。");return false;}
   finally{requestLock.current=false;setSyncing(false);}
  }
  async function table(){if(blocked)return;if(await act({type:"arrive-table"})){setPrompt({type:"keys"});setMessage("已到桌边。");}}
@@ -82,8 +85,16 @@ export function L2Game({preview=false}:{preview?:boolean}){
   setPrompt({type:"keys"});
  }
  async function sit(seat:Seat,yes:boolean){if(!await act({type:"sit",seat,yes}))return;if(yes){setPrompt(seat==="table-seat"?{type:"keys"}:null);setMessage(`你在${seatNames[seat]}坐下了。`);}else{setPrompt(null);setMessage("先不坐下，继续看看房间。");}}
- async function pick(key:KeyId){if(!await act({type:"select-key",key}))return;setPrompt(null);setMessage(`已收好${keyNames[key]}。`);}
- function reset(){if(conflict||!preview)return;if(persist(initialState())){setStorageError("");setPrompt(null);setModal(null);setMessage("走近桌边，或找个位置坐一会儿。");}}
+ async function pick(key:KeyId){if(!await act({type:"select-key",key}))return;setPrompt(null);setMessage("");}
+ async function reset(){
+  if(conflict||requestLock.current)return;
+  if(preview){if(persist(initialState())){setStorageError("");setPrompt(null);setModal(null);setMessage("走近桌边，或找个位置坐一会儿。");}return;}
+  if(!server.current)return;
+  requestLock.current=true;setSyncing(true);setSyncError("");
+  try{await api.restart(server.current);window.location.assign("/l2");}
+  catch(error){setModal(null);setSyncError(playerMessage(error instanceof Error?error.message:"","暂时无法重新探索，请重试。"));}
+  finally{requestLock.current=false;setSyncing(false);}
+ }
  async function changeView(view:"room"|"table"){if(stateRef.current.view!==view&&!await act({type:"view",view}))return false;setPrompt(null);return true;}
  async function door(){if(blocked)return;if(await changeView("room"))setPrompt({type:stateRef.current.doorOpen?"result":"door"});}
  async function tryDoor(key:KeyId){if(blocked||stateRef.current.doorOpen||stateRef.current.attempts.includes(key)||!stateRef.current.keys.includes(key))return;if(await act({type:"try-door",key}))setPrompt({type:"result"});}
@@ -93,46 +104,39 @@ export function L2Game({preview=false}:{preview?:boolean}){
  async function requestReturn(){if(blocked)return;if(!await flushSearch.current())return;if(stateRef.current.search.status!=="found")setPrompt({type:"return"});else returnHall();}
  async function returnHall(){if(blocked||stateRef.current.view!=="bedroom")return;if(await act({type:"return-hall"})){setEarringDropping(false);setPrompt(null);setMessage("已回到大厅。");}}
  async function startLayout(){if(await act({type:"layout-start"})){setPrompt(null);setMessage("拖动家具，按你觉得合适的方式摆放。");}}
- async function moveFurniture(id:FurnitureId,point:Point){if(blocked||prompt||!stateRef.current.furniture.editing)return;if(!moveLayout(stateRef.current.furniture.layout,id,point)){setMessage("未能记录这次移动，请重试。");return;}const bounded=moveLayout(stateRef.current.furniture.layout,id,point)![id];if(Math.hypot(bounded.u-stateRef.current.furniture.layout[id].u,bounded.v-stateRef.current.furniture.layout[id].v)<.002){setMessage("已到可摆放边缘，可以沿墙继续调整。");return;}if(await act({type:"layout-move",id,point:bounded}))setMessage(`${furniture[id].name}的位置已保留，可以继续调整。`);}
- async function layoutAction(type:"layout-undo"|"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?"摆放已保存。":type==="layout-undo"?"已撤销上一次移动。":type==="layout-reset"?"已恢复初始摆放。":"当前摆放已保留。");}}
- const anchor=prompt?.type==="seat"?prompt.seat:prompt?.type==="found"?"armchair":"keys";
+ async function moveFurniture(id:FurnitureId,point:Point){if(blocked||prompt||!stateRef.current.furniture.editing)return;if(!moveLayout(stateRef.current.furniture.layout,id,point)){setMessage("这件家具暂时无法移动，请重试。");return;}const bounded=moveLayout(stateRef.current.furniture.layout,id,point)![id];if(Math.hypot(bounded.u-stateRef.current.furniture.layout[id].u,bounded.v-stateRef.current.furniture.layout[id].v)<.002){setMessage("已到可摆放边缘，可以沿墙继续调整。");return;}if(await act({type:"layout-move",id,point:bounded}))setMessage(`${furniture[id].name}移到了新的位置。`);}
+ async function layoutAction(type:"layout-reset"|"layout-exit"|"layout-confirm"){if(await act({type})){setPrompt(null);setMessage(type==="layout-confirm"?(stateRef.current.exitDoorOpen?"房间整理好了，可以继续前往下一幕。":"房间整理好了，再看看其他物品吧。"):type==="layout-reset"?"已恢复初始摆放。":"继续看看这个房间吧。");}}
+ const anchor=prompt?.type==="use-key"||prompt?.type==="door"||prompt?.type==="result"?"doorPrompt":prompt?.type==="seat"?prompt.seat:prompt?.type==="found"?"armchair":"keys";
  return <main className={styles.game}>
-  {!entered&&<ActOpening act="第二幕" title="失联房间" prompt="请自由探索房间。" ready={ready&&storageReady&&!portrait&&!modal&&!syncError&&!storageError&&!conflict} onEnter={()=>setEntered(true)}/>}
+  {!entered&&<ActOpening journeyId={preview?"preview-l2":server.current?.id} resume={state.events.length>0} act="第二幕" title="失联房间" prompt="请自由探索房间。" ready={ready&&storageReady&&!portrait&&!modal&&!syncError&&!storageError&&!conflict} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第二幕游戏舞台">
-   <Scene state={state} earringDropping={earringDropping} onEarringLanded={()=>setEarringDropping(false)} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={()=>{if(!blocked)setPrompt({type:"exit"});}} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
+   <Scene state={state} earringDropping={earringDropping} onEarringLanded={()=>setEarringDropping(false)} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={enterThird} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
    {ready&&!state.furniture.editing&&<nav className={styles.navigation} aria-label="房间探索操作">
     {state.view==="bedroom"?<button disabled={blocked} onClick={requestReturn}>{state.search.status==="searching"?"放弃寻找并返回大厅":"返回大厅"}</button>:state.view==="table"?<button disabled={blocked} onClick={()=>changeView("room")}>起身回大厅</button>:keysAvailable(state)&&state.keys.length<2&&<button disabled={blocked} onClick={returnToKeys}>回到桌边拿钥匙</button>}
     {state.view!=="bedroom"&&state.keys.length>0&&<button disabled={blocked} onClick={door}>{state.doorOpen?"查看半开的门":"去开门试试"}</button>}
-    {state.view==="bedroom"&&!["searching","found"].includes(state.search.status)&&<button disabled={blocked} onClick={()=>setPrompt({type:"search"})}>查看床头柜上的耳环</button>}
+    {state.view==="bedroom"&&!["searching","found"].includes(state.search.status)&&<button disabled={blocked} onClick={()=>setPrompt({type:"search"})}>查看梳妆台上的耳环</button>}
     {state.view==="room"&&<button disabled={blocked} onClick={startLayout}>整理家具</button>}
-    {state.view==="room"&&state.exitDoorOpen&&<button disabled={blocked} onClick={()=>setPrompt({type:"exit"})}>进入第三幕</button>}
+    {state.view==="room"&&state.exitDoorOpen&&<button disabled={blocked} onClick={enterThird}>进入第三幕</button>}
    </nav>}
    {ready&&state.furniture.editing&&<nav className={styles.layoutTools} aria-label="家具摆放操作">
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>setPrompt({type:"layout-confirm"})}>确认摆放</LayoutButton>
-    <LayoutButton disabled={blocked||!!prompt||!state.furniture.history.length} onAction={()=>layoutAction("layout-undo")}>撤销移动</LayoutButton>
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>setPrompt({type:"layout-reset"})}>恢复初始摆放</LayoutButton>
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>layoutAction("layout-exit")}>返回探索</LayoutButton>
    </nav>}
    <LevelHeading className={styles.heading} ready={entered&&ready&&storageReady&&!portrait}><h1>失联房间</h1></LevelHeading>
    <button className={styles.menu} aria-label="打开第二幕菜单" onClick={()=>setModal("menu")}>☰</button>
    {(!ready||(!storageReady&&!syncError))&&<div className={styles.loading} role="status"><p>{loadError?"房间素材加载失败，请重试。":"正在准备房间…"}</p>{loadError&&<button onClick={()=>setAttempt(v=>v+1)}>重新加载</button>}</div>}
-   {prompt?.type==="exit"&&<section className={`${styles.bubble} ${styles.keys}`} data-game-prompt aria-label="场景提示" inert={blocked}>
-    <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>你已经做了足够的探索，要离开这个房间么</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-    <p>进入后，本幕选择不可修改。</p>
-    <div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><Link className={`${styles.primary} gameYes`} href={preview?"/l3?preview=1&from=l2":"/l3?from=l2"}>是</Link></div>
+   {prompt&&<section className={`${styles.bubble} ${styles[anchor]}`} data-game-prompt aria-label="场景提示" inert={blocked}>
+    <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>{prompt.type==="use-key"?"去开门试试？":prompt.type==="keys"&&state.keys.length===2?"你已经拿完了所有的钥匙。":prompt.type==="layout-confirm"?"就这样摆放吗？":prompt.type==="layout-reset"?"恢复家具的初始位置吗？":prompt.type==="search"?"要寻找另一只耳环吗？":prompt.type==="return"?"先回大厅吗？":prompt.type==="found"?"找到另一只耳环了":prompt.type==="seat"?"要在这里坐下吗？":prompt.type==="door"?"要用哪把钥匙开门？":prompt.type==="result"?(state.doorOpen?"要进入房间吗？":"这把钥匙没有打开门。" ):"要拿哪把钥匙？"}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
+    {prompt.type==="use-key"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>tryDoor(prompt.key)}>是</button></div>:prompt.type==="layout-confirm"||prompt.type==="layout-reset"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>layoutAction(prompt.type==="layout-confirm"?"layout-confirm":"layout-reset")}>是</button></div>:prompt.type==="search"?<div className={styles.actions}><button onClick={()=>searchChoice(false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>searchChoice(true)}>是</button></div>:prompt.type==="return"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><button className="gameYes" onClick={returnHall}>是</button></div>:prompt.type==="found"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>继续看看</button><button className="gameYes" onClick={returnHall}>返回大厅</button></div>:prompt.type==="seat"?<><div className={styles.actions}><button onClick={()=>sit(prompt.seat,false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>sit(prompt.seat,true)}>是</button></div></>:prompt.type==="door"?<><p>{state.keys.length?"选择随身的钥匙。":"尚未携带钥匙。"}</p><div className={styles.keyChoices}>{state.keys.filter(key=>!state.attempts.includes(key)).map(key=><button key={key} disabled={state.attempts.includes(key)} onClick={()=>tryDoor(key)} aria-label={`用${keyNames[key]}开门`}><KeySprite id={key}/><span>{keyNames[key]}</span>{state.attempts.includes(key)&&<small>已试过，无法打开</small>}</button>)}</div>{state.keys.length<2&&<button onClick={returnToKeys} disabled={blocked}>回到桌边拿钥匙</button>}</>:prompt.type==="result"&&state.doorOpen?<div className={styles.actions}><button onClick={()=>explore(false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>explore(true)}>是</button></div>:prompt.type==="result"?<><p>{state.doorOpen?"门已打开。":"门仍然关着。"}</p><div className={styles.actions}>{!state.doorOpen&&<>{state.keys.length<2&&<button onClick={returnToKeys}>回到桌边拿钥匙</button>}{state.keys.some(k=>!state.attempts.includes(k))&&<button onClick={()=>setPrompt({type:"door"})}>换另一把试试</button>}</>}<button onClick={()=>setPrompt(null)}>继续探索</button></div></>:<><div className={styles.keyChoices}>{(["key-1","key-2"] as KeyId[]).filter(key=>!state.keys.includes(key)).map(key=><button key={key} aria-label={`选择${keyNames[key]}`} aria-pressed={state.selectedKey===key} onClick={()=>pick(key)}><KeySprite id={key}/><span>{keyNames[key]}</span></button>)}</div></>}
    </section>}
-   {prompt&&prompt.type!=="exit"&&<section className={`${styles.bubble} ${styles[anchor]}`} data-game-prompt aria-label="场景提示" inert={blocked}>
-    <div className={styles.bubbleTitle}><h2 ref={heading} tabIndex={-1}>{prompt.type==="layout-confirm"?"就这样摆放吗？":prompt.type==="layout-reset"?"恢复家具的初始位置吗？":prompt.type==="search"?"要寻找另一只耳环吗？":prompt.type==="return"?"先回大厅吗？":prompt.type==="found"?"找到另一只耳环了":prompt.type==="seat"?"要在这里坐下吗？":prompt.type==="door"?"要用哪把钥匙开门？":prompt.type==="result"?(state.doorOpen?"要进入房间吗？":"这把钥匙没有打开门。" ):"要拿哪把钥匙？"}</h2><button aria-label="关闭提示，继续探索" onClick={()=>setPrompt(null)}>×</button></div>
-    {prompt.type==="layout-confirm"||prompt.type==="layout-reset"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>layoutAction(prompt.type==="layout-confirm"?"layout-confirm":"layout-reset")}>是</button></div>:prompt.type==="search"?<div className={styles.actions}><button onClick={()=>searchChoice(false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>searchChoice(true)}>是</button></div>:prompt.type==="return"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>否</button><button className="gameYes" onClick={returnHall}>是</button></div>:prompt.type==="found"?<div className={styles.actions}><button onClick={()=>setPrompt(null)}>继续看看</button><button className="gameYes" onClick={returnHall}>返回大厅</button></div>:prompt.type==="seat"?<><div className={styles.actions}><button onClick={()=>sit(prompt.seat,false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>sit(prompt.seat,true)}>是</button></div></>:prompt.type==="door"?<><p>{state.keys.length?"选择随身的钥匙。":"尚未携带钥匙。"}</p><div className={styles.keyChoices}>{state.keys.map(key=><button key={key} disabled={state.attempts.includes(key)} onClick={()=>tryDoor(key)} aria-label={`用${keyNames[key]}开门`}><KeySprite id={key}/><span>{keyNames[key]}</span>{state.attempts.includes(key)&&<small>已试过，无法打开</small>}</button>)}</div>{state.keys.length<2&&<button onClick={returnToKeys} disabled={blocked}>回到桌边拿钥匙</button>}</>:prompt.type==="result"&&state.doorOpen?<div className={styles.actions}><button onClick={()=>explore(false)}>否</button><button className={`${styles.primary} gameYes`} onClick={()=>explore(true)}>是</button></div>:prompt.type==="result"?<><p>{state.doorOpen?"门已打开。":"门仍然关着。"}</p><div className={styles.actions}>{!state.doorOpen&&<>{state.keys.length<2&&<button onClick={returnToKeys}>回到桌边拿钥匙</button>}{state.keys.some(k=>!state.attempts.includes(k))&&<button onClick={()=>setPrompt({type:"door"})}>换另一把试试</button>}</>}<button onClick={()=>setPrompt(null)}>继续探索</button></div></>:<><div className={styles.keyChoices}>{(["key-1","key-2"] as KeyId[]).map(key=><button key={key} aria-label={`选择${keyNames[key]}`} aria-pressed={state.selectedKey===key} onClick={()=>pick(key)}><KeySprite id={key}/><span>{keyNames[key]}</span>{state.keys.includes(key)&&<small>已收好</small>}</button>)}</div></>}
-   </section>}
-   {state.view!=="bedroom"&&!state.furniture.editing&&<aside className={styles.inventory} aria-label="钥匙物品栏">{(["key-1","key-2"] as KeyId[]).map(key=>state.keys.includes(key)?<button key={key} disabled={blocked} aria-label={`物品栏：${keyNames[key]}`} aria-pressed={state.selectedKey===key} onClick={()=>{if(keysAvailable(stateRef.current)){setPrompt({type:"keys"});}}}><KeySprite id={key}/><span>{keyNames[key]}</span></button>:<div className={styles.empty} key={key} aria-label={`${keyNames[key]}物品格为空`}/>)}</aside>}
-   {!prompt&&ready&&<p className={styles.status} role="status">{syncing?"正在同步进度…":message}</p>}
+   {state.view!=="bedroom"&&!state.furniture.editing&&<aside className={styles.inventory} aria-label="钥匙物品栏">{(["key-1","key-2"] as KeyId[]).map(key=>state.keys.includes(key)&&!state.attempts.includes(key)?<button key={key} disabled={blocked} aria-label={`物品栏：${keyNames[key]}`} aria-pressed={state.selectedKey===key} onClick={async()=>{if(await changeView("room"))setPrompt({type:"use-key",key});}}><KeySprite id={key}/><span>{keyNames[key]}</span></button>:<div className={styles.empty} key={key} aria-label={`${keyNames[key]}物品格为空`}/>)}</aside>}
+   {!prompt&&ready&&(syncing||message)&&<p className={styles.status} role="status">{syncing?"请稍候…":message}</p>}
   </section>
-  {(conflict||storageError||saveFull||syncError)&&<section className={styles.notice} role="alert"><p>{conflict?"另一标签页更新了进度，请重新载入。":syncError||storageError||(preview?"本机记录已满，已暂停新的操作。已有进度仍保留，可从菜单查看记录，或确认重新开始 L2。":"本关记录已满，已有服务器进度保留。可查看记录或返回第一幕开始新旅程。")}</p>{conflict?<button onClick={()=>location.reload()}>载入最新进度</button>:preview?<button onClick={()=>setModal("reset")}>重新开始</button>:<><button disabled={syncing||saveFull} onClick={syncServer}>重试同步</button><Link href="/">返回第一幕</Link></>}</section>}
+  {(conflict||storageError||saveFull||syncError)&&<section className={styles.notice} role="alert"><p>{conflict?"另一标签页更新了进度，请重新载入。":playerMessage(syncError||storageError,"暂时无法继续这段探索，请重试，或返回第一幕重新开始。")}</p>{conflict?<button onClick={()=>location.reload()}>载入最新进度</button>:preview?<button onClick={()=>setModal("reset")}>重新开始</button>:<><button disabled={syncing||saveFull} onClick={syncServer}>重试</button><Link href="/">返回第一幕</Link></>}</section>}
   <dialog data-game-dialog ref={dialog} className={styles.dialog} onCancel={()=>setModal(null)}><button className={styles.close} aria-label="关闭菜单" onClick={()=>setModal(null)}>×</button>
-   {modal==="menu"&&<><h2>房间里的探索</h2><p>点击桌边，或在桌前椅坐下，就会出现钥匙选择。窗边椅可以坐下休息，点击“整理家具”可以移动椅子和沙发，合理摆放并确认后，左侧另一扇门会打开。只有明确选择后，钥匙才会进入物品栏。</p><p>{preview?"当前为独立本机预览，进度不上传服务器。":"当前沿用第一幕的旅程，动作和家具摆放由服务器校验保存。评分规则待配置，当前不计算分数。"}</p><div className={styles.actions}><button onClick={()=>setModal("trace")}>{preview?"查看本机选择":"查看服务器记录"}</button>{preview&&<button onClick={()=>setModal("reset")} disabled={conflict}>重新开始</button>}<Link href="/">返回第一幕</Link></div></>}
-   {modal==="reset"&&<><h2>重新探索这个房间？</h2><p>将清除本机的全部 L2 进度，包括座位、钥匙与开门、耳环寻找、家具摆放及事件记录。L1 服务器进度不受影响。</p><div className={styles.actions}><button onClick={()=>setModal(null)}>保留当前进度</button><button onClick={reset} disabled={conflict}>确认重新开始</button></div></>}
-   {modal==="trace"&&!preview&&<ServerTrace sessionId={server.current?.id}/>}{modal==="trace"&&preview&&<><h2>{preview?"本机选择记录":"服务器选择记录"}</h2><p>{preview?"这些记录尚未提交服务器，不代表正式评分。":`会话：${server.current?.id} · L2 版本 ${server.current?.version} · 第一幕已完成，原进度保留。评分待配置。`}</p><p>累计有效调整：{state.furniture.adjustmentCount??"历史记录缺失"} 次。整齐度按重叠组合分为四档：三重或四重叠 1 档，多对重叠 2 档，仅一对 3 档，无重叠 4 档。</p>{state.furniture.classification?.metrics&&<p>最近确认：靠墙／窗程度 {state.furniture.classification.metrics.wallWindowProximity.toFixed(3)}；整齐度第 {state.furniture.classification.metrics.tidinessBand}/4 档。本机预览不生成正式分数。</p>}<ol>{state.events.map(e=><li key={e.id}>{e.action.type==="layout-move"?`移动${furniture[e.action.id].name}`:e.action.type==="layout-start"?"开始整理家具":e.action.type==="layout-undo"?"撤销家具移动":e.action.type==="layout-reset"?"恢复初始家具位置":e.action.type==="layout-exit"?"保留摆放并返回探索":e.action.type==="layout-confirm"?"确认家具摆放":e.action.type==="search-choice"?(e.action.yes?"开始寻找耳环":"暂不寻找耳环"):e.action.type==="search-time"?`寻找有效时间：${e.action.activeMs}ms${e.action.activeMs>15000?"（长寻找）":""}`:e.action.type==="curtain-click"?"查看窗帘附近":e.action.type==="find-earring"?"找到耳环（旧版记录）":e.action.type==="explore"?(e.action.yes?"进入卧室探索":"暂不进入卧室"):e.action.type==="return-hall"?"从卧室返回大厅":e.action.type==="view"?(e.action.view==="table"?"查看桌面":"回到大厅"):e.action.type==="try-door"?`用${keyNames[e.action.key]}开门：${state.attempts[0]===e.action.key?"第一次失败":"第二次成功"}`:e.action.type==="arrive-table"?"走到桌边":e.action.type==="sit"?`${seatNames[e.action.seat]}：${e.action.yes?"坐下":"不坐"}`:`选择${keyNames[e.action.key]}`}</li>)}</ol>{!state.events.length&&<p>尚未作出选择。</p>}</>}
+   {modal==="menu"&&<><h2>房间里的探索</h2><p>点击桌边，或在桌前椅坐下，就会出现钥匙选择。窗边椅可以坐下休息，点击“整理家具”可以移动椅子和沙发，完成至少两项不同的选择后，就能继续前往第三幕。整理家具并确认也算一项选择。只有明确选择后，钥匙才会进入物品栏。</p><div className={styles.actions}><button onClick={()=>setModal(null)}>继续探索</button><button onClick={()=>setModal("reset")} disabled={conflict||syncing}>重新探索此关卡</button></div></>}
+   {modal==="reset"&&<><h2>重新探索这个房间？</h2><p>将重新开始这个房间的探索，包括钥匙、耳环寻找和家具摆放。</p><div className={styles.actions}><button onClick={()=>setModal(null)}>保留当前进度</button><button onClick={reset} disabled={conflict||syncing}>确认重新开始</button></div></>}
   </dialog>
   <dialog data-game-dialog ref={rotation} className={styles.dialog} onCancel={e=>e.preventDefault()}><h2>换一个方向，继续旅程</h2><p>为了保证用户体验请翻转手机为横屏</p></dialog>
  </main>;

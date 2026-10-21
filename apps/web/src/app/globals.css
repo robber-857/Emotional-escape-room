@@ -622,7 +622,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  padding: 4% 4.3%;
+  padding: 2% 4.3%;
   pointer-events: none;
   background: none;
 }
@@ -906,12 +906,16 @@ body {
 .l2Entry {font-size:var(--game-prompt-control);}
 
 /* Opening typography scales independently of scene coordinates. */
-.welcome > div {max-width:800px;min-width:0;}
+.welcome {text-align:center;background:linear-gradient(90deg,#102019a6,#102019b8 50%,#10201973);}
+.welcome > div {width:100%;max-width:800px;min-width:0;margin-inline:auto;}
 .welcome h2 {font-size:clamp(36px,4.6vw,68px);line-height:1.35;}
 .welcome p {font-size:clamp(22px,2.3vw,32px);line-height:1.65;}
 .welcome .eyebrow,.welcome small {font-size:clamp(16px,1.6vw,23px);}
-.welcomeActions {flex-wrap:wrap;}
+.welcomeActions {flex-direction:column;align-items:center;flex-wrap:wrap;}
 .welcomeActions button {font-size:clamp(20px,1.8vw,26px);min-height:48px;}
+.completionActions {display:grid;justify-items:center;gap:14px;margin-top:24px;}
+.completionActions .l2Entry {margin:0;font-size:clamp(20px,1.8vw,26px);padding:14px 24px;}
+.completionSecondary {display:flex;justify-content:center;flex-wrap:wrap;gap:12px;}
 @media(max-height:540px) and (orientation:landscape) {
   .welcome {padding:24px 5vw;overflow:auto;}
   .welcome h2 {font-size:36px;margin:12px 0;}
@@ -919,3 +923,6 @@ body {
   .welcomeActions {margin:18px 0 8px;}
   .welcome small,.welcome .eyebrow {font-size:16px;}
 }
+
+.welcome .replayCorner,.welcome .resumeJourney {position:absolute;left:4.5%;bottom:5%;margin:0;z-index:2;}
+.welcome .replayCorner {background:#e9cd75;color:#332c1b;border:1px solid #f6e3a3;font-size:clamp(14px,1.2vw,18px);padding:9px 16px;min-height:40px;}

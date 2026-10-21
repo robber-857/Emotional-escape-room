@@ -3,6 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import {useSceneAssets} from "../shared/useSceneAssets";
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import {journeyReview} from "./journeyReview";
+import {playerMessage} from "../shared/playerMessage";
 import {LevelHeading} from "../shared/LevelHeading";
 import { woodAtGap, ropeAtGap, repairMaterialsReady } from "./geometry";
 import { Sprite } from "./Sprite";
@@ -16,14 +19,14 @@ import {
   type Subject,
 } from "./model";
 import { type Positions } from "./save";
-import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, hasJourneyProgress, createSession, restartJourney, resumeSession, prepare, submit, getReceipts, RejectedAction, type Session, type Receipt } from "./api";
+import { SESSION_KEY, PENDING_KEY, readSession, readPending, readDraft, hasJourneyProgress, createSession, restartJourney, resumeSession, resumePath, prepare, submit, RejectedAction, type Session } from "./api";
 
 export function L1Game() {
+  const router=useRouter();
   const sessionRef = useRef<Session | null>(null);
   const requestLock = useRef(false);
   const [syncing, setSyncing] = useState(false);
   const [pendingSync, setPendingSync] = useState(false);
-  const [receipts, setReceipts] = useState<Receipt[]>([]);
   const [syncError, setSyncError] = useState("");
   const [effect, setEffect] = useState<"oar" | "repair" | "rope" | null>(null);
   useEffect(() => {
@@ -42,7 +45,6 @@ export function L1Game() {
   const shoreAssets=["shore-base","shore-middle","shore","woman","person","lamp-off","lamp-on"];
   const sceneAssets=(state.scene==="river"?assetNames.filter(name=>!shoreAssets.includes(name)):shoreAssets).map(asset);
   const {ready:loaded,error:assetError}=useSceneAssets(sceneAssets,loadAttempt);
-  const [saveStatus, setSaveStatus] = useState("连接服务器后开始保存进度");
   const [message, setMessage] = useState(
     "河水静静流淌。",
   );
@@ -92,13 +94,6 @@ export function L1Game() {
     else rotationDialog.current?.close();
   }, [portrait]);
   useEffect(() => {
-    if (modal === "trace" && sessionRef.current) {
-      let active = true;
-      getReceipts(sessionRef.current).then((rows) => { if (active) setReceipts(rows); }).catch(() => { if (active) setSyncError("无法刷新服务器记录，请重试同步"); });
-      return () => { active = false; };
-    }
-  }, [modal]);
-  useEffect(() => {
     if (modal) dialog.current?.showModal();
     else dialog.current?.close();
   }, [modal]);
@@ -110,15 +105,13 @@ export function L1Game() {
     // Cosmetic draft only: server state is never restored from this storage.
     try {
       if (sessionRef.current) localStorage.setItem(`emotional:l1:draft:${sessionRef.current.id}`, JSON.stringify(nextPositions));
-      setSaveStatus("关卡进度已由服务器保存；道具摆放保存在本机");
-    } catch { setSaveStatus("道具摆放未能保存，关卡进度仍在服务器"); }
+    } catch { setMessage("道具位置暂时无法保留，重新进入时会回到原位。"); }
   }
   function applySession(session: Session) {
     sessionRef.current = session;
     stateRef.current = session.state;
     setState(session.state);
     setHasSave(hasJourneyProgress(session, readPending()));
-    setSaveStatus(`服务器已保存 · 版本 ${session.version}`);
   }
   async function continueGame() {
     if (requestLock.current || externalChange) return;
@@ -137,11 +130,11 @@ export function L1Game() {
         positionsRef.current = session.positions; setPositions(session.positions);
       }
       setPendingSync(false);
-      setReceipts(await getReceipts(session));
+      if(session.state.scene==="complete"){const path=await resumePath(session);if(path!=="/"){router.push(path);return;}}
       setSelected(null); setStarted(true); setMessage(hasSave ? "进度已恢复。" : "河水静静流淌。");
     } catch (error) {
       if (error instanceof RejectedAction) {
-        applySession(error.session); setSelected(null); setReceipts((r) => [...r, error.receipt]);
+        applySession(error.session); setSelected(null);
         setPendingSync(false); setStarted(true);
       }
       setSyncError(error instanceof Error ? error.message : "连接失败，请重试");
@@ -160,7 +153,7 @@ export function L1Game() {
     )
       return;
     if (stateRef.current.events.length >= 1000) {
-      setMessage("记录已满，请重新开始。");
+      setMessage("这段旅程暂时无法继续，请重新开始。");
       return;
     }
     const session = sessionRef.current;
@@ -172,21 +165,20 @@ export function L1Game() {
       const pending = prepare(session, action, positionsRef.current);
       setPendingSync(true);
       const result = await submit(session, pending);
-      setReceipts((r) => [...r, result.receipt]);
       applySession(result.session); next = result.session.state;
       setPendingSync(false);
     } catch (error) {
       if (error instanceof RejectedAction) {
         applySession(error.session);
         positionsRef.current = error.session.positions; setPositions(error.session.positions);
-        setReceipts((r) => [...r, error.receipt]); setPendingSync(false);
+        setPendingSync(false);
       }
       setSyncError(error instanceof Error ? error.message : "连接失败，请重试同步");
       return;
     } finally { requestLock.current = false; setSyncing(false); }
     if (!before.oar && next.oar) setEffect("oar");
     if (!before.repaired && next.repaired) setEffect("repair");
-    if (before.ropeClicks < 5 && next.ropeClicks === 5) setEffect("rope");
+    if (before.ropeClicks < 3 && next.ropeClicks >= 3) setEffect("rope");
     if (action.type === "paddle") {
       strokeLock.current = true;
       setStrokeBusy(true);
@@ -214,7 +206,7 @@ export function L1Game() {
       }
       else if (action.choice === "take-rope") {
         setSelected(null);
-        setMessage(next.ropeClicks === 5 ? "绳子跃出，落在岸边。" : "草叶轻轻晃动。" );
+        setMessage(next.ropeClicks >= 3 ? "绳子跃出，落在岸边。" : "草叶轻轻晃动。" );
       }
       else if (action.choice === "repair") setSelected("bridge");
       else if (action.choice === "greet") setSelected("person");
@@ -250,7 +242,7 @@ export function L1Game() {
     }
     if (
       repairMaterialsReady(next) &&
-      stateRef.current.ropeClicks === 5 &&
+      stateRef.current.ropeClicks >= 3 &&
       !stateRef.current.repaired &&
       stateRef.current.scene === "river"
     ) {
@@ -259,13 +251,6 @@ export function L1Game() {
       if (stateRef.current.wood) await act({ type: "choose", choice: "repair", yes: true });
     }
   }
-  function resetPositions() {
-    if (externalChange) return;
-    positionsRef.current = {};
-    setPositions({});
-    save(stateRef.current, {});
-    setModal(null);
-  }
   async function fresh() {
     if (externalChange || requestLock.current) return;
     requestLock.current = true; setSyncing(true); setSyncError("");
@@ -273,7 +258,7 @@ export function L1Game() {
     try { session = await restartJourney(); }
     catch (error) { setSyncError(error instanceof Error ? error.message : "无法创建服务器会话"); return; }
     finally { requestLock.current = false; setSyncing(false); }
-    applySession(session); setReceipts([]); setPendingSync(false); setHasSave(false);
+    applySession(session); setPendingSync(false); setHasSave(false);
     if (strokeTimer.current) clearTimeout(strokeTimer.current);
     strokeLock.current = false;
     setStrokeBusy(false);
@@ -310,7 +295,7 @@ export function L1Game() {
     prompt &&
     !state.repaired &&
     selected &&
-    !(selected === "rope" && state.ropeClicks < 5) &&
+    !(selected === "rope" && state.ropeClicks < 3) &&
     ["bridge", "planks", "rope"].includes(selected)
   ) {
     const woodReady = positions.planks && woodAtGap(positions.planks);
@@ -330,7 +315,7 @@ export function L1Game() {
         await act({ type: "choose", choice: "place-wood", yes: true });
         if (!stateRef.current.woodPlaced) return;
       }
-      if ((stateRef.current.bridgeInspected || stateRef.current.woodPlaced) && stateRef.current.ropeClicks < 5 && !stateRef.current.repaired)
+      if ((stateRef.current.bridgeInspected || stateRef.current.woodPlaced) && stateRef.current.ropeClicks < 3 && !stateRef.current.repaired)
         void act({ type: "choose", choice: "take-rope", yes: true });
       else setMessage("草叶轻轻晃动。" );
       return;
@@ -349,7 +334,7 @@ export function L1Game() {
     bush: [88, 53],
     "rope-bush": [90, 42],
     planks: [83, 81],
-    rope: state.ropeClicks < 5 ? [83.4, 51.6] : [71.5, 83],
+    rope: state.ropeClicks < 3 ? [83.4, 51.6] : [71.5, 83],
     person: [62.6, 60.5],
     woman: [15.8, 58],
     lamp: state.lampTaken ? [91, 81] : [13, 83],
@@ -357,7 +342,7 @@ export function L1Game() {
   };
   const activeSubject = selected;
   const baseAnchor = anchor[activeSubject || "bridge"];
-  const delta = activeSubject && !(activeSubject === "rope" && state.ropeClicks < 5) ? positions[activeSubject] : undefined;
+  const delta = activeSubject && !(activeSubject === "rope" && state.ropeClicks < 3) ? positions[activeSubject] : undefined;
   const bubbleX = Math.max(
     20,
     Math.min(80, baseAnchor[0] + (delta?.x || 0) * 100),
@@ -379,13 +364,13 @@ export function L1Game() {
           effect={effect}
           disabled={blocked}
         />
-        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait}>
+        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait} after={state.scene==="river"?<><p>本关任务：</p><p>点击屏幕上的任何物品做出你过河的选择。</p></>:undefined}>
           <h1>分离之河</h1>
         </LevelHeading>
         {!started && (
           <div className="welcome">
             <div>
-              <span className="eyebrow">一段关于选择的旅程</span>
+              <span className="eyebrow">第一幕 · 分离之河</span>
               <h2>光在河的另一边</h2>
               <p>
                 寻找自己的过河方式。
@@ -393,7 +378,7 @@ export function L1Game() {
               {loaded ? (
                 <div className="welcomeActions">
                   <button
-                    className="primary gameYes"
+                    className={`primary gameYes ${hasSave?"resumeJourney":""}`}
                     disabled={syncing || externalChange}
                     onClick={() => sessionRef.current ? continueGame() : fresh()}
                   >
@@ -419,7 +404,6 @@ export function L1Game() {
               ) : (
                 <p role="status">正在准备河岸与道具…</p>
               )}
-              <small>第一幕 · 分离之河</small>
             </div>
           </div>
         )}
@@ -442,39 +426,13 @@ export function L1Game() {
               <span className="eyebrow">第一幕 · 已走过</span>
               <h2>你来到了门前</h2>
               <p>选择已留在旅程里。</p>
-              <dl>
-                <div>
-                  <dt>过河方式</dt>
-                  <dd>
-                    {
-                      {
-                        bridge: "修桥步行",
-                        swim: "直接游泳",
-                        ring: "使用救生圈",
-                        boat: "划船",
-                      }[state.route!]
-                    }
-                  </dd>
-                </div>
-                <div>
-                  <dt>随身物品</dt>
-                  <dd>
-                    {state.lampTaken
-                      ? state.lampLit
-                        ? "亮着的灯"
-                        : "未点亮的灯"
-                      : "没有带灯"}
-                  </dd>
-                </div>
-              </dl>
-              <p className="nextNotice">第二幕，新的房间。</p>
-              <Link className="primary l2Entry" href="/l2">进入第二幕</Link>
-              <button className="primary gameYes" onClick={() => setModal("restart")}>
+              <div className="completionActions"><Link className="primary gameYes l2Entry" href="/l2">进入第二幕 <span aria-hidden="true">→</span></Link><div className="completionSecondary">
+              <button className="replayCorner" onClick={() => setModal("restart")}>
                 再探索一次
               </button>
               <button className="quiet" onClick={() => setModal("trace")}>
                 查看本次选择
-              </button>
+              </button></div></div>
             </div>
           </div>
         )}
@@ -597,7 +555,7 @@ export function L1Game() {
             </div>
           </div>
         )}
-        {started && !prompt && (
+        {started && state.scene!=="complete" && !prompt && (
           <p className="sceneStatus" role="status">
             {effect === "repair"
               ? "木板铺合，木桥修好了。"
@@ -636,8 +594,8 @@ export function L1Game() {
       </button>
       {(syncing || syncError || pendingSync) && (
         <section className="syncStatus" role="status">
-          <p>{syncing ? "正在等待服务器校验…" : syncError || "有尚未确认的事件"}</p>
-          {!syncing && <button onClick={continueGame} disabled={externalChange || syncing}>重试同步 / 载入服务器进度</button>}
+          <p>{syncing ? "正在继续旅程…" : playerMessage(syncError || "这次操作尚未完成，请重试。")}</p>
+          {!syncing && <button onClick={continueGame} disabled={externalChange || syncing}>重试并继续</button>}
         </section>
       )}
       {externalChange && (
@@ -673,35 +631,12 @@ export function L1Game() {
                 {motion ? "减少场景动效" : "开启场景动效"}
               </button>
               <button
-                disabled={!started || externalChange || syncing || pendingSync}
-                onClick={resetPositions}
-              >
-                恢复道具位置
-              </button>
-              <button
                 disabled={externalChange || syncing}
                 onClick={() => setModal("restart")}
               >
                 重新开始旅程
               </button>
             </div>
-            <p role="status">{saveStatus}</p>
-            <div className="decisions">
-              <button
-                disabled={!started || externalChange || syncing || pendingSync}
-                onClick={() => {
-                  save(stateRef.current, positionsRef.current);
-                  setStarted(false);
-                  setModal(null);
-                }}
-              >
-                保存并返回
-              </button>
-              <button onClick={() => setModal("trace")}>开发预览记录</button>
-            </div>
-            <small>
-              关卡进度以服务器回执为准；尚不计算正式人格分数。
-            </small>
           </>
         )}
         {modal === "restart" && (
@@ -718,21 +653,11 @@ export function L1Game() {
         )}
         {modal === "trace" && (
           <>
-            <span className="eyebrow">REVIEW · 服务器校验记录</span>
+            <span className="eyebrow">旅程回顾</span>
             <h2>这次旅程的选择</h2>
-            <p>
-              每条记录包含服务器校验结果；只有接受的动作才推进关卡。尚不计算正式分数。
-              会话：{sessionRef.current?.id} · 规则：{sessionRef.current?.rules_version}
-            </p>
-            <ol className="trace">
-              {receipts.map((e, i) => (
-                <li key={`${e.action_id}-${i}`}>
-                  <span>{e.action.type === "paddle" ? "划桨一次" : choiceLabels[e.action.choice]}{e.action.type === "choose" ? (e.action.yes ? " · 是" : " · 否") : ""}<br /><small>{e.action_id}</small></span>
-                  <b>{e.accepted ? "服务器已接受" : "服务器已拒绝"} · v{e.version}<br />{e.code}{e.duplicate ? " · 重试去重" : ""}</b>
-                </li>
-              ))}
-            </ol>
-            {!receipts.length && <p>还没有执行任何选择。</p>}
+            <p>每一次选择，都让这段旅程有了自己的模样。</p>
+            <ol className="trace">{journeyReview(state.events).map((label,i)=><li key={i}>{label}</li>)}</ol>
+            {!state.events.length && <p>你的故事才刚刚开始。</p>}
           </>
         )}
       </dialog>

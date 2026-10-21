@@ -385,7 +385,7 @@ export function Scene({
           <g data-layer="props">
             {layer("rope-bush", "rope-bush")}
             {layer("boat", "boat")}
-            {!state.repaired && state.ropeClicks === 5 && layer("rope", "rope", true)}
+            {!state.repaired && state.ropeClicks >= 3 && layer("rope", "rope", true)}
             {layer("ring", "ring", true)}
             {state.oar && (
               <g
