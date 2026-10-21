@@ -3,7 +3,7 @@ import {FurniturePiece} from "./FurniturePiece";
 import {furnitureIds,type FurnitureId,type Point} from "./layout";
 import { seatNames, type KeyId, type Seat, type State } from "./model";
 import styles from "./l2.module.css";
-export const assets=["cabinet.png","cabinet-mask.svg","earring.png","door-panel.png","bedroom-single-clue.png","table-view.png","room.png","room-exit-open.png","chair.png","sofa.png","armchair.png","table-chair.png","keys.png","detail.svg"];
+export const assets=["cabinet.png","cabinet-mask.svg","earring-green.png","door-panel.png","bedroom-single-clue.png","table-view.png","room.png","room-exit-open.png","chair.png","sofa.png","armchair.png","table-chair.png","keys.png","detail.svg"];
 export function KeySprite({id}:{id:KeyId}) {
  return <svg viewBox="0 0 51 44" width="51" height="44" overflow="hidden" aria-hidden="true"><image href={gameAsset("/game/l2/keys.png")} x={id==="key-1"?0:-59.9454} y="0" width="111.0015" height="44" preserveAspectRatio="none" /></svg>;
 }
@@ -21,18 +21,20 @@ export function Scene({state,earringDropping,onEarringLanded,disabled,onSeat,onT
  }
  if(state.view==="bedroom")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：卧室">
   <image data-layer="bedroom" href={gameAsset("/game/l2/bedroom-single-clue.png")} x="-29" y="0" width="1978" height="1113" preserveAspectRatio="xMidYMid slice"/>
-  {<svg data-layer="earring-clue" x="379" y="690" width="17" height="27" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={17*-.4656} y={27*-.6732} width={17*3.6641} height={27*2.3415} preserveAspectRatio="none"/></svg>}
-  {state.search.status==="found"&&<g data-layer="found-earring" transform="translate(1510 625)" aria-label="落在梳妆台上的耳环" pointerEvents="none">
+  <g data-layer="earring-clue" transform="translate(1490 625)"><g className={styles.foundEarring}><image href={gameAsset("/game/l2/earring-green.png")} x="-15" y="-27" width="30" height="54"/></g></g>
+  {state.search.status==="found"&&<g data-layer="found-earring" transform="translate(1530 625)" aria-label="落在梳妆台上的耳环" pointerEvents="none">
    <ellipse className={`${styles.earringShadow} ${earringDropping?styles.earringShadowLanding:""}`} cx="0" cy="4" rx="18" ry="3"/>
    <g className={`${styles.foundEarring} ${earringDropping?styles.earringDrop:""}`} onAnimationEnd={e=>{if(e.target===e.currentTarget)onEarringLanded();}}>
-    <svg x="-12.5" y="-20" width="25" height="40" overflow="hidden"><image href={gameAsset("/game/l2/earring.png")} x={25*-.4656} y={40*-.6732} width={25*3.6641} height={40*2.3415} preserveAspectRatio="none"/></svg>
+    <image href={gameAsset("/game/l2/earring-green.png")} x="-15" y="-27" width="30" height="54"/>
+
    </g>
   </g>}
-  {state.search.status==="searching"?hit("查看窗帘附近",1155,320,150,350,onFind):state.search.status!=="found"&&hit("查看床头柜上的耳环",350,658,75,85,onSearch)}
+  {state.search.status==="searching"?hit("查看窗帘附近",1155,320,150,350,onFind):state.search.status!=="found"&&hit("查看梳妆台上的耳环",1450,585,120,75,onSearch)}
 
  </svg>;
  if(state.view==="table")return <svg className={styles.scene} viewBox="0 0 1920 1049" role="img" aria-label="失联房间：坐在桌前">
   <svg x="-100" y="0" width="2048" height="1088" overflow="hidden"><image data-layer="table-view" href={gameAsset("/game/l2/table-view.png")} x="92.3648" y="-583.3856" width="2048" height="1768.4352" preserveAspectRatio="none"/></svg>
+  {hit("查看桌上的钥匙",500,350,900,420,onTable)}
   {(["key-1","key-2"] as KeyId[]).map((key,i)=>!state.keys.includes(key)&&<g key={key} data-layer={key}>
    <g transform={`translate(${760+i*270} 420) scale(2.7)`}><KeySprite id={key}/></g>
    {hit(`拿起${key==="key-1"?"钥匙1":"钥匙2"}`,740+i*270,400,185,170,()=>onKey(key))}
@@ -51,6 +53,7 @@ export function Scene({state,earringDropping,onEarringLanded,disabled,onSeat,onT
    <rect x="917" y="269" width="17" height="507" fill="#050505" style={{filter:"blur(3.6px)"}}/>
   </g>}
   {!state.exitDoorOpen&&<image data-layer="detail" href="/game/l2/detail.svg" x="633" y="321.49" width="10" height="10"/>}
+  {!state.furniture.editing&&hit(state.doorOpen?"查看半开的门":"查看门锁",745,285,180,480,onDoor)}
   {[...furnitureIds].sort((a,b)=>state.furniture.layout[a].v-state.furniture.layout[b].v).map(id=><FurniturePiece key={id} id={id} point={state.furniture.layout[id]} editing={state.furniture.editing} disabled={disabled} onMove={onMove}>
    {id==="chair"&&<><g style={{filter:"blur(.65px) drop-shadow(-2px 4px 7.6px #0005)"}}><ImageLayer id="chair" x={1059} y={574} w={173} h={247} opacity={.84} crop={[-.3095,-.1535,1.571,1.2876]}/></g>{!state.furniture.editing&&hit(`坐在${seatNames.chair}`,1060,577,170,240,()=>onSeat("chair"))}</>}
    {id==="sofa"&&<ImageLayer id="sofa" x={1176} y={581} w={768} h={370} crop={[-.0548,-.2011,1.099,1.3554]}/>}
@@ -63,7 +66,6 @@ export function Scene({state,earringDropping,onEarringLanded,disabled,onSeat,onT
   </FurniturePiece>)}
   {/* The foreground cabinet occludes the armchair in exploration mode. */}
   {!state.furniture.editing&&<g mask="url(#l2-cabinet-mask)"><ImageLayer id="cabinet" x={-46} y={166.77} w={302.458} h={1076.751}/></g>}
-  {!state.furniture.editing&&hit(state.doorOpen?"查看半开的门":"查看门锁",745,285,180,480,onDoor)}
 
   {state.exitDoorOpen&&!state.furniture.editing&&hit("查看通往第三幕的门",270,225,310,580,onExit)}
   {state.keys.length<2&&<title>{`桌上有${2-state.keys.length}把尚未拿起的钥匙`}</title>}

@@ -7,7 +7,7 @@
 .earringDrop {animation:earringDrop 1100ms both;}
 .earringShadowLanding {animation:earringShadowLanding 1100ms both;}
 @keyframes earringDrop {
- 0% {transform:translate(-70px,-190px) rotate(-18deg);opacity:0;animation-timing-function:ease-in;}
+ 0% {transform:translate(-250px,-190px) rotate(-18deg);opacity:0;animation-timing-function:ease-in;}
  12% {opacity:1;}
  65% {transform:translate(0,0) scaleY(.65) rotate(-55deg);animation-timing-function:ease-out;}
  80% {transform:translate(3px,-13px) scaleY(.8) rotate(-80deg);animation-timing-function:ease-in;}
@@ -100,3 +100,8 @@
  .bubble {grid-area:2/3/16/23;align-self:center;width:min(440px,78vw);max-height:calc(100dvh - 24px);}
  .navigation {grid-area:3/2/7/16;}
 }
+
+/* Keep navigation above the door frames. */
+.navigation,.layoutTools {grid-area:2/2/4/23;align-self:start;}
+.doorPrompt {grid-area:4/9/11/18;align-self:center;}
+@media(max-height:500px) and (orientation:landscape){.navigation,.layoutTools{grid-area:2/2/4/23;}.doorPrompt{grid-area:3/8/13/19;}}
