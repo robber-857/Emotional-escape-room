@@ -32,7 +32,7 @@ export function ActOpening({act,title,prompt,ready,onEnter,resume=false,journeyI
       <p className={styles.eyebrow}>{act}</p>
       <h2>{title}</h2>
       <p className={styles.prompt}>{prompt}</p>
-      <button className={`gameYes ${continuing?styles.resume:""}`} onClick={enter}>{continuing?"继续上次旅程":"开始探索"} <span aria-hidden="true">→</span></button>
+      <button className={continuing?"gameResumeButton":"gameYes"} onClick={enter}>{continuing?"继续上次旅程":"开始探索"} <span aria-hidden="true">→</span></button>
     </div>
   </dialog>;
 }

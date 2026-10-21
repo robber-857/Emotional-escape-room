@@ -10,5 +10,3 @@
 @media(max-height:540px) and (orientation:landscape) {.opening{padding:24px 6vw;}.content h2{font-size:36px;margin:12px 0;}.prompt{font-size:22px;}.content button{margin-top:18px;padding:10px 20px;}.eyebrow{font-size:16px;}}
 @keyframes arrive {from{opacity:0}to{opacity:1}}
 @media(prefers-reduced-motion:reduce){.opening[open]{animation:none;}}
-
-.opening .resume {position:absolute;left:4.5%;bottom:5%;font-size:clamp(16px,1.7vw,24px);}

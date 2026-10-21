@@ -378,7 +378,7 @@ export function L1Game() {
               {loaded ? (
                 <div className="welcomeActions">
                   <button
-                    className={`primary gameYes ${hasSave?"resumeJourney":""}`}
+                    className={hasSave?"resumeJourney gameResumeButton":"primary gameYes"}
                     disabled={syncing || externalChange}
                     onClick={() => sessionRef.current ? continueGame() : fresh()}
                   >

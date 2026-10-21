@@ -632,6 +632,19 @@ body {
   color: white;
   text-shadow: 0 2px 10px #17251d;
 }
+.sceneHeading[data-level-task] {
+  max-width: min(780px, 88vw);
+}
+.sceneHeading[data-level-task] p {
+  display: block;
+  font: 600 clamp(20px, 2vw, 28px) / 1.65 var(--font-game);
+  color: #fff;
+  letter-spacing: 0.08em;
+  text-shadow: 0 2px 4px #17251d, 0 3px 10px #17251de6;
+}
+.sceneHeading[data-level-task] p + p {
+  margin-top: 0.2em;
+}
 .gameMenu {
   position: absolute;
   top: max(12px, env(safe-area-inset-top));
@@ -926,3 +939,30 @@ body {
 
 .welcome .replayCorner,.welcome .resumeJourney {position:absolute;left:4.5%;bottom:5%;margin:0;z-index:2;}
 .welcome .replayCorner {background:#e9cd75;color:#332c1b;border:1px solid #f6e3a3;font-size:clamp(14px,1.2vw,18px);padding:9px 16px;min-height:40px;}
+
+:root button.gameResumeButton {
+  position: absolute;
+  left: 4.5%;
+  bottom: 5%;
+  z-index: 2;
+  margin: 0;
+  min-height: 44px;
+  padding: 8px 14px;
+  font: 600 clamp(14px, 1.2vw, 18px) / 1.4 var(--font-game);
+  background: #e9cd75;
+  color: #332c1b;
+  border: 1px solid #f6e3a3;
+  border-radius: 7px;
+}
+:root button.gameResumeButton span {
+  margin-left: 12px;
+  padding: 0;
+  font-weight: 400;
+}
+:root button.gameResumeButton:hover:not(:disabled) {
+  background: #f6e3a3;
+  border-color: #f6e3a3;
+}
+:root button.gameResumeButton:focus-visible {
+  outline-color: #f6e3a3;
+}
