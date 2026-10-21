@@ -1,4 +1,4 @@
-"""L2 authoritative facts. Four distinct choices unlock the exit."""
+"""L2 authoritative facts. Five distinct choices unlock the exit."""
 from copy import deepcopy
 from .l2_layout import initial_layout, move_layout, constrain_layout
 from .l2_metrics import measure, MOVEMENT_TOLERANCE, COUNT_VERSION
@@ -14,7 +14,7 @@ def initial_state():
                 search=dict(curtainClicks=0, status="idle", activeMs=0, long=False), view="room", attempts=[], doorOpen=False,
                 atTable=False, seat=None, keys=[], selectedKey=None, events=[])
 
-COMPLETION_POLICY_VERSION = "l2-four-choices-v4"
+COMPLETION_POLICY_VERSION = "l2-five-choices-v5"
 
 def with_completion(state):
     s = deepcopy(state)
@@ -115,5 +115,5 @@ def apply_action(state, action):
     fact = choice_fact(action)
     if fact: facts.add(fact)
     result["choiceActions"] = sorted(facts)
-    result["exitDoorOpen"] = len(facts) >= 4 or with_completion(state)["exitDoorOpen"]
+    result["exitDoorOpen"] = len(facts) >= 5 or with_completion(state)["exitDoorOpen"]
     return result
