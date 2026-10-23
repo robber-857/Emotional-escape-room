@@ -35,3 +35,14 @@
 .matchActions .matchYes{background:#b92152;border-color:#b92152;color:#fff8f2}
 .matchActions button:disabled{cursor:wait;opacity:.65}
 @media(max-width:600px){.article{padding:6px;border-radius:18px}.originalPoster{border-radius:11px}.reading{padding:10px}.card{padding:16px 8px}.card p{padding-left:0}.matchEntry{padding:18px 8px 12px}.matchEntry button{font-size:18px;padding:10px 14px;gap:10px}}
+.fittedPage{box-sizing:border-box;min-height:100dvh;padding:0 16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
+.fittedPage .header{box-sizing:border-box;width:100%;min-height:60px;margin:0;flex-shrink:0;padding-right:180px}
+.fittedPage .previewNote{margin:0;padding:0;font-size:11px;line-height:16px}
+.fittedPage .article{box-sizing:border-box;width:min(1200px,100%,calc((100dvh - 230px) * 2048 / 1365 + 20px));margin:auto 0;padding:8px;flex-shrink:0;border-radius:18px}
+.fittedPage .matchEntry{padding:8px 0 0}
+.fittedPage .matchEntry button{min-height:36px;padding:5px 16px;font-size:16px;gap:12px}
+.fittedPage .footer{width:min(1200px,100%);min-height:24px;margin:0;flex-wrap:wrap;justify-content:center;gap:8px 20px;flex-shrink:0}
+.fittedPage .matchNotice{font-size:12px;margin:5px 0 0}
+.readingDialog{width:min(760px,94vw);color:#482c27;font-family:var(--font-game)}
+.readingDialog .reading{margin:0}
+@media(max-width:600px){.fittedPage .header{min-height:60px;padding-right:145px}.fittedPage .header:has(.controls){flex-wrap:wrap;gap:4px}.fittedPage .brand{font-size:13px}.fittedPage .controls{order:3}.fittedPage .footer{font-size:11px}.fittedPage .article{width:min(100%,calc((100dvh - 250px) * 2048 / 1365 + 20px))}}

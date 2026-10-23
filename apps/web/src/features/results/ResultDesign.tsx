@@ -13,6 +13,7 @@ export type MatchRequest = {portraitId:string;source:"result"|"preview"};
 export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatchRequest?:(request:MatchRequest)=>void|Promise<void>}={}){
  const [index,setIndex]=useState(0),[failed,setFailed]=useState(false),[retry,setRetry]=useState(0);
  const dialog=useRef<HTMLDialogElement>(null);
+ const readingDialog=useRef<HTMLDialogElement>(null);
  const matchDialog=useRef<HTMLDialogElement>(null);
  const [matchBusy,setMatchBusy]=useState(false),[matchNotice,setMatchNotice]=useState("");
  const portrait=portraits[result?Number(result.portrait_id)-1:index];
@@ -33,7 +34,7 @@ export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatc
  </figure>
 
  </>;}
- return <main className={styles.page}>
+ return <main className={`${styles.page} ${styles.fittedPage}`}>
  <header className={styles.header}><a href={result?'/l4':'/l4?preview=1'} className={styles.brand}>情感密室<span>恋爱性格图鉴</span></a>
  {!result&&<div className={styles.controls}><button onClick={()=>select(index-1)} aria-label="上一幅画像">←</button><select value={index} onChange={e=>select(Number(e.target.value))} aria-label="选择恋爱性格画像">{portraits.map((p,i)=><option key={p.id} value={i}>{p.id} · {p.name}</option>)}</select><button onClick={()=>select(index+1)} aria-label="下一幅画像">→</button></div>}
  <span className={styles.preview}>{result?'你的恋爱性格':`原画预览 · ${portrait.id} / 16`}</span></header>
@@ -41,14 +42,17 @@ export function ResultDesign({result,onMatchRequest}:{result?:FinalResult;onMatc
  <article key={portrait.id} className={styles.article} aria-labelledby="portrait-heading">
  <div className={styles.screenReader}><h1 id="portrait-heading">{portrait.name} · {portrait.type}</h1><p>{portrait.quote}</p>{sections.map(s=><section key={s.key}><h2>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div>
  {artwork()}
- {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><div className={`${styles.cards} ${styles.ratingCopy}`}>
- {(['authenticity','love'] as const).map(key=>{const metric=result.metrics![key]!,copy=resolveRatingCopy(portrait.id,key,metric.stars);return <section key={key} className={styles.card}><h2>{key==='authenticity'?'真我值':'恋爱脑'} · {metric.stars}/5 星</h2><p>{metric.score.toFixed(2)} / 100</p>{copy&&<><h3>{copy.title}</h3><p>{copy.body}</p></>}</section>;})}
- </div></section>}
+
  <div className={`${styles.match} ${styles.matchEntry}`}><button type="button" onClick={requestMatch}><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>找到你的另一半<span aria-hidden="true">→</span></button></div>
  {matchNotice&&<p className={styles.matchNotice} role="status">{matchNotice}</p>}
  </article>
- <footer className={styles.footer}><p>匹配功能即将开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
+ <footer className={styles.footer}><p>匹配功能即将开放</p>{result?.metrics&&<button onClick={()=>readingDialog.current?.showModal()}>查看星级解读</button>}<button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
  <dialog data-game-dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
+ <dialog data-game-dialog ref={readingDialog} className={`${styles.dialog} ${styles.readingDialog}`} aria-label="你的星级解读" onClick={e=>{if(e.target===e.currentTarget)readingDialog.current?.close();}}><form method="dialog"><button>关闭 ×</button></form>
+ {result?.metrics&&<section className={styles.reading} aria-label="你的星级解读"><div className={`${styles.cards} ${styles.ratingCopy}`}>
+ {(['authenticity','love'] as const).map(key=>{const metric=result.metrics![key]!,copy=resolveRatingCopy(portrait.id,key,metric.stars);return <section key={key} className={styles.card}><h2>{key==='authenticity'?'真我值':'恋爱脑'} · {metric.stars}/5 星</h2><p>{metric.score.toFixed(2)} / 100</p>{copy&&<><h3>{copy.title}</h3><p>{copy.body}</p></>}</section>;})}
+ </div></section>}
+ </dialog>
  <dialog data-game-dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onCancel={e=>{if(matchBusy)e.preventDefault();}} onClick={e=>{if(!matchBusy&&e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">您想匹配您理想的另一半吗？</h2>{matchNotice&&<p role="status">{matchNotice}</p>}<div className={styles.matchActions}><button autoFocus disabled={matchBusy} onClick={()=>matchDialog.current?.close()}>否</button><button className={styles.matchYes} disabled={matchBusy} onClick={()=>void confirmMatch()}>{matchBusy?"正在提交…":"是"}</button></div></dialog>
  </main>;
 }

@@ -62,7 +62,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  function applyServer(current:api.Session){server.current=current;stateRef.current=current.state;setState(current.state);}
  async function syncServer(){
   if(requestLock.current)return;requestLock.current=true;setSyncing(true);setSyncError("");
-  try{const auth=api.credentials();let current=await api.start(auth);const pending=api.readPending(auth.id);if(pending)current=await api.submit(auth,pending);applyServer(current);setStorageReady(true);setPrompt(null);setMessage("新的房间，等待你慢慢探索。");}
+  try{const auth=api.credentials();let current=await api.start(auth);const pending=api.readPending(auth.id);if(pending)current=await api.submit(auth,pending);applyServer(current);setStorageReady(true);setPrompt(null);setMessage("");}
   catch(error){if(error instanceof api.RejectedAction){applyServer(error.session);setStorageReady(true);}setSyncError(error instanceof Error?error.message:"无法连接服务器，请重试。");}
   finally{requestLock.current=false;setSyncing(false);}
  }
