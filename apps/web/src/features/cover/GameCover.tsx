@@ -57,8 +57,8 @@ export function GameCover({ onEnter }: { onEnter: () => void }) {
   }, []);
 
   useEffect(() => {
-    // Reference sequence: black at 0s, a light at .5s, logo at 1s,
-    // then orientation guidance at 2s. No storage or game API calls here.
+    // Reveal the supplied artwork, then enable entry after the opening pause.
+    // Orientation guidance appears at 2s. No storage or game API calls here.
     const delays = reducedMotion ? [0, 100, 200] : [500, 1000, 2000];
     const timers = delays.map((delay, index) => window.setTimeout(() => setStage(current => Math.max(current, index + 1)), delay));
     return () => timers.forEach(window.clearTimeout);
@@ -92,57 +92,32 @@ export function GameCover({ onEnter }: { onEnter: () => void }) {
       data-exiting={exiting}
       aria-label="情感密室游戏封面"
     >
-      <div className={styles.atmosphere} aria-hidden="true" />
-      <div className={styles.grain} aria-hidden="true" />
-      <div className={styles.mote} aria-hidden="true"><span /></div>
-
-      <header className={styles.prologue} aria-hidden={stage < 2}>
-        <p>一个关于你与爱的探索之旅</p>
-        <span>SOME TRUTHS HIDE IN SILENCE</span>
-      </header>
-
-      <section className={styles.center}>
-        <div className={styles.identity}>
-          <div className={styles.artwork} aria-hidden="true">
-            <img src="/game/cover/doorway.svg" alt="" width="600" height="600" fetchPriority="high" />
-            <span className={styles.doorLight} />
-            <span className={styles.dustOne} />
-            <span className={styles.dustTwo} />
-            <span className={styles.dustThree} />
-          </div>
-          <h1>情感密室</h1>
-          <p className={styles.englishTitle}>THE EMOTIONAL ROOM</p>
-        </div>
-
-        <div className={styles.invitation} aria-hidden={stage < 2}>
-          <p>每一次选择<br />都是一次靠近真实的自己</p>
-        </div>
-
-        {mobile && portrait ? (
-          <div className={styles.orientation} aria-hidden={stage < 3}>
-            <RotationCue />
-            <p>转动手机<br />进入你的故事</p>
-            <span className={styles.orientationNote}>为了保证用户体验请翻转手机为横屏</span>
-            <span className={styles.littleCross} aria-hidden="true">✧</span>
-          </div>
-        ) : (
-          <div className={styles.entry} aria-hidden={stage < 3}>
-            {mobile ? (
-              <p className={styles.landscapeMessage} role="status">故事，即将开始</p>
-            ) : (
-              <button
-                className={styles.enterButton}
-                onClick={() => setRequestedEntry(true)}
-                disabled={stage < 3 || requestedEntry}
-              >
-                <span>进入你的故事</span><span aria-hidden="true">⟶</span>
-              </button>
-            )}
-            <div className={styles.hairline} aria-hidden="true"><span /></div>
-          </div>
+      <div className={styles.pictureFrame}>
+        <img
+          className={styles.coverImage}
+          src="/game/cover/emotional-room.jpg"
+          alt="一个关于你与爱的探索之旅。情感密室 — THE EMOTIONAL ROOM"
+          width="1552"
+          height="1013"
+          fetchPriority="high"
+          draggable={false}
+        />
+        {!mobile && (
+          <button
+            className={styles.enterButton}
+            aria-label="进入你的故事"
+            onClick={() => setRequestedEntry(true)}
+            disabled={stage < 3 || requestedEntry}
+          />
         )}
-      </section>
-
+      </div>
+      {mobile && portrait && (
+        <div className={styles.orientation} aria-hidden={stage < 3}>
+          <RotationCue />
+          <p>转动手机，进入你的故事</p>
+          <span>为了保证用户体验请翻转手机为横屏</span>
+        </div>
+      )}
     </main>
   );
 }
