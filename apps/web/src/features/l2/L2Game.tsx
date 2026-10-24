@@ -45,6 +45,7 @@ export function L2Game({preview=false}:{preview?:boolean}){
  useEffect(()=>{if(portrait)rotation.current?.showModal();else rotation.current?.close();},[portrait]);
  useEffect(()=>{if(prompt)heading.current?.focus({preventScroll:true});},[prompt]);
  const flushSearch=useRef<()=>Promise<boolean>>(async()=>true);
+ const visitedBedroom=state.events.some(event=>event.action.type==="explore"&&event.action.yes);
  const saveFull=state.events.length>=MAX_EVENTS;
  const blocked=!entered||!ready||!storageReady||portrait||!!modal||conflict||!!storageError||saveFull||syncing||!!syncError;
  useEffect(()=>{
@@ -112,11 +113,11 @@ export function L2Game({preview=false}:{preview?:boolean}){
     <section className={styles.stage} aria-label="第二幕游戏舞台">
    <Scene state={state} earringDropping={earringDropping} onEarringLanded={()=>setEarringDropping(false)} disabled={blocked||(state.furniture.editing&&!!prompt)} onTable={table} onExit={enterThird} onDoor={door} onKey={pick} onSearch={()=>{if(!blocked)setPrompt({type:"search"});}} onFind={findEarring} onMove={moveFurniture} onSeat={seat=>{if(!blocked)setPrompt({type:"seat",seat});}}/>
    {ready&&!state.furniture.editing&&<nav className={styles.navigation} aria-label="房间探索操作">
-    {state.view==="bedroom"?<button disabled={blocked} onClick={requestReturn}>{state.search.status==="searching"?"放弃寻找并返回大厅":"返回大厅"}</button>:state.view==="table"?<button disabled={blocked} onClick={()=>changeView("room")}>起身回大厅</button>:keysAvailable(state)&&state.keys.length<2&&<button disabled={blocked} onClick={returnToKeys}>回到桌边拿钥匙</button>}
-    {state.view!=="bedroom"&&state.keys.length>0&&<button disabled={blocked} onClick={door}>{state.doorOpen?"查看半开的门":"去开门试试"}</button>}
+    {state.view==="bedroom"?<button disabled={blocked} onClick={requestReturn}>{state.search.status==="searching"?"放弃寻找并返回大厅":"返回大厅"}</button>:state.view==="table"?(state.keys.length===0||visitedBedroom)&&<button disabled={blocked} onClick={()=>changeView("room")}>起身回大厅</button>:keysAvailable(state)&&state.keys.length<2&&<button disabled={blocked} onClick={returnToKeys}>回到桌边拿钥匙</button>}
+    {state.view!=="bedroom"&&!visitedBedroom&&state.keys.length>0&&<button disabled={blocked} onClick={door}>{state.doorOpen?"查看半开的门":"去开门试试"}</button>}
     {state.view==="bedroom"&&!["searching","found"].includes(state.search.status)&&<button disabled={blocked} onClick={()=>setPrompt({type:"search"})}>查看梳妆台上的耳环</button>}
-    {state.view==="room"&&<button disabled={blocked} onClick={startLayout}>整理家具</button>}
-    {state.view==="room"&&state.exitDoorOpen&&<button disabled={blocked} onClick={enterThird}>进入第三幕</button>}
+    {state.view==="room"&&!state.furniture.confirmed&&<button disabled={blocked} onClick={startLayout}>整理家具</button>}
+    {state.view==="room"&&state.exitDoorOpen&&<button className="gameYes" disabled={blocked} onClick={enterThird}>进入第三幕</button>}
    </nav>}
    {ready&&state.furniture.editing&&<nav className={styles.layoutTools} aria-label="家具摆放操作">
     <LayoutButton disabled={blocked||!!prompt} onAction={()=>setPrompt({type:"layout-confirm"})}>确认摆放</LayoutButton>

@@ -80,7 +80,7 @@ export function L4Game({preview}:{preview:boolean}) {
       <LevelHeading className={styles.heading} ready={entered&&ready&&loaded}><h1>远方之门</h1></LevelHeading>
       {doors.map((door,index)=><button key={door.id} data-door={door.id} data-door-state={confirmed?(confirmed.id===door.id?"chosen":"dimmed"):"available"} style={{"--left":`${door.left}%`,"--width":`${door.width}%`,"--delay":`${index*90}ms`} as CSSProperties} className={`${styles.door} ${confirmed?.id===door.id?styles.chosen:confirmed?styles.dimmed:""}`} aria-label={`${door.name}，${door.view}`} aria-pressed={confirmed?.id===door.id} disabled={!entered||!ready||!loaded||!!error||!!confirmed||busy} onClick={()=>setSelected(door)}/>)}
       <footer className={styles.footer}>
-        {confirmed&&<Link className={styles.resultEntry} href={preview?"/results?preview=1":"/results"}>查看恋爱性格</Link>}
+        {confirmed&&<Link className={`${styles.resultEntry} gameYes`} href={preview?"/results?preview=1":"/results"}>查看恋爱性格</Link>}
         <p role="status">{busy?"正在确认选择…":confirmed?"你已经走出情感密室，走向远方之门":""}</p>
       </footer>
       {(!ready||!loaded||error)&&<div className={styles.loading} role={error||assetError?"alert":"status"}><p>{(error?playerMessage(error):"")|| (assetError?"场景图片加载失败。":"正在走出密室…")}</p>{error?<><button disabled={busy} onClick={()=>preview?window.location.reload():void server.sync()}>{preview?"重新载入":"重试"}</button><Link href={back}>返回第三幕</Link></>:assetError?<button onClick={()=>{setAttempt(v=>v+1);}}>重新加载图片</button>:null}</div>}
