@@ -16,6 +16,7 @@ export function ResultDesign({result,onMatchRequest,headerAction}:{result?:Final
  const matchDialog=useRef<HTMLDialogElement>(null);
  const [matchBusy,setMatchBusy]=useState(false),[matchNotice,setMatchNotice]=useState("");
  const portrait=portraits[result?Number(result.portrait_id)-1:index];
+ const numberColor=portrait.id==='09'?'#fff9e9':['02','06','08'].includes(portrait.id)?'#193d68':['11','12'].includes(portrait.id)?'#1b5140':'#8e202c';
  function select(next:number){setIndex((next+16)%16);setFailed(false);}
  function requestMatch(){setMatchNotice("");matchDialog.current?.showModal();}
  async function confirmMatch(){
@@ -28,8 +29,8 @@ export function ResultDesign({result,onMatchRequest,headerAction}:{result?:Final
  }
  function artwork(){return <><figure className={styles.originalPoster}>
  <img key={`${portrait.id}-${retry}`} src={portrait.image} width={2048} height={1365} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>
- {portrait.id==='14'&&<img className={styles.numberBackgroundRepair} src="/game/portraits/14-number-background.png" width={2048} height={1365} alt="" aria-hidden="true"/>}
- <span className={`${styles.portraitNumber} ${portrait.id==='14'?styles.transparentNumber:''}`} aria-label={`卡片编号 ${portrait.id}`}>{portrait.id}</span>
+ <img key={`repair-${portrait.id}-${retry}`} className={styles.numberBackgroundRepair} src={`/game/portraits/${portrait.id}-number-background.png`} width={2048} height={1365} alt="" aria-hidden="true" onError={()=>setFailed(true)}/>
+ <span className={styles.portraitNumber} style={{color:numberColor}} aria-label={`卡片编号 ${portrait.id}`}>{portrait.id}</span>
  <div className={styles.portraitType}>{portrait.type}</div>
  {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[i];const metric=result.metrics![key]!;return <div key={key} className={styles.originalRating} style={{left:`${x/2048*100}%`,top:`${y/1365*100}%`,width:`${w/2048*100}%`,height:`${h/1365*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
  {failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(v=>v+1);}}>重新加载</button></div>}
