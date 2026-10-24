@@ -22,7 +22,7 @@ export function ResultPage({preview}:{preview:boolean}){
  }catch(e){if(live)setError(e instanceof Error?e.message:'结果暂时无法读取，请重试。');}}
  void load();return()=>{live=false;controller.abort();};
  },[preview,attempt]);
- if(preview)return <><RestartJourney floating/><ResultDesign/></>;
- if(data?.status==='ready')return <><RestartJourney floating/><ResultDesign result={data}/></>;
+ if(preview)return <ResultDesign headerAction={<RestartJourney/>}/>;
+ if(data?.status==='ready')return <ResultDesign result={data} headerAction={<RestartJourney/>}/>;
  return <main className={styles.page}><RestartJourney floating/><section className={styles.pending}><p>情感密室 · 旅程终点</p><h1>{error?'暂时无法展开画像':data?'你的旅程已完成':'正在展开你的画像…'}</h1><p role={error?'alert':'status'}>{error?playerMessage(error,"画像暂时无法展开，请稍后重试。"):data?'你的恋爱性格画像暂时无法展开，请稍后再来看看。':'正在展开你的恋爱性格…'}</p><div>{(error||data)&&<button onClick={()=>setAttempt(v=>v+1)}>重新查看</button>}<Link href="/l4">返回出口</Link></div></section></main>;
 }

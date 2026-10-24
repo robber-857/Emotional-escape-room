@@ -1,5 +1,6 @@
 // User-approved portrait cards. Asset slugs are retained for URL compatibility.
 // No scoring or personality assignment is performed here.
+const v5Names = ["笃实者", "自若者", "圆场者", "藏心者", "直面者", "释怀者", "讨好者", "隐忍者", "独行者", "逍遥者", "掩饰者", "遁世者", "挣扎者", "共存者", "内耗者", "封心者"];
 const rows = [
 ["elephant","笃定象","求真型","稳定的爱，是最长情的陪伴。","慢热但专一，用行动表达爱。","稳定可靠，值得信赖。","有时过于固执，不爱妥协。","学会倾听与妥协，让爱更柔软。"],
 ["whale","自由鲸","自在型","爱是辽阔的海，自由也能并肩同行。","享受独立，也珍惜真诚的陪伴。","开朗包容，给予彼此空间。","有时过于理性，容易忽略对方感受。","在自由中建立承诺，让爱更长久。"],
@@ -20,5 +21,5 @@ const rows = [
 ];
 export const portraits = rows.map(([slug,name,type,quote,mode,strength,caution,advice], index) => {
 const id=String(index+1).padStart(2,'0');
-return {id,name,type,quote,mode,strength,caution,advice,image:`/game/portraits/${id}-${slug}.png`,crop:[0,0,2048,687]};
+return {id,name,type:v5Names[index],quote,mode,strength,caution,advice,image:`/game/portraits/${id}-${slug}.png`,crop:[0,0,2048,687]};
 });

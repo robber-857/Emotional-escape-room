@@ -67,6 +67,9 @@ def register_l4(app, authorize):
             binding=conn.execute(select(score_evaluations.c.policy).where(score_evaluations.c.session_id==str(sid))).scalar_one_or_none()
             return dict(build_result(sid, snapshots, scores, (binding or {}).get('portrait_policy')), score_summary=scores)
 
+    from .ai_report import register_reports
+    register_reports(app, final_result)
+
     @app.post("/api/v1/sessions/{sid}/levels/l4", tags=["L4"])
     def start(sid: UUID, body: StrictModel, authorization: str = Header(default="")):
         with app.state.engine.begin() as conn:

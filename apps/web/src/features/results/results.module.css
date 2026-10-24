@@ -36,7 +36,7 @@
 .matchActions button:disabled{cursor:wait;opacity:.65}
 @media(max-width:600px){.article{padding:6px;border-radius:18px}.originalPoster{border-radius:11px}.reading{padding:10px}.card{padding:16px 8px}.card p{padding-left:0}.matchEntry{padding:18px 8px 12px}.matchEntry button{font-size:18px;padding:10px 14px;gap:10px}}
 .fittedPage{box-sizing:border-box;min-height:100dvh;padding:0 16px 12px;display:flex;flex-direction:column;align-items:center;gap:8px}
-.fittedPage .header{box-sizing:border-box;width:100%;min-height:60px;margin:0;flex-shrink:0;padding-right:180px}
+.fittedPage .header{box-sizing:border-box;width:min(1200px,100%,calc((100dvh - 230px) * 2048 / 1365 + 20px));min-height:72px;margin:0;flex-shrink:0;padding:8px 0;gap:16px}
 .fittedPage .previewNote{margin:0;padding:0;font-size:11px;line-height:16px}
 .fittedPage .article{box-sizing:border-box;width:min(1200px,100%,calc((100dvh - 230px) * 2048 / 1365 + 20px));margin:auto 0;padding:8px;flex-shrink:0;border-radius:18px}
 .fittedPage .matchEntry{padding:8px 0 0}
@@ -45,4 +45,16 @@
 .fittedPage .matchNotice{font-size:12px;margin:5px 0 0}
 .readingDialog{width:min(760px,94vw);color:#482c27;font-family:var(--font-game)}
 .readingDialog .reading{margin:0}
-@media(max-width:600px){.fittedPage .header{min-height:60px;padding-right:145px}.fittedPage .header:has(.controls){flex-wrap:wrap;gap:4px}.fittedPage .brand{font-size:13px}.fittedPage .controls{order:3}.fittedPage .footer{font-size:11px}.fittedPage .article{width:min(100%,calc((100dvh - 250px) * 2048 / 1365 + 20px))}}
+@media(max-width:600px){.fittedPage .header{min-height:60px;width:100%;padding:8px 0;gap:10px}.fittedPage .header:has(.controls){flex-wrap:wrap;gap:4px}.fittedPage .brand{font-size:13px}.fittedPage .controls{order:3}.fittedPage .footer{font-size:11px}.fittedPage .article{width:min(100%,calc((100dvh - 250px) * 2048 / 1365 + 20px))}}
+
+.headerAction{margin-left:auto;flex-shrink:0}.headerAction a{box-shadow:none;white-space:nowrap}.fittedPage .brand{flex-shrink:0}.fittedPage .header:has(.controls){flex-wrap:wrap}.fittedPage .header .controls{margin-left:auto}@media(max-width:600px){.headerAction a{font-size:12px;padding:8px 10px}.fittedPage .header .controls{width:100%;justify-content:center;order:3}}
+
+.portraitType{position:absolute;left:10.65%;top:16.05%;width:23.1%;height:8.2%;border-radius:999px;background:#193d68;color:white;display:flex;align-items:center;justify-content:center;font:700 3.3cqw/1.1 var(--font-game);letter-spacing:.08em}
+.fittedPage .matchEntry{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:12px}
+:root .matchEntry .reportButton{background:#4baa8b;color:#fff;border:1px solid #8dcfb4;box-shadow:none;border-radius:999px}
+.reportDialog{width:min(960px,94vw);max-height:88dvh;padding:24px;background:#fff9ef;color:#482c27;box-sizing:border-box}
+.reportHeader{display:flex;align-items:center;justify-content:space-between;gap:20px;border-bottom:1px solid #ddcbb6;padding-bottom:14px}.reportHeader h2{margin:0;font-size:24px}.reportHeader button{flex-shrink:0}
+.reportContent{font-size:16px;line-height:1.85}.reportContent section{padding:14px 0;border-bottom:1px solid #e9ddcd}.reportContent h3{margin:12px 0 8px}.reportContent p{margin:8px 0}.reportNote{color:#806f60;font-size:13px}.reportContent details{margin:24px 0;border:1px solid #dfcebb;border-radius:12px;padding:16px}.reportContent summary{cursor:pointer;font-weight:600}.reportContent pre{white-space:pre-wrap;overflow-wrap:anywhere;background:#f2eadf;padding:16px;border-radius:8px;font-size:13px;line-height:1.7}.reportTable{overflow:auto}.reportTable table{border-collapse:collapse;min-width:650px;width:100%;font-size:14px}.reportTable th,.reportTable td{padding:10px;border:1px solid #dfcebb;text-align:left;vertical-align:top}.reportTable th{background:#eee4d7}.reviewCheck{display:flex;align-items:baseline;gap:10px;margin:10px 0}.reviewCheck input{flex-shrink:0}
+@media(max-width:600px){.reportDialog{padding:16px}.reportHeader h2{font-size:19px}.reportContent{font-size:14px}.fittedPage .matchEntry button{font-size:14px}}
+
+.reportLoading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;padding:28px 12px;text-align:center;gap:12px}.reportLoading h3,.reportLoading p{margin:0}.reportSpinner{width:36px;height:36px;border:3px solid #e9ddcd;border-top-color:#4baa8b;border-radius:50%;animation:reportSpin 1s linear infinite}@keyframes reportSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.reportSpinner{animation:none}}

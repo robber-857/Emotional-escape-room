@@ -30,7 +30,10 @@ services:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
-    environment: *api-env
+    environment:
+      <<: *api-env
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENAI_REPORT_MODEL: ${OPENAI_REPORT_MODEL:-gpt-4.1-mini}
     ports:
       - "127.0.0.1:${API_PORT:-8000}:8000"
     depends_on:
