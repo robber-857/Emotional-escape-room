@@ -85,6 +85,7 @@ test("boat requires oar; exactly five valid, unique strokes, including after res
   let s = initialState();
   assert.equal(choose(s, "board"), s);
   assert.equal(paddle(s), s);
+  s = choose(s, "inspect-boat");
   for (let i = 0; i < 5; i++) s = choose(s, "search");
   s = choose(s, "board");
   assert.equal(choose(s, "board"), s);
@@ -109,7 +110,8 @@ test("boat requires oar; exactly five valid, unique strokes, including after res
 test("rowing permits exploring and changing route before arrival, including after resume", () => {
   for (const strokes of [0, 1, 4]) {
     let s = initialState();
-    for (let i = 0; i < 5; i++) s = choose(s, "search");
+    s = choose(s, "inspect-boat");
+  for (let i = 0; i < 5; i++) s = choose(s, "search");
     s = choose(s, "board");
     for (let i = 0; i < strokes; i++) s = paddle(s);
     s = restore(saved(s)).state;
@@ -209,6 +211,7 @@ test("restore rejects corrupt, incompatible or out-of-order journals and invalid
 
 test("three bush clicks survive resume; no and duplicate clicks do not advance", () => {
   let s = initialState();
+  s = choose(s, "inspect-boat");
   s = choose(s, "search", false);
   assert.equal(s.bushClicks, 0);
   for (let i = 1; i <= 2; i++) {
@@ -233,7 +236,7 @@ test("wood drop target requires centre inside gap, rejects other ground and inva
     true,
   );
   assert.equal(
-    woodAtGap({ x: (1200 - 2446.355) / 2944, y: (1160 - 1426.75) / 1568 }),
+    woodAtGap({ x: (1290 - 2446.355) / 2944, y: (1160 - 1426.75) / 1568 }),
     false,
   );
   assert.equal(woodAtGap({ x: NaN, y: 0 }), false);
@@ -328,6 +331,7 @@ test("L1-02 explicit greeting refusal stays distinct from an untouched character
 
 test("boat exploration never unlocks rope; bridge inspection survives resume", () => {
   let s = initialState();
+  s = choose(s, "inspect-boat");
   for (let i = 0; i < 5; i++) s = choose(s, "search");
   s = choose(s, "board");
   assert.equal(choose(s, "take-rope"), s);
@@ -350,4 +354,19 @@ test("all scene prompts stay below fifteen characters and hide search solutions"
       assert.doesNotMatch(prompt.body, /还需点击|五次|草丛中/);
     }
   }
+});
+
+
+test("grass cannot reveal the oar until the boat has been inspected", () => {
+ let s = initialState();
+ for(let i=0;i<6;i++) assert.equal(choose(s,"search"),s);
+ assert.equal(s.bushClicks,0);
+ s=choose(s,"inspect-boat");
+ s=restore(saved(s)).state;
+ for(let i=0;i<3;i++)s=choose(s,"search");
+ assert.equal(s.oar,true);
+});
+test("expanded bridge target accepts both materials near its new edges",()=>{
+ const positions={planks:{x:(680-2446.355)/2944,y:(1010-1426.75)/1568},rope:{x:(1260-2104.5)/2944,y:(1310-1413.5)/1568}};
+ assert.equal(repairMaterialsReady(positions),true);
 });

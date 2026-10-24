@@ -5,13 +5,13 @@ RULES_VERSION = "l1-rules-v6-three-clicks"
 SUPPORTED_RULES_VERSIONS = ("l1-rules-v1", "l1-rules-v2-rope", "l1-rules-v3-route-switch", "l1-rules-v4-hidden-rope", "l1-rules-v5-wood-placement", RULES_VERSION)
 
 def initial_state(): #初始化这一关
-    return dict(scene="river", wood=False, woodPlaced=False, repaired=False, bridgeInspected=False, ropeClicks=0, oar=False, bushClicks=0,
+    return dict(scene="river", wood=False, woodPlaced=False, repaired=False, bridgeInspected=False, boatInspected=False, ropeClicks=0, oar=False, bushClicks=0,
                 rowing=False, strokes=0, route=None, greeted=False, greetedWoman=False,
                 lampTaken=False, lampLit=False, events=[])
 
 def normalize_state(state):
     # Existing sessions had a freely available rope. Preserve their progress.
-    return {"woodPlaced": bool(state.get("wood") or state.get("repaired")), "ropeClicks": 5, "bridgeInspected": bool(state.get("ropeClicks", 5) or state.get("repaired")), **state}
+    return {"boatInspected": bool(state.get("oar") or state.get("bushClicks")), "woodPlaced": bool(state.get("wood") or state.get("repaired")), "ropeClicks": 5, "bridgeInspected": bool(state.get("ropeClicks", 5) or state.get("repaired")), **state}
 
 def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态，choice是要做的操作
     if s["scene"] == "complete": return False
@@ -19,17 +19,17 @@ def allowed(s, choice): #判断这个操作现在能不能做，s是当前状态
         fields = {"greet": "greeted", "greet-woman": "greetedWoman",
                   "take-lamp": "lampTaken", "light-lamp": "lampLit"}
         return choice == "enter" or (choice in fields and not s[fields[choice]])
-    return {"inspect-bridge": not s.get("bridgeInspected", False) and not s["repaired"],
+    return {"inspect-boat": not s.get("boatInspected", False), "inspect-bridge": not s.get("bridgeInspected", False) and not s["repaired"],
             "place-wood": not s.get("woodPlaced", False) and not s["repaired"],
             "take-rope": (s.get("bridgeInspected", False) or s.get("woodPlaced", False)) and s.get("ropeClicks", 5) < 3 and not s["repaired"],
             "collect-wood": not s["wood"] and not s["repaired"],
             "repair": s["wood"] and not s["repaired"], "cross-bridge": s["repaired"],
-            "swim": True, "use-ring": True, "search": not s["oar"], "board": s["oar"] and not s["rowing"]}.get(choice, False)
+            "swim": True, "use-ring": True, "search": s.get("boatInspected", False) and not s["oar"], "board": s["oar"] and not s["rowing"]}.get(choice, False)
 
 def material_at_gap(positions, key):
     cx, cy = {"planks": (2446.355, 1426.75), "rope": (2104.5, 1413.5)}[key]
     p = positions.get(key)
-    return bool(p and 760 <= cx + p["x"]*2944 <= 1160 and 1060 <= cy + p["y"]*1568 <= 1260)
+    return bool(p and 660 <= cx + p["x"]*2944 <= 1280 and 990 <= cy + p["y"]*1568 <= 1330)
 
 def materials_ready(positions):
     return material_at_gap(positions, "planks") and material_at_gap(positions, "rope")
@@ -53,7 +53,8 @@ def apply_action(state, action, positions):#真正执行游戏操作
         raise ValueError("ROPE_NOT_RELEASED")
     if choice in ("collect-wood", "repair") and not materials_ready(positions):
         raise ValueError("REPAIR_MATERIALS_NOT_AT_GAP")
-    if choice == "inspect-bridge": s["bridgeInspected"] = True
+    if choice == "inspect-boat": s["boatInspected"] = True
+    elif choice == "inspect-bridge": s["bridgeInspected"] = True
     elif choice == "place-wood": s["woodPlaced"] = True
     elif choice == "take-rope": s["ropeClicks"] += 1
     elif choice == "collect-wood": s["wood"] = True

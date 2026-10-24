@@ -29,7 +29,7 @@ def test_direct_wood_placement_unlocks_rope_once_and_survives_resume(client):
     assert s["state"]["repaired"] is True
 
 
-@pytest.mark.parametrize("x,y", [(759,1160),(1161,1160),(960,1059),(960,1261)])
+@pytest.mark.parametrize("x,y", [(659,1160),(1281,1160),(960,989),(960,1331)])
 def test_outside_gap_does_not_unlock_rope(client, x, y):
     s, h = session(client)
     assert send(client, s, h, "place-wood", positions=wood_position(x,y))[0].json()["code"] == "WOOD_NOT_AT_GAP"

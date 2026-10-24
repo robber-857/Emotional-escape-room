@@ -50,6 +50,7 @@ def test_fixed_weights_require_four_complete_levels():
 
 def test_no_click_scores_and_raw_delta_matches_server_ledger(client):
     s,h=session(client)
+    send(client,s,h,'inspect-boat')
     r,_=send(client,s,h,'search')
     assert r.json()['score_effect']['reason']=='MECHANICAL_STEP'
     assert scores(client,s,h)['ledger']==[]
@@ -68,13 +69,13 @@ def test_no_click_scores_and_raw_delta_matches_server_ledger(client):
     assert result['levels']['l1']['complete'] is False
     assert all(v is None for v in result['final']['vector'].values())
     assert 'total' not in result['levels']['l1']
-    assert len(result['ledger'])==2 and len(result['actions'])==3
+    assert len(result['ledger'])==2 and len(result['actions'])==4
     assert client.post(f"/api/v1/sessions/{s['id']}/levels/l2",headers=h,json={}).status_code==200
     result=scores(client,s,h)
     axes=result['levels']['l1']['axes']
     assert axes['A']['normalized']==0 and axes['F']['normalized']==0
     assert result['levels']['l1']['complete'] is True
-    assert len(result['ledger'])==4 and len(result['actions'])==4
+    assert len(result['ledger'])==4 and len(result['actions'])==5
 
 
 def test_refusal_and_rejection_are_not_zero_score_events(client):
@@ -102,6 +103,7 @@ def test_lamp_finalization_and_explicit_zero(client,lit,taken,expected):
 
 def test_boat_fifth_stroke_counts_once_and_retains_zero_f(client):
     s,h=session(client)
+    send(client,s,h,'inspect-boat')
     for _ in range(3):send(client,s,h,'search')
     send(client,s,h,'board')
     for _ in range(4):assert send(client,s,h)[0].json()['score_effect']['events']==[]

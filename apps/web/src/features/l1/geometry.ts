@@ -3,13 +3,13 @@ import type { Position, Positions } from "./save";
 export function woodAtGap(p: Position) {
   const x = 2446.355 + p.x * 2944,
     y = 1426.75 + p.y * 1568;
-  return x >= 760 && x <= 1160 && y >= 1060 && y <= 1260;
+  return x >= 660 && x <= 1280 && y >= 990 && y <= 1330;
 }
 
 export function ropeAtGap(p: Position) {
   const x = 2104.5 + p.x * 2944,
     y = 1413.5 + p.y * 1568;
-  return x >= 760 && x <= 1160 && y >= 1060 && y <= 1260;
+  return x >= 660 && x <= 1280 && y >= 990 && y <= 1330;
 }
 export function repairMaterialsReady(positions: Positions): boolean {
   return (

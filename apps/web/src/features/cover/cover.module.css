@@ -6,7 +6,7 @@
   height: 100svh;
   height: 100dvh;
   overflow: hidden;
-  background: #291b3e;
+  background: linear-gradient(180deg, #241843 0%, #2a1949 10%, #341f52 20%, #41255c 30%, #4b2a62 40%, #572f67 50%, #62366e 60%, #703e75 70%, #7c4278 80%, #874878 90%, #8d4777 100%);
   color: #ffe5b9;
   font-family: var(--font-game);
   text-align: center;

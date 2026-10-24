@@ -95,7 +95,7 @@ export function GameCover({ onEnter }: { onEnter: () => void }) {
       <div className={styles.pictureFrame}>
         <img
           className={styles.coverImage}
-          src="/game/cover/emotional-room.jpg"
+          src="/game/cover/emotional-room-clear.png"
           alt="一个关于你与爱的探索之旅。情感密室 — THE EMOTIONAL ROOM"
           width="1552"
           height="1013"

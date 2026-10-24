@@ -301,7 +301,7 @@ export function L1Game() {
     const woodReady = positions.planks && woodAtGap(positions.planks);
     const ropeReady = positions.rope && ropeAtGap(positions.rope);
     if (woodReady && state.woodPlaced && !ropeReady)
-      prompt.body = "木板就位，还缺绳子。";
+      prompt.body = "木板就位，还缺绳子，在草丛找找看。";
     else if (ropeReady && !woodReady)
       prompt.body = "绳子就位，还缺木板。";
   }
@@ -323,8 +323,18 @@ export function L1Game() {
     setSelected(subject);
     if (subject === "bridge" && !state.bridgeInspected && !state.repaired)
       void act({ type: "choose", choice: "inspect-bridge", yes: true });
-    if (subject === "bush" && !state.oar)
+    if (subject === "boat" && !state.boatInspected) {
+      await act({ type: "choose", choice: "inspect-boat", yes: true });
+      setSelected("boat");
+    }
+    if (subject === "bush" && !state.oar && state.boatInspected)
       act({ type: "choose", choice: "search", yes: true });
+  }
+  const hasShoreScore = state.events.some(e => e.action.type === "choose" && e.action.yes && ["greet", "greet-woman", "take-lamp", "light-lamp"].includes(e.action.choice));
+  async function enterSecond() {
+    if (blocked || !hasShoreScore) return;
+    await act({ type: "choose", choice: "enter", yes: true });
+    if (stateRef.current.scene === "complete") router.push("/l2");
   }
   const anchor: Record<Subject, [number, number]> = {
     bridge: [33, 65],
@@ -337,7 +347,7 @@ export function L1Game() {
     rope: state.ropeClicks < 3 ? [83.4, 51.6] : [71.5, 83],
     person: [62.6, 60.5],
     woman: [15.8, 58],
-    lamp: state.lampTaken ? [91, 81] : [13, 83],
+    lamp: state.lampTaken ? [13, 35] : [13, 83],
     door: [43, 49],
   };
   const activeSubject = selected;
@@ -364,17 +374,19 @@ export function L1Game() {
           effect={effect}
           disabled={blocked}
         />
-        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait} after={<><p>本关任务：</p><p>{state.scene==="river"?"点击屏幕上的任何物品做出你过河的选择。":"请进入房间开始下一幕。"}</p></>}>
+        <LevelHeading className="sceneHeading" ready={started&&loaded&&!portrait} after={<><p>本关任务：</p><p>{state.scene==="river"?"点击屏幕上的任何物品做出你过河的选择。":"请进入房间开始下一幕。"}</p>{state.scene === "shore" && <div className="shoreTools">{hasShoreScore && <button className="gameYes shoreNext" disabled={blocked} onClick={enterSecond}>进入第二幕 <span aria-hidden="true">→</span></button>}{state.lampTaken && <aside className="shoreInventory" aria-label="物品栏"><span>物品</span><button aria-label={state.lampLit ? "物品栏：亮着的灯" : "物品栏：未点亮的灯"} onClick={() => setSelected("lamp")} disabled={blocked}><svg viewBox="327 1307 114 184" aria-hidden="true"><Sprite id={state.lampLit ? "lamp-on" : "lamp-off"} /></svg></button></aside>}</div>}</>}>
           <h1>分离之河</h1>
         </LevelHeading>
         {!started && (
           <div className="welcome">
             <div>
+              <div className="welcomeMessage">
               <span className="eyebrow">分离之河</span>
               <h2>光在河的另一边</h2>
               <p>
                 寻找自己的过河方式。
               </p>
+              </div>
               {loaded ? (
                 <div className="welcomeActions">
                   <button
@@ -387,10 +399,10 @@ export function L1Game() {
                   </button>
                   {hasSave && (
                     <button
-                      className="quiet"
+                      className="primary gameYes restartJourney"
                       onClick={() => setModal("restart")}
                     >
-                      重新开始
+                      重新开始 <span aria-hidden="true">→</span>
                     </button>
                   )}
                 </div>
@@ -564,26 +576,7 @@ export function L1Game() {
                 : message}
           </p>
         )}
-        {started && state.scene === "shore" && (
-          <aside className="shoreInventory" aria-label="物品栏">
-            <span>物品</span>
-            {state.lampTaken ? (
-              <button
-                aria-label={
-                  state.lampLit ? "物品栏：亮着的灯" : "物品栏：未点亮的灯"
-                }
-                onClick={() => setSelected("lamp")}
-                disabled={blocked}
-              >
-                <svg viewBox="327 1307 114 184" aria-hidden="true">
-                  <Sprite id={state.lampLit ? "lamp-on" : "lamp-off"} />
-                </svg>
-              </button>
-            ) : (
-              <div className="emptySlot" aria-label="物品栏为空" />
-            )}
-          </aside>
-        )}
+
       </section>
       <button
         className="gameMenu"

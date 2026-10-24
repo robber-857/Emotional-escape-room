@@ -9,8 +9,7 @@ import type { Positions } from "./save";
 export const assetNames = [
   "rope",
   "rope-bush",
-  "river-broken",
-  "river-repaired",
+  "river-daylight-clear",
   "plant-back",
   "plant-right",
   "plant-mid",
@@ -162,6 +161,7 @@ export function Scene({
       <g
         key={id}
         data-layer={id}
+        style={isBoat ? { transition: "transform 450ms ease-out" } : undefined}
         transform={`translate(${dx} ${dy})`}
         role={subject ? "button" : undefined}
         aria-disabled={subject ? disabled : undefined}
@@ -322,9 +322,7 @@ export function Scene({
         <image
           href={asset(
             river
-              ? state.repaired && effect !== "repair"
-                ? "river-repaired"
-                : "river-broken"
+              ? "river-daylight-clear"
               : "shore",
           )}
           width={W}
@@ -334,22 +332,21 @@ export function Scene({
       </g>
       {river ? (
         <>
-          {state.repaired && effect === "repair" && (
-            <image
-              className="bridgeReveal"
-              href={asset("river-repaired")}
-              width={W}
-              height={H}
-            />
+          {state.repaired && (
+            <g className={effect === "repair" ? "bridgeReveal" : undefined} aria-hidden="true">
+              <path d="M760 1116 L1070 1109 L1164 1165 L848 1196 Z" fill="#a67c47" stroke="#65492b" strokeWidth="5" />
+              <path d="M780 1134 L1092 1123 M802 1153 L1118 1139 M825 1174 L1140 1153" fill="none" stroke="#563c23" strokeWidth="5" />
+              <path d="M775 1120 L1070 1114 M800 1141 L1100 1131 M825 1163 L1130 1148" fill="none" stroke="#e6c38a" strokeWidth="3" opacity=".8" />
+            </g>
           )}
           {!state.repaired &&
             (selected === "planks" || selected === "rope" || state.wood) && (
               <rect
                 className="gapTarget"
-                x="760"
-                y="1060"
-                width="400"
-                height="200"
+                x="660"
+                y="990"
+                width="620"
+                height="340"
                 rx="20"
                 pointerEvents="none"
               />
@@ -357,26 +354,6 @@ export function Scene({
           <g data-layer="water-effects" className="decoration">
             <g className="glimmerSlow">{layer("sparkles")}</g>
             <g className="glimmerFast">{layer("sparkles-small")}</g>
-          </g>
-          <g data-layer="scenery">
-            <image
-              className="decoration"
-              href="/game/l1/lilies-shadow.svg"
-              x="-16.94"
-              y="1475.16"
-              width="326.377"
-              height="122.505"
-              opacity=".7"
-            />
-            {[
-              "plant-back",
-              "plant-right",
-              "plant-mid",
-              "plant-left",
-              "plant-low",
-              "post",
-              "lilies",
-            ].map((id) => layer(id))}
           </g>
           <g data-layer="hit-regions">
             {hotspot("water", 1170, 900, 620, 430)}

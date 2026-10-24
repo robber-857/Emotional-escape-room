@@ -48,6 +48,8 @@ export function restore(raw: string): { state: L1State; positions: Positions } {
       )
     )
       throw new Error("未知的存档动作");
+    // Legacy journals predate boat inspection; preserve their already earned oar progress.
+    if (a.type === "choose" && a.choice === "search" && !value.events.some((entry: GameEvent) => entry.action.type === "choose" && entry.action.choice === "inspect-boat")) state = { ...state, boatInspected: true };
     const next = transition(state, e);
     if (next === state) throw new Error("存档动作顺序无效");
     state = next;

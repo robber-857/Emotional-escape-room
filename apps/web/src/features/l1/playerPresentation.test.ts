@@ -6,9 +6,9 @@ import {initialState,transition,type Action} from "./model";
 
 test("player review uses accepted story actions, with no identifiers or mechanical duplicates",()=>{
  let state=initialState();
- const actions:Action[]=[{type:"choose",choice:"search",yes:true},{type:"choose",choice:"search",yes:true},{type:"choose",choice:"swim",yes:false},{type:"choose",choice:"swim",yes:true},{type:"choose",choice:"board",yes:true}];
+ const actions:Action[]=[{type:"choose",choice:"inspect-boat",yes:true},{type:"choose",choice:"search",yes:true},{type:"choose",choice:"search",yes:true},{type:"choose",choice:"swim",yes:false},{type:"choose",choice:"swim",yes:true},{type:"choose",choice:"board",yes:true}];
  for(const [i,action] of actions.entries())state=transition(state,{id:`private-id-${i}`,at:"2026-10-19",action});
- assert.deepEqual(journeyReview(state.events),["拨开草丛 · 是","直接游泳 · 否","直接游泳 · 是"]);
+ assert.deepEqual(journeyReview(state.events),["查看小船 · 是","拨开草丛 · 是","直接游泳 · 否","直接游泳 · 是"]);
 });
 
 test("technical failures are replaced without exposing codes or response details",()=>{

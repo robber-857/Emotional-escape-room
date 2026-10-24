@@ -52,6 +52,7 @@ def test_rejections_and_forged_state_do_not_advance(client):
 
 def test_boat_third_search_and_fifth_paddle(client):
     s, h = session(client)
+    assert send(client, s, h, "inspect-boat")[0].status_code == 200
     for i in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
         assert s["state"]["oar"] is (i == 2)
@@ -89,6 +90,7 @@ def test_bridge_geometry_and_completion(client):
 def test_switch_route_while_rowing_preserves_receipts_and_scores_only_arrival(client, strokes, choice, route):
     s, h = session(client)
     url = f"/api/v1/sessions/{s['id']}"
+    assert send(client, s, h, "inspect-boat")[0].status_code == 200
     for _ in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
     assert send(client, s, h, "board")[0].status_code == 200
@@ -166,6 +168,7 @@ def test_legacy_session_keeps_rope_available(client):
     assert restored["state"]["ropeClicks"] == 5
     assert restored["rules_version"] == "l1-rules-v1"
     assert send(client, s, h, "take-rope")[0].status_code == 409
+    assert send(client, s, h, "inspect-boat")[0].status_code == 200
     assert send(client, s, h, "search")[0].status_code == 200
     assert s["state"]["ropeClicks"] == 5
 
@@ -178,6 +181,7 @@ def test_rope_unavailable_after_arrival(client, route):
 
 def test_idempotency_payload_conflict_and_version_conflict(client):
     s, h = session(client)
+    assert send(client, s, h, "inspect-boat")[0].status_code == 200
     _, body = send(client, s, h, "search")
     url = f"/api/v1/sessions/{s['id']}/actions"
     r = client.post(url, headers=h, json=body)
@@ -187,7 +191,7 @@ def test_idempotency_payload_conflict_and_version_conflict(client):
     assert client.post(url, headers=h, json=body).status_code == 409
     r, rejected = send(client, s, h, "search", version=0)
     assert r.json()["code"] == "VERSION_CONFLICT"
-    assert s["version"] == 1
+    assert s["version"] == 2
     assert client.post(url, headers=h, json=rejected).json()["duplicate"] is True
     assert send(client, s, h, "search")[0].status_code == 200
     assert s["state"]["bushClicks"] == 2
@@ -196,6 +200,7 @@ def test_idempotency_payload_conflict_and_version_conflict(client):
 @pytest.mark.parametrize("choice,field", [("search", "bushClicks"), ("take-rope", "ropeClicks")])
 def test_concurrent_requests_only_one_advances(client, choice, field):
     s, h = session(client)
+    if choice == "search": send(client, s, h, "inspect-boat")
     if choice == "take-rope":
         assert send(client, s, h, "inspect-bridge")[0].status_code == 200
     version = s["version"]
@@ -211,6 +216,7 @@ def test_rope_gate_boat_progress_and_inspection_resume(client):
     s, h = session(client)
     for _ in range(3):
         assert send(client, s, h, "take-rope")[0].status_code == 409
+    assert send(client, s, h, "inspect-boat")[0].status_code == 200
     for _ in range(3):
         assert send(client, s, h, "search")[0].status_code == 200
     assert send(client, s, h, "board")[0].status_code == 200
@@ -238,3 +244,22 @@ def test_legacy_rope_progress_preserved():
     state["ropeClicks"] = 3
     assert normalize_state(state)["bridgeInspected"] is True
     assert normalize_state(state)["ropeClicks"] == 3
+
+
+def test_grass_requires_boat_inspection_and_survives_resume(client):
+    s,h=session(client)
+    for _ in range(4):
+        assert send(client,s,h,"search")[0].status_code==409
+    assert s["state"]["bushClicks"]==0
+    assert send(client,s,h,"inspect-boat")[0].status_code==200
+    s.update(client.get(f"/api/v1/sessions/{s['id']}",headers=h).json())
+    for _ in range(3): assert send(client,s,h,"search")[0].status_code==200
+    assert s["state"]["oar"] is True
+
+def test_expanded_gap_accepts_edge_placements(client):
+    s,h=session(client)
+    positions={"planks":{"x":(680-2446.355)/2944,"y":(1010-1426.75)/1568},"rope":{"x":(1260-2104.5)/2944,"y":(1310-1413.5)/1568}}
+    assert send(client,s,h,"place-wood",positions={"planks":positions["planks"]})[0].status_code==200
+    for _ in range(3): assert send(client,s,h,"take-rope")[0].status_code==200
+    assert send(client,s,h,"collect-wood",positions=positions)[0].status_code==200
+    assert send(client,s,h,"repair",positions=positions)[0].status_code==200

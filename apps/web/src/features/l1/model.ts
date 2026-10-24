@@ -13,6 +13,7 @@ export type Subject =
   | "lamp"
   | "door";
 export type Choice =
+  | "inspect-boat"
   | "inspect-bridge"
   | "place-wood"
   | "take-rope"
@@ -39,6 +40,7 @@ export type L1State = {
   woodPlaced: boolean;
   repaired: boolean;
   bridgeInspected: boolean;
+  boatInspected?: boolean;
   ropeClicks: number;
   oar: boolean;
   bushClicks: number;
@@ -57,6 +59,7 @@ export const initialState = (): L1State => ({
   woodPlaced: false,
   repaired: false,
   bridgeInspected: false,
+  boatInspected: false,
   ropeClicks: 0,
   oar: false,
   bushClicks: 0,
@@ -82,6 +85,8 @@ export function canChoose(s: L1State, choice: Choice): boolean {
     );
   }
   switch (choice) {
+    case "inspect-boat":
+      return !s.boatInspected;
     case "inspect-bridge":
       return !s.bridgeInspected && !s.repaired;
     case "place-wood":
@@ -98,7 +103,7 @@ export function canChoose(s: L1State, choice: Choice): boolean {
     case "use-ring":
       return true;
     case "search":
-      return !s.oar;
+      return !!s.boatInspected && !s.oar;
     case "board":
       return s.oar && !s.rowing;
     default:
@@ -127,6 +132,8 @@ export function transition(s: L1State, event: GameEvent): L1State {
   // An explicit no is evidence; closing a prompt is not a refusal.
   if (!a.yes) return next;
   switch (a.choice) {
+    case "inspect-boat":
+      return { ...next, boatInspected: true };
     case "inspect-bridge":
       return { ...next, bridgeInspected: true };
     case "place-wood":
@@ -322,6 +329,7 @@ export const labels: Record<Subject, string> = {
 };
 export const choiceLabels: Record<Choice, string> = {
   "inspect-bridge": "查看木桥",
+  "inspect-boat": "查看小船",
   "place-wood": "木板就位",
   "take-rope": "拨动上方草丛",
   "collect-wood": "拾起木板",
