@@ -28,6 +28,7 @@ export function ResultDesign({result,onMatchRequest,headerAction}:{result?:Final
  }
  function artwork(){return <><figure className={styles.originalPoster}>
  <img key={`${portrait.id}-${retry}`} src={portrait.image} width={2048} height={1365} alt={`${portrait.name}，${portrait.type}。${portrait.quote}`} onError={()=>setFailed(true)} onLoad={()=>setFailed(false)}/>
+ <span className={styles.portraitNumber} aria-label={`卡片编号 ${portrait.id}`}>{portrait.id}</span>
  <div className={styles.portraitType}>{portrait.type}</div>
  {result?.metrics&&(['authenticity','love'] as const).map((key,i)=>{const [x,y,w,h]=ratingPanels[i];const metric=result.metrics![key]!;return <div key={key} className={styles.originalRating} style={{left:`${x/2048*100}%`,top:`${y/1365*100}%`,width:`${w/2048*100}%`,height:`${h/1365*100}%`}} aria-label={`${i===0?'真我值':'恋爱脑'}：${metric.score}分，${metric.stars}星，共5星`}><strong>{i===0?'真我值':'恋爱脑'}</strong><span className={i===0?styles.goldStars:styles.pinkHearts} aria-hidden="true">{Array.from({length:5},(_,n)=><i key={n} style={{opacity:n<metric.stars?1:.18}}>{i===0?'★':'♥'}</i>)}</span></div>;})}
  {failed&&<div className={styles.error} role="alert"><p>画像暂时未能加载</p><button onClick={()=>{setFailed(false);setRetry(v=>v+1);}}>重新加载</button></div>}
@@ -43,7 +44,7 @@ export function ResultDesign({result,onMatchRequest,headerAction}:{result?:Final
  <div className={styles.screenReader}><h1 id="portrait-heading">{portrait.name} · {portrait.type}</h1><p>{portrait.quote}</p>{sections.map(s=><section key={s.key}><h2>{s.title}</h2><p>{portrait[s.key]}</p></section>)}</div>
  {artwork()}
 
- <div className={`${styles.match} ${styles.matchEntry}`}><button type="button" onClick={requestMatch}><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>找到你的另一半<span aria-hidden="true">→</span></button><JourneyReport result={result}/></div>
+ <div className={`${styles.match} ${styles.matchEntry}`}><button type="button" onClick={requestMatch}><svg aria-hidden="true" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V6a4 4 0 0 1 8 0v4"/></svg>找到你的另一半</button><JourneyReport result={result}/></div>
  {matchNotice&&<p className={styles.matchNotice} role="status">{matchNotice}</p>}
  </article>
  <footer className={styles.footer}><p>匹配功能即将开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>

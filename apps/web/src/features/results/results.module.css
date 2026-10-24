@@ -58,3 +58,13 @@
 @media(max-width:600px){.reportDialog{padding:16px}.reportHeader h2{font-size:19px}.reportContent{font-size:14px}.fittedPage .matchEntry button{font-size:14px}}
 
 .reportLoading{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:260px;padding:28px 12px;text-align:center;gap:12px}.reportLoading h3,.reportLoading p{margin:0}.reportSpinner{width:36px;height:36px;border:3px solid #e9ddcd;border-top-color:#4baa8b;border-radius:50%;animation:reportSpin 1s linear infinite}@keyframes reportSpin{to{transform:rotate(360deg)}}@media(prefers-reduced-motion:reduce){.reportSpinner{animation:none}}
+
+/* Keep every card number on the same baseline, including the enlarged card. */
+.portraitNumber{position:absolute;left:3%;top:4%;width:10%;height:10%;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border-radius:.6cqw;background:#fff1dc;color:#8e202c;font:700 5.3cqw/1 Arial,Helvetica,sans-serif;font-variant-numeric:lining-nums tabular-nums;letter-spacing:0}
+.reportDialog .reportContent{font-size:20px;line-height:1.9;text-align:left;color:#593b32}
+.reportDialog .reportContent p{font-size:inherit;line-height:inherit;margin:12px 0;color:inherit}
+.reportDialog .reportContent h3{font-size:24px;line-height:1.55}
+.reportDialog .reportContent .reportNote{font-size:16px;color:#806f60}
+.reportDialog .reportTable table{font-size:18px;line-height:1.75}
+.reportDialog .reportLoading p{font-size:18px;line-height:1.7}
+@media(max-width:600px){.reportDialog .reportContent{font-size:18px}.reportDialog .reportContent h3{font-size:21px}.reportDialog .reportContent .reportNote{font-size:15px}.reportDialog .reportTable table{font-size:16px}}

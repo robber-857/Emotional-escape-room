@@ -37,7 +37,7 @@ export function JourneyReport({result}:{result?:FinalResult}){
   }catch{if(!abort.signal.aborted)setError('报告暂时无法生成，请稍后重试。');}
   finally{setBusy(false);}
  }
- return <><button type="button" className={`${styles.reportButton} gameYes`} onClick={()=>void load()}>查看报告 <span aria-hidden="true">→</span></button>
+ return <><button type="button" className={`${styles.reportButton} gameYes`} onClick={()=>void load()}>查看报告</button>
  <dialog ref={dialog} data-game-dialog className={`${styles.dialog} ${styles.reportDialog}`} aria-labelledby="report-heading" onCancel={()=>controller.current?.abort()} onClick={e=>{if(e.target===e.currentTarget)close();}}>
  <div className={styles.reportHeader}><h2 id="report-heading">{report?.title||'你的旅程解读'}</h2><button onClick={close} aria-label="关闭报告">关闭 ×</button></div>
  {busy&&<div className={styles.reportLoading} role="status" aria-live="polite"><span className={styles.reportSpinner} aria-hidden="true"/><h3>正在生成你的分析报告</h3><p>生成分析报告大约需要 30 秒，请耐心等待。</p><p className={styles.reportNote}>正在回顾你在旅程中触发的事件与做出的选择…</p></div>}
