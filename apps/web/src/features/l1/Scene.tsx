@@ -10,6 +10,7 @@ export const assetNames = [
   "rope",
   "rope-bush",
   "river-daylight-clear",
+  "river-daylight-repaired-v2",
   "plant-back",
   "plant-right",
   "plant-mid",
@@ -333,11 +334,16 @@ export function Scene({
       {river ? (
         <>
           {state.repaired && (
-            <g className={effect === "repair" ? "bridgeReveal" : undefined} aria-hidden="true">
-              <path d="M760 1116 L1070 1109 L1164 1165 L848 1196 Z" fill="#a67c47" stroke="#65492b" strokeWidth="5" />
-              <path d="M780 1134 L1092 1123 M802 1153 L1118 1139 M825 1174 L1140 1153" fill="none" stroke="#563c23" strokeWidth="5" />
-              <path d="M775 1120 L1070 1114 M800 1141 L1100 1131 M825 1163 L1130 1148" fill="none" stroke="#e6c38a" strokeWidth="3" opacity=".8" />
-            </g>
+            <image
+              data-layer="repaired-background"
+              className={effect === "repair" ? "bridgeReveal" : undefined}
+              href={asset("river-daylight-repaired-v2")}
+              width={W}
+              height={H}
+              preserveAspectRatio="none"
+              pointerEvents="none"
+              aria-hidden="true"
+            />
           )}
           {!state.repaired &&
             (selected === "planks" || selected === "rope" || state.wood) && (

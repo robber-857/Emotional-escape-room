@@ -783,17 +783,18 @@ body {
 }
 @keyframes repairReveal {
   from {
-    clip-path: inset(0 100% 0 0);
-    opacity: 0.2;
+    opacity: 0;
   }
   to {
-    clip-path: inset(0 0 0 0);
     opacity: 1;
   }
 }
 .still .oarFlight,
 .still .bridgeReveal {
   animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bridgeReveal { animation: none; }
 }
 .conflict {
   position: absolute;
