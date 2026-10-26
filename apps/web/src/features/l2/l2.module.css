@@ -84,6 +84,13 @@
 @media(max-height:500px) and (orientation:landscape){.layoutTools {grid-area:3/2/7/23;}.layoutTools button {padding:5px 8px;font-size:11px;}}
 
 .game button {touch-action:manipulation;}
+.menu{align-self:start;margin-top:8px;min-width:44px;min-height:44px}
+.dialog .close{min-width:44px;min-height:44px}
+@media(max-height:540px) and (orientation:landscape){
+ .dialog{padding:14px;overflow:auto}
+ .dialog .actions{position:sticky;bottom:-14px;background:#33382e;padding:10px 0;margin-bottom:-14px}
+ .dialog p{margin-bottom:10px;line-height:1.6}
+}
 .serverTrace {overflow-wrap:anywhere;}
 .serverTrace ol {padding-inline-start:22px;}
 .serverTrace li {margin-block:16px;padding-block:12px;border-bottom:1px solid #cabd9766;}

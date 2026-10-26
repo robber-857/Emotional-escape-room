@@ -50,7 +50,7 @@ export function ResultDesign({result,onMatchRequest,headerAction}:{result?:Final
  {matchNotice&&<p className={styles.matchNotice} role="status">{matchNotice}</p>}
  </article>
  <footer className={styles.footer}><p>匹配功能即将开放</p><button onClick={()=>dialog.current?.showModal()}>放大查看卡片 ↗</button></footer>
- <dialog data-game-dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
+ <dialog data-game-dialog ref={dialog} className={`${styles.dialog} ${styles.posterDialog}`} aria-label={`${portrait.name}放大卡片`} onClick={e=>{if(e.target===e.currentTarget)dialog.current?.close();}}><form method="dialog"><p className={styles.zoomHint}>左右滑动查看完整卡片</p><button aria-label="关闭原画">关闭 ×</button></form><div className={styles.zoomCanvas}>{artwork()}</div></dialog>
  <dialog data-game-dialog ref={matchDialog} className={`${styles.dialog} ${styles.matchDialog}`} aria-labelledby="match-heading" onCancel={e=>{if(matchBusy)e.preventDefault();}} onClick={e=>{if(!matchBusy&&e.target===e.currentTarget)matchDialog.current?.close();}}><h2 id="match-heading">您想匹配您理想的另一半吗？</h2>{matchNotice&&<p role="status">{matchNotice}</p>}<div className={styles.matchActions}><button autoFocus disabled={matchBusy} onClick={()=>matchDialog.current?.close()}>否</button><button className={styles.matchYes} disabled={matchBusy} onClick={()=>void confirmMatch()}>{matchBusy?"正在提交…":"是"}</button></div></dialog>
  </main>;
 }

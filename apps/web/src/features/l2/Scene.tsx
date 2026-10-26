@@ -8,7 +8,7 @@ export function KeySprite({id}:{id:KeyId}) {
  return <svg viewBox="0 0 51 44" width="51" height="44" overflow="hidden" aria-hidden="true"><image href={gameAsset("/game/l2/keys.png")} x={id==="key-1"?0:-59.9454} y="0" width="111.0015" height="44" preserveAspectRatio="none" /></svg>;
 }
 function ImageLayer({id,x,y,w,h,crop=[0,0,1,1],opacity=1}:{id:string;x:number;y:number;w:number;h:number;crop?:number[];opacity?:number}){
- return <svg data-layer={id} x={x} y={y} width={w} height={h} viewBox={`0 0 ${w} ${h}`} overflow="hidden" opacity={opacity}>
+ return <svg data-layer={id} pointerEvents="none" x={x} y={y} width={w} height={h} viewBox={`0 0 ${w} ${h}`} overflow="hidden" opacity={opacity}>
   <image href={gameAsset(`/game/l2/${id}.png`)} x={crop[0]*w} y={crop[1]*h} width={crop[2]*w} height={crop[3]*h} preserveAspectRatio="none" />
  </svg>;
 }

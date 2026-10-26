@@ -69,8 +69,8 @@ dialog[data-game-dialog] {
 
 :root [data-game-prompt] button[aria-label^="关闭提示"] {
   font-size: 23px;
-  min-width: 32px;
-  min-height: 32px;
+  min-width: 44px;
+  min-height: 44px;
 }
 
 :root .gameYes,

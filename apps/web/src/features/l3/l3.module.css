@@ -46,6 +46,14 @@
 .dialog ol {padding-left:22px;}.dialog li {margin-block:16px;font-size:13px;}.dialog small {display:block;overflow-wrap:anywhere;margin-top:6px;color:#c2bcb2;}
 .close {float:right;min-height:32px;padding:0 8px;font-size:23px;}
 .menuActions {display:grid;gap:8px;}.menuActions a,.gate a {padding:12px;border:1px solid #cbb19655;border-radius:7px;}
+.menu{align-self:start;margin-top:8px;min-width:44px;min-height:44px}
+.dialog .close{min-width:44px;min-height:44px}
+@media(max-height:540px) and (orientation:landscape){
+ .dialog{padding:14px}
+ .dialog p{line-height:1.6;margin-bottom:10px}
+ .menuActions{display:flex;flex-wrap:wrap;gap:8px}
+ .menuActions button{min-height:44px}
+}
 .gate {min-height:100dvh;display:flex;flex-direction:column;justify-content:center;align-items:start;gap:22px;max-width:700px;margin:auto;padding:30px;}.gate p{line-height:1.8;}
 .storm {animation:shake .4s ease-out 1;}
 .reduced * {animation:none!important;transition:none!important;}

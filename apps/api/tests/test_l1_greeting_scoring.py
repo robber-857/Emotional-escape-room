@@ -76,7 +76,7 @@ def test_each_greeting_outcome_settles_only_when_l2_starts(client, man, woman):
         assert row['vector'] == dict(A=None, V=VALUES[option], T=None, F=None)
         assert row['cutoff_version'] == parent['version']
         assert row['evidence']['cutoff_state']['scene'] == 'complete'
-        assert row['event_score_version'] == 'event-scores-v8-l1-greetings'
+        assert row['event_score_version'] == 'event-scores-v9-l3-door-close'
     actions = settlement_actions(settled)
     assert len(actions) == 1
     assert actions[0]['delta'] == dict(A=None, V=VALUES[man] + VALUES[woman], T=None, F=None)
@@ -172,7 +172,7 @@ def test_old_bound_policy_keeps_immediate_yes_only_scores(client, monkeypatch):
         parent, headers = session(client)
     # A later journey binds the current policy without replacing the old snapshot.
     newer, newer_headers = session(client)
-    assert scoring(client, newer, newer_headers)['event_score_version'] == 'event-scores-v8-l1-greetings'
+    assert scoring(client, newer, newer_headers)['event_score_version'] == 'event-scores-v9-l3-door-close'
     assert send(client, parent, headers, 'swim')[0].status_code == 200
     yes = send(client, parent, headers, 'greet')[0].json()['score_effect']
     assert yes['delta'] == dict(A=None, V=-2, T=None, F=None)

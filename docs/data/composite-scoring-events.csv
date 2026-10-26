@@ -28,7 +28,7 @@ l2.furniture,final_layout,最终确认家具布局,最终确认layout/classifica
 l3.storm-door,unopened,保持半开,风暴选择结束 AND open=false AND close=false,,2,1,,已对应,组内互斥；最终一次,44
 l3.storm-door,opened,打开并保持,风暴选择结束 AND open=true AND close=false,,-2,1,,已对应,组内互斥；最终一次,45
 l3.storm-door,closed,打开后又关上,风暴选择结束 AND open=true AND close=true,,0,-2,,已对应,组内互斥；最终一次,46
-l3.storm-door,unopened_closed,未开但选择关门,open=false AND close=true,待定,待定,待定,待定,缺失向量,服务器允许此组合，原表未给分,
+l3.storm-door,unopened_closed,未开但选择关门,open=false AND close=true,NA,2,-1,NA,已配置,2026-10-26 用户确认：打开并保持的反向 V/T 评分,
 l3.wait,yes,等待,风暴结束 choices.wait=yes,1,,,,已对应,组内互斥；最终一次,47
 l3.wait,no,不等待,风暴结束 choices.wait=no,-1,,,,已对应,组内互斥；最终一次,48
 l3.curtain,yes,拉开窗帘,风暴结束 choices.curtain=yes,,-1,,,已对应,组内互斥；最终一次,49

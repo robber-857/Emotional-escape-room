@@ -21,6 +21,7 @@ type RecordEntry={source:"local_preview";door:string;at:string};
 
 export function L4Game({preview}:{preview:boolean}) {
   const [entered,setEntered]=useState(false);
+  const [portrait,setPortrait]=useState(false);
   const server=useServerL4(!preview);
   const [localLoaded,setLoaded]=useState(false);
   const [attempt,setAttempt]=useState(0),[localError,setError]=useState("");
@@ -59,10 +60,17 @@ export function L4Game({preview}:{preview:boolean}) {
     window.addEventListener("storage",changed);
     return()=>{live=false;window.removeEventListener("storage",changed);};
   },[preview]);
-  useEffect(()=>{if(selected)dialog.current?.showModal();else dialog.current?.close();},[selected]);
+  useEffect(()=>{
+    const query=matchMedia("(orientation: portrait) and (max-width: 700px), (pointer: coarse) and (orientation: portrait) and (max-width: 900px)");
+    const update=()=>setPortrait(query.matches);
+    update();query.addEventListener("change",update);
+    return()=>query.removeEventListener("change",update);
+  },[]);
+  // Preserve the selected door while rotation guidance temporarily replaces its dialog.
+  useEffect(()=>{if(selected&&!portrait)dialog.current?.showModal();else dialog.current?.close();},[selected,portrait]);
   useEffect(()=>{if(!preview&&(server.conflict||server.error))setSelected(null);},[preview,server.conflict,server.error]);
   async function confirm(){
-    if(!selected||!loaded||!ready||error||confirmed||busy)return;
+    if(!selected||portrait||!loaded||!ready||error||confirmed||busy)return;
     if(!preview){if(await server.confirm(selected.id))setSelected(null);return;}
     try{
       if(localStorage.getItem(key.current)!==lastRaw.current)throw Error("其他页面已更新选择，请重新载入后继续。");
@@ -70,8 +78,8 @@ export function L4Game({preview}:{preview:boolean}) {
       localStorage.setItem(key.current,raw);lastRaw.current=raw;setConfirmed(selected);setSelected(null);
     }catch(e){setError(e instanceof Error?e.message:"保存失败，请重新载入后重试。");setSelected(null);}
   }
-  return <main className={styles.game}>
-    <aside className={styles.rotation}><h2>请翻转手机</h2><p>横屏后，选择你想走向的那扇门。</p></aside>
+  return <main className={styles.game} data-portrait={portrait}>
+    <aside className={styles.rotation} role="status"><h2>请翻转手机</h2><p>横屏后，选择你想走向的那扇门。</p></aside>
     {!entered&&<ActOpening journeyId={preview?"preview-l4":server.session?.id} resume={!!confirmed} act="第四幕" title="远方之门" prompt="选择一扇门走向远方。" ready={ready&&loaded&&!error&&!confirmed} onEnter={()=>setEntered(true)}/>}
     <section className={styles.stage} aria-label="第四幕：远方之门">
       <div className={styles.art}>

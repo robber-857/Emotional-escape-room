@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "event_definition_version": "server-composite-v4",
-  "event_score_version": "event-scores-v8-l1-greetings",
+  "event_score_version": "event-scores-v9-l3-door-close",
   "groups": {
     "l1.crossing": {
       "bridge": {
@@ -324,11 +324,11 @@
       },
       "unopened_closed": {
         "label": "未开但选择关门",
-        "status": "not_measured",
+        "status": "configured",
         "vector": {
           "A": null,
-          "V": null,
-          "T": null,
+          "V": 2.0,
+          "T": -1.0,
           "F": null
         }
       }
@@ -692,8 +692,7 @@
   },
   "temporary_null_options": [
     "l3.item/backpack",
-    "l2.retry/abandon",
-    "l3.storm-door/unopened_closed"
+    "l2.retry/abandon"
   ],
   "temporary_unresolved_conditions": [
     "l2.retry",
