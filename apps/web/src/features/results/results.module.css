@@ -70,3 +70,22 @@
 @media(max-width:600px){.reportDialog .reportContent{font-size:18px}.reportDialog .reportContent h3{font-size:21px}.reportDialog .reportContent .reportNote{font-size:15px}.reportDialog .reportTable table{font-size:16px}}
 
 .originalPoster>.numberBackgroundRepair{position:absolute;inset:0;width:100%;height:100%;object-fit:fill;clip-path:inset(4% 87% 86% 3%);mask-image:linear-gradient(to right,transparent 3%,#000 4.1%,#000 12%,transparent 13%),linear-gradient(to bottom,transparent 4%,#000 4.7%,#000 13.3%,transparent 14%);mask-composite:intersect;pointer-events:none}
+
+/* Reserve room for readable actions independently of the artwork height. */
+.fittedPage .article{min-width:min(100%,340px)}
+.fittedPage .matchEntry{display:flex;justify-content:center;flex-wrap:wrap;gap:10px}
+.fittedPage .matchEntry>button{box-sizing:border-box;flex:0 0 auto;width:176px;max-width:100%;min-width:0;min-height:44px;height:44px;justify-content:center;padding:8px 12px;border-width:1px;border-radius:12px;font-size:16px;font-weight:600;line-height:1.25;letter-spacing:0;gap:8px;white-space:nowrap}
+.fittedPage .matchEntry>button svg{width:18px;height:18px;flex-shrink:0}
+.fittedPage .matchEntry>.reportButton{border-radius:12px}
+@media(max-width:600px){.fittedPage .matchEntry>button{width:148px;font-size:14px;padding:8px 10px;gap:6px}}
+@media(max-height:540px) and (orientation:landscape){
+ .fittedPage{padding:0 12px 8px;gap:6px}
+ .fittedPage .header{width:100%;min-height:48px;gap:8px;padding:4px 0}
+ .fittedPage .header:has(.controls){flex-wrap:nowrap}
+ .fittedPage .header .controls{width:auto;order:0;margin-left:0}
+ .fittedPage .article{width:min(100%,max(340px,calc((100dvh - 180px) * 2048 / 1365 + 20px)))}
+ .fittedPage .matchEntry{padding:10px 0 0;gap:10px}
+ .fittedPage .matchEntry>button{width:148px;font-size:14px;padding:8px 10px;gap:6px}
+ .fittedPage .matchNotice{margin:5px 0 0}
+ .fittedPage .footer{font-size:11px}
+}
