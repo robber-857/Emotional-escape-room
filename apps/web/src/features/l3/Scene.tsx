@@ -16,7 +16,7 @@ export function Scene({state,blocked,reduced,onPrompt,onItem,onCarryStart}:{stat
     return <g role="button" aria-label={label} aria-disabled={disabled} tabIndex={disabled?-1:0} className={styles.hotspot}
       onClick={()=>{if(!disabled)onPrompt(slot);}} onKeyDown={e=>{if(!disabled&&(e.key==="Enter"||e.key===" ")){e.preventDefault();onPrompt(slot);}}}>
       <rect x={x} y={y} width={w} height={h} rx="12"/>
-      {caption&&<g className={styles.marker} aria-hidden="true" transform={`translate(${x+w/2} ${y+h/2})`}><rect x="-110" y="-33" width="220" height="66" rx="20"/><text textAnchor="middle" dominantBaseline="central">{caption}</text></g>}
+      {caption&&state.choices[slot]===null&&<g className={styles.marker} aria-hidden="true" transform={`translate(${x+w/2} ${y+h/2})`}><rect x="-110" y="-33" width="220" height="66" rx="20"/><text textAnchor="middle" dominantBaseline="central">{caption}</text></g>}
     </g>;
   }
   return <svg className={`${styles.scene} ${storm&&!reduced?styles.storm:""}`} viewBox="0 0 1920 1049" aria-label="风暴大厅场景">
